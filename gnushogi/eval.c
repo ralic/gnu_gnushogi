@@ -692,12 +692,12 @@ evaluate (short side,
 
   	seed[0] = seed[1] = 0;
 	threats (side);
-	if (Anyatak (side, sq=PieceList[xside][0]) && board[sq] == king) {
+	if (Anyattack (side, sq=PieceList[xside][0]) && board[sq] == king) {
 	  *InChk = (board[sq=PieceList[side][0]] == king) ? SqAttacked (sq, xside, blockable) : false;
 	  return ((SCORE_LIMIT+1001) - ply);
 	}
 	threats (xside);
-	*InChk = (board[sq=PieceList[side][0]] == king) ? Anyatak (xside, sq) : false;
+	*InChk = (board[sq=PieceList[side][0]] == king) ? Anyattack (xside, sq) : false;
 	*blockable = true;
 #ifndef BAREBONES 
 	EvalNodes++;

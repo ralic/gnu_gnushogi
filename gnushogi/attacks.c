@@ -171,7 +171,7 @@ SqAttacked (short square, short side, short *blockable)
     printf("atak array for %s available for SqAttacked!\n",ColorStr[side]);
 #endif
     *blockable = true; /* don't know */
-    return(Anyatak(side,square));
+    return(Anyattack(side,square));
   }
 
  /*

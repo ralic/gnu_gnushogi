@@ -316,7 +316,7 @@ extern char  *Lang;
 
 /* attack functions */
 #define Patak(c, u) (atak[c][u] > ctlP)
-#define Anyatak(c, u) (atak[c][u] != 0)
+#define Anyattack(c, u) (atak[c][u] != 0)
 
 /* hashtable flags */
 #define truescore 0x0001
