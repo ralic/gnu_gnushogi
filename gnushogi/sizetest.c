@@ -68,7 +68,7 @@ int gettimeofday(struct timeval *tp, void *tzp)
  * with different random number generators, that is not acceptable if they
  * are going to share the same transposition table.
  */
-unsigned long int next = 1;
+unsigned long next = 1;
 
 unsigned int
 urand (void)
@@ -131,7 +131,7 @@ short XCmoves[3], XCminutes[3], XCseconds[3], XC, XCmore;
 const short otherside[3] =
 {white, black, neutral};
 unsigned short hint;
-short int TOflag;		/* force search re-init if we backup search */
+short TOflag;		/* force search re-init if we backup search */
 
 unsigned short killr0[MAXDEPTH], killr1[MAXDEPTH];
 unsigned short killr2[MAXDEPTH], killr3[MAXDEPTH];
@@ -150,7 +150,7 @@ short stage, stage2;
 FILE *hashfile;
 
 unsigned int starttime;
-short int ahead = true, hash = true;
+short ahead = true, hash = true;
 
  
 

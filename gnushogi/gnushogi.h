@@ -203,7 +203,7 @@ typedef unsigned long ULONG;
 extern char *binbookfile;
 #endif
 extern char *bookfile;
-extern short int ahead;
+extern short ahead;
 extern char  *xwin;
 extern char  *Lang;
 
@@ -212,11 +212,11 @@ extern char  *Lang;
 #define SEEK_SET 0
 #define SEEK_END 2
 #if defined DEBUG || defined DEBUG_EVAL
-     extern void ShowDBLine (char *, short int, short int,
-	    		short int, short int, short int,
+     extern void ShowDBLine (char *, short, short,
+	    		short, short, short,
 	    		short unsigned int *);
      extern FILE *debugfd;
-     extern short int debuglevel;
+     extern short debuglevel;
        
      extern void debug_position (FILE *D);
      extern void debug_ataks (FILE *D, long *atk);
@@ -273,7 +273,7 @@ extern char  *Lang;
      extern int atoi (const char *);
 
 /* <time.h> */
-     extern long int time (long int *);
+     extern long time (long *);
 
 /* <string.h> */
      extern void *memset (void *, int, size_t);
@@ -617,11 +617,11 @@ extern char  *Lang;
      struct etable
      { 
 	unsigned long ehashbd;
-	short int escore[2];
+	short escore[2];
 #if !defined SAVE_SSCORE
-	short int sscore[NO_SQUARES];
+	short sscore[NO_SQUARES];
 #endif
-	short int score;
+	short score;
 	small_short hung[2];
 #ifdef CACHETEST
 	unsigned char bd[PTBLBDSIZE];
@@ -743,11 +743,11 @@ extern short debug_moves;
      extern char *PieceStr[NO_PIECES];
 #endif
      extern char mvstr[4][6]; 
-     extern unsigned short int MV[MAXDEPTH];
+     extern unsigned short MV[MAXDEPTH];
      extern int MSCORE;
      extern int mycnt1, mycnt2;
-     extern short int ahead;
-     extern short int xshogi;
+     extern short ahead;
+     extern short xshogi;
      extern struct leaf rootnode;
      extern struct leaf  *Tree;
      extern struct leaf  *root;
@@ -806,14 +806,14 @@ extern short debug_moves;
      extern const small_short Stboard[];
      extern const small_short Stcolor[];
      extern unsigned short hint;
-     extern short int TOflag;
+     extern short TOflag;
      extern short stage, stage2;
 
 #define in_opening_stage (!flag.tsume && (stage < 33))
 #define in_middlegame_stage (!flag.tsume && (stage >= 33) && (stage <= 66))
 #define in_endgame_stage (flag.tsume || (stage > 66))
 
-     extern short int ahead, hash;
+     extern short ahead, hash;
      extern short balance[2];
      extern small_short ChkFlag[], CptrFlag[], TesujiFlag[];
      extern short Pscore[], Tscore[];
@@ -830,7 +830,7 @@ extern short debug_moves;
      extern const short kingP[];
      extern unsigned short killr0[], killr1[];
      extern unsigned short killr2[], killr3[];
-     extern unsigned short int PrVar[MAXDEPTH];
+     extern unsigned short PrVar[MAXDEPTH];
      extern unsigned short PV, SwagHt, Swag0, Swag1, Swag2, Swag3, Swag4, sidebit;
      extern short mtl[2], pmtl[2], hung[2];
      extern const small_short relative_value[];
@@ -965,48 +965,48 @@ typedef struct hashval drop_hashcode_array[2][NO_PIECES][NO_SQUARES];
      extern void Initialize_dist (void); /* init.c */
      extern void Initialize_eval (void); /* eval.c */
      extern void NewGame (void);
-     extern int parse (FILE * fd, short unsigned int *mv, short int side, char *opening);
+     extern int parse (FILE * fd, short unsigned int *mv, short side, char *opening);
      extern void GetOpenings (void);
-     extern int OpeningBook (unsigned short int *hint, short int side);
+     extern int OpeningBook (unsigned short *hint, short side);
      
 typedef enum { REMOVE_PIECE = 1, ADD_PIECE } UpdatePieceList_mode;
 
-     extern void UpdatePieceList (short int side, short int sq, UpdatePieceList_mode iop);
+     extern void UpdatePieceList (short side, short sq, UpdatePieceList_mode iop);
 
 typedef enum { FOREGROUND_MODE = 1, BACKGROUND_MODE } SelectMove_mode;
 
-     extern void SelectMove (short int side, SelectMove_mode iop);
+     extern void SelectMove (short side, SelectMove_mode iop);
      extern int
-      search (short int side,
-	       short int ply,
-	       short int depth,
-	       short int alpha,
-	       short int beta,
+      search (short side,
+	       short ply,
+	       short depth,
+	       short alpha,
+	       short beta,
 	       short unsigned int *bstline,
-	       short int *rpt);
+	       short *rpt);
 #ifdef CACHE
 	void
-	  PutInEETable (short int side,int score);
+	  PutInEETable (short side,int score);
 	int
-	  CheckEETable (short int side);
+	  CheckEETable (short side);
 	int
-	  ProbeEETable (short int side, short int *score);
+	  ProbeEETable (short side, short *score);
 #endif
 #if ttblsz
      extern int
-      ProbeTTable (short int side,
-		    short int depth,
-		    short int ply,
-		    short int *alpha,
-		    short int *beta,
-		    short int *score);
+      ProbeTTable (short side,
+		    short depth,
+		    short ply,
+		    short *alpha,
+		    short *beta,
+		    short *score);
      extern int
-      PutInTTable (short int side,
-		    short int score,
-		    short int depth,
-		    short int ply,
-		    short int alpha,
-		    short int beta,
+      PutInTTable (short side,
+		    short score,
+		    short depth,
+		    short ply,
+		    short alpha,
+		    short beta,
 		    short unsigned int mv);
      extern void ZeroTTable (void);
      extern void ZeroRPT (void);
@@ -1015,19 +1015,19 @@ typedef enum { FOREGROUND_MODE = 1, BACKGROUND_MODE } SelectMove_mode;
 #ifdef HASHFILE
      extern void gsrand (unsigned int);
      extern int
-      ProbeFTable (short int side,
-		    short int depth,
-		    short int ply,
-		    short int *alpha,
-		    short int *beta,
-		    short int *score);
+      ProbeFTable (short side,
+		    short depth,
+		    short ply,
+		    short *alpha,
+		    short *beta,
+		    short *score);
      extern void
-      PutInFTable (short int side,
-		    short int score,
-		    short int depth,
-		    short int ply,
-		    short int alpha,
-		    short int beta,
+      PutInFTable (short side,
+		    short score,
+		    short depth,
+		    short ply,
+		    short alpha,
+		    short beta,
 		    short unsigned int f,
 		    short unsigned int t);
 
@@ -1039,39 +1039,39 @@ typedef enum { FOREGROUND_MODE = 1, BACKGROUND_MODE } SelectMove_mode;
 
      extern short generate_move_flags;
 
-     extern void MoveList (short int side, short int ply, 
-			   short int in_check, short int blockable);
-     extern void CaptureList (short int side, short int ply, 
-			      short int in_check, short int blockable);
+     extern void MoveList (short side, short ply, 
+			   short in_check, short blockable);
+     extern void CaptureList (short side, short ply, 
+			      short in_check, short blockable);
 
      /* from ataks.c */
-     extern int SqAtakd (short int square, short int side, short int *blockable);
+     extern int SqAtakd (short square, short side, short *blockable);
      
 extern void
-      MakeMove (short int side,
+      MakeMove (short side,
 		 struct leaf  *node,
-		 short int *tempb,
-		 short int *tempc,
-		 short int *tempsf,
-		 short int *tempst,
-		 short int *INCscore);
+		 short *tempb,
+		 short *tempc,
+		 short *tempsf,
+		 short *tempst,
+		 short *INCscore);
      extern void
-      UnmakeMove (short int side,
+      UnmakeMove (short side,
 		   struct leaf  *node,
-		   short int *tempb,
-		   short int *tempc,
-		   short int *tempsf,
-		   short int *tempst);
+		   short *tempb,
+		   short *tempc,
+		   short *tempsf,
+		   short *tempst);
      extern void InitializeStats (void);
      extern int
-      evaluate (short int side,
-		 short int ply,
-		 short int alpha,
-		 short int beta,
-		 short int INCscore,
-		 short int *InChk,
-		 short int *blockable);
-     extern short int ScorePosition (short int side);
+      evaluate (short side,
+		 short ply,
+		 short alpha,
+		 short beta,
+		 short INCscore,
+		 short *InChk,
+		 short *blockable);
+     extern short ScorePosition (short side);
      extern void ExaminePosition (short side);
      extern short ScorePatternDistance(short side);
      extern void DetermineStage (short side);
@@ -1085,10 +1085,10 @@ extern void
      extern void SetTimeControl (void);
      extern void SelectLevel (char *sx);
      extern void
-      UpdateDisplay (short int f,
-		      short int t,
-		      short int flag,
-		      short int iscastle);
+      UpdateDisplay (short f,
+		      short t,
+		      short flag,
+		      short iscastle);
 
 typedef enum { COMPUTE_AND_INIT_MODE = 1, COMPUTE_MODE
 #ifdef INTERRUPT_TEST
@@ -1097,30 +1097,30 @@ typedef enum { COMPUTE_AND_INIT_MODE = 1, COMPUTE_MODE
     } ElapsedTime_mode; 
 
      extern void ElapsedTime (ElapsedTime_mode iop);
-     extern void SetResponseTime (short int side);
+     extern void SetResponseTime (short side);
      extern void CheckForTimeout (int score, int globalscore, int Jscore, int zwndw);
 
      extern void ShowSidetoMove (void);
      extern void ShowResponseTime (void);
      extern void ShowPatternCount (short side, short n);
-     extern void SearchStartStuff (short int side);
+     extern void SearchStartStuff (short side);
      extern void ShowDepth (char ch);
      extern void TerminateSearch (int);
      extern void
-      ShowResults (short int score,
+      ShowResults (short score,
 		    short unsigned int *bstline,
 		    char ch);
      extern void PromptForMove (void);
      extern void SetupBoard (void);
-     extern void algbr (short int f, short int t, short int flag);
+     extern void algbr (short f, short t, short flag);
      extern void OutputMove (void);
-     extern void ShowCurrentMove (short int pnt, short int f, short int t);
+     extern void ShowCurrentMove (short pnt, short f, short t);
      extern void ListGame (void);
      extern void ShowMessage (char *s);
      extern void ClrScreen (void);
-     extern void gotoXY (short int x, short int y);
+     extern void gotoXY (short x, short y);
      extern void ClrEoln (void);
-     extern void DrawPiece (short int sq);
+     extern void DrawPiece (short sq);
      extern void UpdateClocks (void);
      extern void DoDebug (void);
      extern void DoTable (short table[NO_SQUARES]);
@@ -1137,14 +1137,14 @@ typedef enum { COMPUTE_AND_INIT_MODE = 1, COMPUTE_MODE
      extern void ChangeSearchDepth (void);
      extern void skip (void);
      extern void skipb (void);
-     extern void EnPassant (short int xside, short int f, short int t, short int iop);
-     extern void ShowNodeCnt (long int NodeCnt);
+     extern void EnPassant (short xside, short f, short t, short iop);
+     extern void ShowNodeCnt (long NodeCnt);
      extern void ShowLine (short unsigned int *bstline);
-     extern int pick (short int p1, short int p2);
-     extern short int repetition (void);
+     extern int pick (short p1, short p2);
+     extern short repetition (void);
      extern void TimeCalc (void);
-     extern short DropPossible (short int piece, short int side, short int sq); /* genmoves.c */
-     extern short IsCheckmate (short int side, short int in_check, short int blockable); /* genmoves.c */
+     extern short DropPossible (short piece, short side, short sq); /* genmoves.c */
+     extern short IsCheckmate (short side, short in_check, short blockable); /* genmoves.c */
 
 
 typedef enum { VERIFY_AND_MAKE_MODE, VERIFY_AND_TRY_MODE, UNMAKE_MODE } VerifyMove_mode;

@@ -30,12 +30,12 @@
 #include <assert.h>
 #endif
 unsigned int TTadd = 0;
-short int recycle; 
-short int ISZERO = 1;
+short recycle; 
+short ISZERO = 1;
 
 
 int
-parse (FILE * fd, short unsigned int *mv, short int side, char *opening)
+parse (FILE * fd, short unsigned int *mv, short side, char *opening)
 {
   int c, i, r1, r2, c1, c2;
   char s[128];
@@ -178,12 +178,12 @@ void ShowPTBL (struct hashentry *ptbl)
 
 
 int
-ProbeTTable (short int side,
-	     short int depth,
-	     short int ply,
-	     short int *alpha,
-	     short int *beta,
-	     short int *score)
+ProbeTTable (short side,
+	     short depth,
+	     short ply,
+	     short *alpha,
+	     short *beta,
+	     short *score)
 
 /*
  * Look for the current board position in the transposition table.
@@ -259,12 +259,12 @@ ProbeTTable (short int side,
 
 
 int
-PutInTTable (short int side,
-	     short int score,
-	     short int depth,
-	     short int ply,
-	     short int alpha,
-	     short int beta,
+PutInTTable (short side,
+	     short score,
+	     short depth,
+	     short ply,
+	     short alpha,
+	     short beta,
 	     short unsigned int mv)
 
 /*
@@ -380,19 +380,19 @@ int Fbdcmp(unsigned char *a,unsigned char *b)
 	return true;
 }
 int
-ProbeFTable (short int side,
-	     short int depth,
-	     short int ply,
-	     short int *alpha,
-	     short int *beta,
-	     short int *score)
+ProbeFTable (short side,
+	     short depth,
+	     short ply,
+	     short *alpha,
+	     short *beta,
+	     short *score)
 
 /*
  * Look for the current board position in the persistent transposition table.
  */
 
 {
-  short int i;
+  short i;
   unsigned long hashix;
   struct fileentry new, t;
 
@@ -409,7 +409,7 @@ ProbeFTable (short int side,
       fread (&t, sizeof (struct fileentry), 1, hashfile);
       if (!t.depth) break;
        if(!Fbdcmp(t.bd, new.bd)) continue;
-      if (((short int) t.depth >= depth) 
+      if (((short) t.depth >= depth) 
 	  && (new.flags == (unsigned short)(t.flags & (kingcastle | queencastle))))
 	{
 #if !defined BAREBONES
@@ -443,12 +443,12 @@ ProbeFTable (short int side,
 }
 
 void
-PutInFTable (short int side,
-	     short int score,
-	     short int depth,
-	     short int ply,
-	     short int alpha,
-	     short int beta,
+PutInFTable (short side,
+	     short score,
+	     short depth,
+	     short ply,
+	     short alpha,
+	     short beta,
 	     short unsigned int f,
 	     short unsigned int t)
 
@@ -529,7 +529,7 @@ ZeroRPT (void)
 #if defined CACHE
 
 void
-PutInEETable (short int side,int score)
+PutInEETable (short side,int score)
 
 /*
  * Store the current eval position in the transposition table.
@@ -555,7 +555,7 @@ PutInEETable (short int side,int score)
 
 
 int
-CheckEETable (short int side)
+CheckEETable (short side)
 
 /* Get an evaluation from the transposition table */
 {
@@ -570,7 +570,7 @@ CheckEETable (short int side)
 
 
 int
-ProbeEETable (short int side, short int *score)
+ProbeEETable (short side, short *score)
 
 /* Get an evaluation from the transposition table */
 {

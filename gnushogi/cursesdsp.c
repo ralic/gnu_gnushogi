@@ -66,7 +66,7 @@ int mycnt1, mycnt2;
 #define VIR_C(s)  ((flag.reverse) ? 8-column(s) : column(s))
 #define VIR_R(s)  ((flag.reverse) ? 8-row(s) : row(s))
 
-unsigned short int MV[MAXDEPTH];
+unsigned short MV[MAXDEPTH];
 int MSCORE;
 char *DRAW;
 
@@ -389,7 +389,7 @@ ClearMessage (void)
 }
 
 void
-ShowCurrentMove (short int pnt, short int f, short int t)
+ShowCurrentMove (short pnt, short f, short t)
 {
   algbr (f, t, false);
   gotoXY (TAB, 7);
@@ -420,7 +420,7 @@ ShowPrompt (void)
 }
 
 void
-ShowNodeCnt (long int NodeCnt)
+ShowNodeCnt (long NodeCnt)
 {
   gotoXY (TAB, 22);
   /* printz (CP[90], NodeCnt, (et > 100) ? NodeCnt / (et / 100) : 0); */
@@ -429,7 +429,7 @@ ShowNodeCnt (long int NodeCnt)
 }
 
 void
-ShowResults (short int score, short unsigned int *bstline, char ch)
+ShowResults (short score, short unsigned int *bstline, char ch)
 {
   unsigned char d, ply;
 
@@ -495,7 +495,7 @@ ShowResponseTime (void)
 }
 
 void
-SearchStartStuff (short int side)
+SearchStartStuff (short side)
 {
   short i;
 
@@ -594,7 +594,7 @@ UpdateClocks (void)
 }
 
 void
-gotoXY (short int x, short int y)
+gotoXY (short x, short y)
 {
 #if defined MSDOS
   putchar (ESC);
@@ -659,7 +659,7 @@ param (short n)
 #endif /* MSDOS */
 
 void
-DrawPiece (short int sq)
+DrawPiece (short sq)
 {
   char x, y;
 
@@ -698,7 +698,7 @@ DrawPiece (short int sq)
 }
 
 void
-ShowPostnValue (short int sq)
+ShowPostnValue (short sq)
 
 /*
  * must have called ExaminePosition() first
@@ -738,7 +738,7 @@ ShowPostnValues (void)
 
 
 void
-UpdateDisplay (short int f, short int t, short int redraw, short int isspec)
+UpdateDisplay (short f, short t, short redraw, short isspec)
 {
   short i, sq, z;
 

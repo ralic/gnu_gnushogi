@@ -28,7 +28,7 @@
 #include "gnushogi.h"
 
 
-short int ahead = true, hash = true;
+short ahead = true, hash = true;
 char  *xwin = 0;
 char  *Lang = NULL;
 
@@ -95,7 +95,7 @@ short XC=0, XCmore=0;
 const short otherside[3] = 
 {white, black, neutral};
 unsigned short hint;
-short int TOflag;		/* force search re-init if we backup search */
+short TOflag;		/* force search re-init if we backup search */
 
 unsigned short killr0[MAXDEPTH], killr1[MAXDEPTH];
 unsigned short killr2[MAXDEPTH], killr3[MAXDEPTH];

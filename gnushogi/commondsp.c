@@ -63,7 +63,7 @@ short debug_moves = false;
 #if defined DEBUG || defined BOOKTEST || defined DEBUG_EVAL
 
 void
-movealgbr (short int m, char *s)
+movealgbr (short m, char *s)
 {
     unsigned int f, t;
     short piece = 0, flag = 0;
@@ -113,7 +113,7 @@ movealgbr (short int m, char *s)
 
 
 void
-algbr (short int f, short int t, short int flag)
+algbr (short f, short t, short flag)
 
 
 /*
@@ -299,7 +299,7 @@ VerifyMove (char *s, VerifyMove_mode iop, short unsigned int *mv)
     {
       FILE *D;
       int r, c, side, l;
-      extern unsigned short int PrVar[];
+      extern unsigned short PrVar[];
       D = fopen ("/tmp/DEBUG", "a+");
       pnt = TrPnt[2];
       fprintf (D, "resp = %d\n", ResponseTime);
@@ -1204,7 +1204,7 @@ FlagString (unsigned short flags, char *s)
 
 
 void
- TestSpeed (void (*f) (short int side, short int ply, short int in_check, short int blockable), 
+ TestSpeed (void (*f) (short side, short ply, short in_check, short blockable), 
 		unsigned j)
 {
 #ifdef test
@@ -1322,7 +1322,7 @@ struct timeval tv;
 }
 
 void
- TestPSpeed (short int (*f) (short int side), unsigned j)
+ TestPSpeed (short (*f) (short side), unsigned j)
 {
   short i;
   long cnt, rate, t1, t2;
@@ -1494,7 +1494,7 @@ InputCommand (char *command)
 	  {
 	    FILE *D;
 	    int r, c, l;
-	    extern unsigned short int PrVar[];
+	    extern unsigned short PrVar[];
 	    extern struct leaf  *root;
 	    D = fopen ("/tmp/DEBUGA", "a+");
 	    fprintf (D, "score = %d\n", root->score);
@@ -1792,7 +1792,7 @@ Sdepth = 0;
 #endif
 #if MAXDEPTH > 3
 	  if ( GameCnt > 0 ) {
-	    extern unsigned short int PrVar[MAXDEPTH];
+	    extern unsigned short PrVar[MAXDEPTH];
 	    SwagHt = (GameList[GameCnt].gmove == PrVar[1]) ? PrVar[2] : 0;
 	  } else      
 #endif
@@ -1887,7 +1887,7 @@ Sdepth = 0;
 	  else if ( ok = VerifyMove (s, VERIFY_AND_MAKE_MODE, &mv) )
 	    {     
   	      /* check for repetition */
-	      short int rpt = repetition(); 
+	      short rpt = repetition(); 
 	      if ( rpt >= 3 )
 	        { DRAW = CP[101];  
 		  ShowMessage(DRAW);

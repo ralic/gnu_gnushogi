@@ -67,7 +67,7 @@ static ULONG bhashkey;
 
 
 void
-Balgbr (short int f, short int t, short int flag)
+Balgbr (short f, short t, short flag)
 
 
      /*
@@ -293,7 +293,7 @@ RESET (void)
       */
 
 {
-    short int l;
+    short l;
 
     flag.illegal = flag.mate = flag.post = flag.quit = flag.reverse = flag.bothsides = flag.onemove = flag.force = false;
     flag.material = flag.coords = flag.hash = flag.easy = flag.beep = flag.rcptr = true;
@@ -563,12 +563,12 @@ GetOpenings (void)
       * positions and recommended moves in those positions.
       */
 {
-    short int i;
+    short i;
     char opening[80];
     char msg[80];
     int mustwrite = false, first;
     unsigned short xside, side;
-    short int c;
+    short c;
     USHORT mv, flags; unsigned int x;
     unsigned int games = 0;
     LONG collisions = 0;
@@ -793,7 +793,7 @@ GetOpenings (void)
 
 
 int
-OpeningBook (unsigned short *hint, short int side)
+OpeningBook (unsigned short *hint, short side)
 
      /*
       * Go thru each of the opening lines of play and check for a match with the

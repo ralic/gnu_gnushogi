@@ -47,22 +47,22 @@ void TerminateSearch (int), Die (int);
 #include "gnushogi.h"
 
 #ifdef DEBUG
-short int debuglevel = 1024;
+short debuglevel = 1024;
 #endif /* DEBUG */
-unsigned short int MV[MAXDEPTH];
+unsigned short MV[MAXDEPTH];
 int MSCORE;
 
 #if defined XSHOGI
-short int xshogi = 1;
+short xshogi = 1;
 
 #else
-short int xshogi = 0;
+short xshogi = 0;
 
 #endif /* XSHOGI */
 int mycnt1, mycnt2;
 char *DRAW;
 extern char *InPtr;
-extern short int pscore[];
+extern short pscore[];
 
 void
 Initialize (void)
@@ -363,7 +363,7 @@ ShowLine (short unsigned int *bstline)
 }
 
 void
-ShowResults (short int score, short unsigned int *bstline, char ch)
+ShowResults (short score, short unsigned int *bstline, char ch)
 {
   if (flag.post)
     {
@@ -404,7 +404,7 @@ ShowGameType (void)
 }
 
 void
-SearchStartStuff (short int side)
+SearchStartStuff (short side)
 {
   signal (SIGINT, TerminateSearch);
 #if !defined MSDOS && !defined THINK_C
@@ -424,7 +424,7 @@ OutputMove (void)
   if (1)
     {
       FILE *D;
-      extern unsigned short int PrVar[];
+      extern unsigned short PrVar[];
       char d[80];
       int r, c, l, i;
       D = fopen ("/tmp/DEBUGA", "a+");
@@ -524,7 +524,7 @@ ClrScreen (void)
 }
 
 void
-UpdateDisplay (short int f, short int t, short int redraw, short int isspec)
+UpdateDisplay (short f, short t, short redraw, short isspec)
 {
 
   short r, c, l, m;
@@ -591,7 +591,7 @@ PromptForMove (void)
 
 
 void
-ShowCurrentMove (short int pnt, short int f, short int t)
+ShowCurrentMove (short pnt, short f, short t)
 {
 #ifdef MSDOS
   f++;
@@ -725,7 +725,7 @@ ChangeXwindow (void)
 }
 
 void
-ShowPostnValue (short int sq)
+ShowPostnValue (short sq)
 
 /*
  * must have called ExaminePosition() first

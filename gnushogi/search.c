@@ -32,12 +32,12 @@
 double pow();
 #endif
 short background = 0;
-static short int DepthBeyond;
-unsigned short int PrVar[MAXDEPTH];
-extern short int recycle, ISZERO;
+static short DepthBeyond;
+unsigned short PrVar[MAXDEPTH];
+extern short recycle, ISZERO;
 #ifdef NULLMOVE
-short int null;         /* Null-move already made or not */
-short int PVari;        /* Is this the PV */
+short null;         /* Null-move already made or not */
+short PVari;        /* Is this the PV */
 #endif
 #ifdef DEBUG40
 extern int whichway;
@@ -56,12 +56,12 @@ extern FILE *debug_eval_file;
 #endif
 
 
-short int zwndw;
+short zwndw;
 
 
 #ifdef DEBUG41
 void
-debug41 (short int score, short unsigned int xxx[], char ch)
+debug41 (short score, short unsigned int xxx[], char ch)
 {
   int i;
   FILE *D;
@@ -98,7 +98,7 @@ debug41 (short int score, short unsigned int xxx[], char ch)
 
 
 
-short int
+short
 repetition ()
 
 /*  Check for draw by fourfold repetition 
@@ -107,7 +107,7 @@ repetition ()
  */
 
 {     
-  short int i, cnt = 0;
+  short i, cnt = 0;
 
 #ifndef NOREPETITION
   struct GameRec  *g;
@@ -132,7 +132,7 @@ repetition ()
 
 int plyscore, globalscore;
 int
-pick (short int p1, short int p2)
+pick (short p1, short p2)
 
 /*
  * Find the best move in the tree between indexes p1 and p2. Swap the best
@@ -210,7 +210,7 @@ static void debug4(short Sdepth, short alpha, short beta, short stage)
 
 
 void
-SelectMove (short int side, SelectMove_mode iop)
+SelectMove (short side, SelectMove_mode iop)
 
 
 /*
@@ -223,8 +223,8 @@ SelectMove (short int side, SelectMove_mode iop)
  */
 
 {
-  static short int i, tempb, tempc, tempsf, tempst, xside, rpt;
-  static short int alpha, beta, score;
+  static short i, tempb, tempc, tempsf, tempst, xside, rpt;
+  static short alpha, beta, score;
   static struct GameRec  *g;
   short blocked;       
   short sqking, in_check, blockable;
@@ -722,13 +722,13 @@ if ( debuglevel & (512 | 1024) ) {
 
                  
 int
-search (short int side,
-	short int ply,
-	short int depth,
-	short int alpha,
-	short int beta,
+search (short side,
+	short ply,
+	short depth,
+	short alpha,
+	short beta,
 	short unsigned int *bstline,
-	short int *rpt)
+	short *rpt)
 
 /*
  * Perform an alpha-beta search to determine the score for the current board
@@ -750,8 +750,8 @@ search (short int side,
   short bestwidth = 0;
   short mustcut;
 #ifdef NULLMOVE
-  short int PVsave;
-  short int PVarisave;
+  short PVsave;
+  short PVarisave;
 #endif
 #ifdef DEBUG
   int xxxtmp;
@@ -1313,7 +1313,7 @@ printf("FT %d %d %d %x\n",side,best,depth,mv);
 
 
 void
-UpdatePieceList (short int side, short int sq, UpdatePieceList_mode iop)
+UpdatePieceList (short side, short sq, UpdatePieceList_mode iop)
 
 /*
  * Update the PieceList and Pindex arrays when a piece is captured or when a
@@ -1354,7 +1354,7 @@ UpdatePieceList (short int side, short int sq, UpdatePieceList_mode iop)
 
 
 void
-drop (short int side, short int piece, short int f, short int t, short int iop)
+drop (short side, short piece, short f, short t, short iop)
 
 /* Make or Unmake drop move. */
 
@@ -1451,13 +1451,13 @@ CheckHashKey ()
 #endif
 
 void
-MakeMove (short int side,
+MakeMove (short side,
 	  struct leaf  *node,
-	  short int *tempb,	/* piece at to square */
-	  short int *tempc,	/* color of to square */
-	  short int *tempsf,	/* static value of piece on from */
-	  short int *tempst,	/* static value of piece on to */
-	  short int *INCscore)	/* score increment */
+	  short *tempb,	/* piece at to square */
+	  short *tempc,	/* color of to square */
+	  short *tempsf,	/* static value of piece on from */
+	  short *tempst,	/* static value of piece on to */
+	  short *INCscore)	/* score increment */
 
 /*
  * Update Arrays board[], color[], and Pindex[] to reflect the new board
@@ -1468,7 +1468,7 @@ MakeMove (short int side,
 {
   short f, t, xside, ct, cf;
   struct GameRec  *g;
-  short int fromb,fromc;
+  short fromb,fromc;
 
   xside = side ^ 1;
   g = &GameList[++GameCnt];
@@ -1476,7 +1476,7 @@ MakeMove (short int side,
   g->hashbd = hashbd;
   FROMsquare = f = node->f;
   TOsquare = t = (node->t & 0x7f);
-  *INCscore = (short int)node->INCscore;
+  *INCscore = (short)node->INCscore;
   g->Game50 = Game50;
   g->gmove = (f << 8) | node->t;
   g->flags = node->flags;
@@ -1604,12 +1604,12 @@ MakeMove (short int side,
 }
 
 void
-UnmakeMove (short int side,
+UnmakeMove (short side,
 	    struct leaf  *node,
-	    short int *tempb,
-	    short int *tempc,
-	    short int *tempsf,
-	    short int *tempst)
+	    short *tempb,
+	    short *tempc,
+	    short *tempsf,
+	    short *tempst)
 
 /*
  * Take back a move.

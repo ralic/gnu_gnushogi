@@ -46,7 +46,7 @@ double pow();
  * are going to share the same transposition table.
  */
 
-static unsigned long int next = 1;
+static unsigned long next = 1;
 
 unsigned int
 urand (void)
@@ -108,7 +108,7 @@ TimeCalc ()
  * Set ResponseTime, TCcount, and TCleft.
  */
  
-void SetResponseTime (short int side)
+void SetResponseTime (short side)
 {
 
 #ifdef ALTERNATIVE_TC

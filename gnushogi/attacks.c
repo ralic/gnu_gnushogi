@@ -33,7 +33,7 @@
 #if defined DEBUG
 
 void 
-ataks (short int side, long int *a)
+ataks (short side, long *a)
 /*
  * Fill array atak[][] with info about ataks to a square.  Bits 16-31 are set
  * if the piece (king..pawn) ataks the square.  Bits 0-15 contain a count of
@@ -42,7 +42,7 @@ ataks (short int side, long int *a)
                                                             
 {
   short u, sq;
-  long int c;
+  long c;
 #ifdef SAVE_NEXTPOS
   short d;
 #else
@@ -128,7 +128,7 @@ debug_ataks (FILE *D, long *atk)
 
 
 int
-SqAtakd (short int square, short int side, short int *blockable)
+SqAtakd (short square, short side, short *blockable)
 
 /*
  * See if any piece with color 'side' ataks sq.
@@ -146,7 +146,7 @@ SqAtakd (short int square, short int side, short int *blockable)
   if ( MatchSignature(threats_signature[side]) ) {
 #ifdef DEBUG  
     short i,n, sq;
-    long int a[NO_SQUARES];
+    long a[NO_SQUARES];
     ataks(side,a);
     for ( i = 0, n = -1; i < NO_SQUARES; i++ ) 
       if (a[i] != atak[side][i]) {

@@ -90,12 +90,12 @@ static short MaxNum[MAXDEPTH] =
 inline
 static
 void
-GenMakeMove (short int side,
+GenMakeMove (short side,
 	     short f,
 	     short t,
-	     short int *tempb,	/* piece at to square */
-	     short int *tempc,	/* color of to square */
-	     short int promote_piece)
+	     short *tempb,	/* piece at to square */
+	     short *tempc,	/* color of to square */
+	     short promote_piece)
 
 /*
  * Update Arrays board[] and color[] to reflect the new board
@@ -103,7 +103,7 @@ GenMakeMove (short int side,
  */
 
 {
-  short int piece, upiece, n;
+  short piece, upiece, n;
 
   t = t & 0x7f;
       
@@ -161,12 +161,12 @@ GenMakeMove (short int side,
 
 static
 void
-GenUnmakeMove (short int side,
+GenUnmakeMove (short side,
 	       short f,
 	       short t,
-	       short int tempb,
-	       short int tempc,
-	       short int promote_piece)
+	       short tempb,
+	       short tempc,
+	       short promote_piece)
 
 /*
  * Take back a move.
@@ -301,7 +301,7 @@ Link (short side, short piece,
 
 inline
 int
-PromotionPossible (short int color, short int f, short int t, short int p)
+PromotionPossible (short color, short f, short t, short p)
 { 
   if ( color == black ) {
     if ( f < 54 && t < 54 ) return(false);
@@ -324,7 +324,7 @@ PromotionPossible (short int color, short int f, short int t, short int p)
 
 inline
 int
-NonPromotionPossible (short int color, short int f, short int t, short int p)
+NonPromotionPossible (short color, short f, short t, short p)
 {
   switch ( p ) {
     case pawn : 
@@ -353,7 +353,7 @@ NonPromotionPossible (short int color, short int f, short int t, short int p)
 inline
 static 
 short
-field_bonus (short int ply, short int side, short int piece, short int f, short int t, 
+field_bonus (short ply, short side, short piece, short f, short t, 
 	     unsigned short *local_flag)
 
 /* bonus for possible next moves */
@@ -491,11 +491,11 @@ field_bonus (short int ply, short int side, short int piece, short int f, short 
 
 
 /* inline */ void
-LinkMove (short int ply, short int f,
-	  short int t,
+LinkMove (short ply, short f,
+	  short t,
 	  unsigned short local_flag,
-	  short int xside,
-	  short int score_if_impossible)
+	  short xside,
+	  short score_if_impossible)
 
 /*
  * Add a move to the tree.  Assign a bonus to order the moves as follows:
@@ -739,7 +739,7 @@ LinkMove (short int ply, short int f,
 
 
 short
-DropPossible (short int piece, short int side, short int sq)
+DropPossible (short piece, short side, short sq)
 
 { 
   short r = row(sq), possible = true;
@@ -788,9 +788,9 @@ DropPossible (short int piece, short int side, short int sq)
 
 static
 void
-SortMoves(short int ply)
+SortMoves(short ply)
 { 
-  short int p;
+  short p;
   for (p = TrPnt[ply]; p < TrPnt[ply+1]; p++)
     pick(p,TrPnt[ply+1]-1);
 }
@@ -799,10 +799,10 @@ SortMoves(short int ply)
 #ifdef DONTUSE_HEURISTIC
 
 static void
-DontUseMoves(short int ply, short int n)
+DontUseMoves(short ply, short n)
 {
   struct leaf  *p;
-  short int i,k;
+  short i,k;
 #ifdef DEBUG
   short j = 0;
 #endif 
@@ -838,8 +838,8 @@ DontUseMoves(short int ply, short int n)
 
 inline
 void
-GenMoves (short int ply, short int sq, short int side, 
-	  short int xside)
+GenMoves (short ply, short sq, short side, 
+	  short xside)
 
 /*
  * Generate moves for a piece. The moves are taken from the precalulated
@@ -868,7 +868,7 @@ GenMoves (short int ply, short int sq, short int side,
 #endif
 
   do
-    { unsigned short int local_flag;
+    { unsigned short local_flag;
       short  c;
       if ( (c = color[u]) == xside )
         local_flag = capture;
@@ -1070,8 +1070,8 @@ LinkCheckDrops (short side, short xside, short ply)
 
 
 void
-MoveList (short int side, short int ply, 
-          short int in_check, short int blockable)
+MoveList (short side, short ply, 
+          short in_check, short blockable)
 
 /*
  * Fill the array Tree[] with all available moves for side to play. Array
@@ -1231,8 +1231,8 @@ MoveList (short int side, short int ply,
 }
 
 void
-CaptureList (short int side, short int ply, 
-	     short int in_check, short int blockable)
+CaptureList (short side, short ply, 
+	     short in_check, short blockable)
 
 /*
  * Fill the array Tree[] with all available captures for side to play.
@@ -1358,7 +1358,7 @@ CaptureList (short int side, short int ply,
 
 
 short
-IsCheckmate (short int side, short int in_check, short int blockable)
+IsCheckmate (short side, short in_check, short blockable)
 
 /*
  * If the king is in check, try to find a move that prevents check.

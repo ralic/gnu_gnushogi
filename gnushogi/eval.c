@@ -198,7 +198,7 @@ static const short KTHRT[36] =
 
 static small_short fvalue[2][NO_FEATURES];
 
-long int atak[2][NO_SQUARES];       /* threats to squares */
+long atak[2][NO_SQUARES];       /* threats to squares */
 small_short sseed[NO_SQUARES];      /* square occupied by a seed piece? */
 
 struct signature threats_signature[2] =    /* statistics valid for position ... */
@@ -352,7 +352,7 @@ debug_table (FILE *D, small_short *table, char *s)
 
 
 void 
-threats (short int side)
+threats (short side)
 /*
  * Fill array atak[side][] with info about ataks to a square.  Bits 16-31 are set
  * if the piece (king..pawn) ataks the square.  Bits 0-15 contain a count of
@@ -361,8 +361,8 @@ threats (short int side)
  */  
 {                                                            
   short u, sq;
-  long int c; 
-  long int *a;
+  long c; 
+  long *a;
 #ifdef SAVE_NEXTPOS
   short d;
 #else
@@ -642,13 +642,13 @@ ExamineSquares (void)
 
 
 int
-evaluate (short int side,
-	  short int ply,
-	  short int alpha,
-	  short int beta,
-	  short int INCscore,
-	  short int *InChk,	/* output Check flag */
-	  short int *blockable)	/* king threat blockable */
+evaluate (short side,
+	  short ply,
+	  short alpha,
+	  short beta,
+	  short INCscore,
+	  short *InChk,	/* output Check flag */
+	  short *blockable)	/* king threat blockable */
 
 /*
  * Compute an estimate of the score by adding the positional score from the
@@ -745,7 +745,7 @@ static short value_of_weakest_attacker (long a2)
 
 inline
 int
-BRLscan (short int sq, short int *mob)
+BRLscan (short sq, short *mob)
 
 /*
  * Find (promoted) Bishop, (promoted) Rook, and Lance mobility, XRAY attacks, and pins. 
@@ -1000,8 +1000,8 @@ BRLscan (short int sq, short int *mob)
 
 
 inline
-short int
-KingScan (short int sq)
+short
+KingScan (short sq)
 
 /*
  * Assign penalties if king can be threatened by checks, if squares near the
@@ -1047,9 +1047,9 @@ KingScan (short int sq)
 #else
     unsigned char  *ppos, *pdir;
 #endif
-    short int s;
+    short s;
     short u, ptyp;
-    short int ok, ds;
+    short ok, ds;
 #ifdef DEBUG_EVAL
     short s0;
 #endif
@@ -1161,7 +1161,7 @@ static short checked_trapped;
 
 inline
 int
-trapped (short int sq)
+trapped (short sq)
 
 /*
  * See if the attacked piece has unattacked squares to move to. The following
@@ -1175,7 +1175,7 @@ trapped (short int sq)
 #else
     unsigned char  *ppos, *pdir;
 #endif
-    short int piece;
+    short piece;
     short rvalue;
 
     piece = board[sq];
@@ -1210,7 +1210,7 @@ trapped (short int sq)
 
 
 
-static int AttackedPieceValue (short int sq, short int side)
+static int AttackedPieceValue (short sq, short side)
 {              
    short s, ds;
 
@@ -1330,7 +1330,7 @@ OpenFileValue (short sq, short hopn, short hopnx)
 
 
 static inline int
-PawnValue (short int sq, short int side)
+PawnValue (short sq, short side)
 /*
  * Calculate the positional value for a pawn on 'sq'.
  */
@@ -1415,7 +1415,7 @@ PawnValue (short int sq, short int side)
 
 
 static inline int
-LanceValue (short int sq, short int side)
+LanceValue (short sq, short side)
 /*
  * Calculate the positional value for a lance on 'sq'.
  */
@@ -1451,7 +1451,7 @@ LanceValue (short int sq, short int side)
 }
 
 static inline int
-KnightValue (short int sq, short int side)
+KnightValue (short sq, short side)
 /*
  * Calculate the positional value for a knight on 'sq'.
  */
@@ -1496,7 +1496,7 @@ KnightValue (short int sq, short int side)
 }
 
 static inline int
-SilverValue (short int sq, short int side)
+SilverValue (short sq, short side)
 /*
  * Calculate the positional value for a silver on 'sq'.
  */
@@ -1536,7 +1536,7 @@ SilverValue (short int sq, short int side)
 }
 
 static inline int
-GoldValue (short int sq, short int side)
+GoldValue (short sq, short side)
 /*
  * Calculate the positional value for a gold on 'sq'.
  */
@@ -1572,7 +1572,7 @@ GoldValue (short int sq, short int side)
 }
 
 static inline int
-BishopValue (short int sq, short int side)
+BishopValue (short sq, short side)
 /*
  * Calculate the positional value for a bishop on 'sq'.
  */
@@ -1618,7 +1618,7 @@ BishopValue (short int sq, short int side)
 }
 
 static inline int
-RookValue (short int sq, short int side)
+RookValue (short sq, short side)
 /*
  * Calculate the positional value for a rook on 'sq'.
  */
@@ -1684,7 +1684,7 @@ RookValue (short int sq, short int side)
 }
 
 static inline int
-PPawnValue (short int sq, short int side)
+PPawnValue (short sq, short side)
 /*
  * Calculate the positional value for a promoted pawn on 'sq'.
  */
@@ -1698,7 +1698,7 @@ PPawnValue (short int sq, short int side)
 }
 
 static inline int
-PLanceValue (short int sq, short int side)
+PLanceValue (short sq, short side)
 /*
  * Calculate the positional value for a promoted lance on 'sq'.
  */
@@ -1712,7 +1712,7 @@ PLanceValue (short int sq, short int side)
 }
 
 static inline int
-PKnightValue (short int sq, short int side)
+PKnightValue (short sq, short side)
 /*
  * Calculate the positional value for a promoted knight on 'sq'.
  */
@@ -1726,7 +1726,7 @@ PKnightValue (short int sq, short int side)
 }
 
 static inline int
-PSilverValue (short int sq, short int side)
+PSilverValue (short sq, short side)
 /*
  * Calculate the positional value for a promoted silver on 'sq'.
  */
@@ -1740,7 +1740,7 @@ PSilverValue (short int sq, short int side)
 }
 
 static inline int
-PBishopValue (short int sq, short int side)
+PBishopValue (short sq, short side)
 /*
  * Calculate the positional value for a promoted bishop on 'sq'.
  */
@@ -1754,7 +1754,7 @@ PBishopValue (short int sq, short int side)
 }
 
 static inline int
-PRookValue (short int sq, short int side)
+PRookValue (short sq, short side)
 /*
  * Calculate the positional value for a promoted rook on 'sq'.
  */
@@ -1770,7 +1770,7 @@ PRookValue (short int sq, short int side)
 }
 
 static inline int
-KingValue (short int sq, short int side)
+KingValue (short sq, short side)
 /*
  * Calculate the positional value for a king on 'sq'.
  */
@@ -1811,7 +1811,7 @@ KingValue (short int sq, short int side)
 
 
 static inline int
-PieceValue (short int sq, short int side)
+PieceValue (short sq, short side)
 /*
  * Calculate the positional value for a piece on 'sq'.
  */
@@ -2085,7 +2085,7 @@ ScorePatternDistance (short c1)
 
 static
 void
-UpdatePatterns (short int side, short int GameCnt)
+UpdatePatterns (short side, short GameCnt)
 
 /*
  * Determine castle and attack pattern which should be reached next.
@@ -2364,8 +2364,8 @@ ScoreCaptures (void)
 
 
 
-short int
-ScorePosition (short int side)
+short
+ScorePosition (short side)
 
 /*
  * Perform normal static evaluation of board position. A score is generated
@@ -2373,11 +2373,11 @@ ScorePosition (short int side)
  */
 
 {
-    short int score;
+    short score;
     short sq, i, xside;
-    short int s;
-    short int escore;
-    short int ds;
+    short s;
+    short escore;
+    short ds;
 
     xside = side ^ 1;
 
@@ -2680,7 +2680,7 @@ static
 void
 DetermineGameType (short side_to_move)
 {
-    short int side;
+    short side;
 
     GuessGameType(side_to_move);
 
