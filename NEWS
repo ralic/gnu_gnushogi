@@ -1,5 +1,26 @@
 Changes of XShogi will are recorded starting with XShogi 1.0 patchlevel 10.
 
+version 1.3 
+
+01.06.1999
+    o New maintainer: Mike Vanier (mvanier@bbb.caltech.edu).
+
+    o Merged xshogi into the gnushogi source tree.
+      Henceforth, further revisions of xshogi will be noted in the
+      top-level NEWS file; this file will not be added to.
+
+    o Cleaned up the source code and Makefile.
+
+    o Changed the code to refer to "gnushogi" instead
+      of "gnushogix" since gnushogi now is only
+      one executable, and the default input/output
+      format is the xshogi format.
+
+    o Removed support for Internet Shogi Server (ISS);
+      there are now better ways to play shogi over the internet
+      such as JavaShogi, so this support was redundant.
+
+
 version 1.2 patchlevel 2 -> version 1.2 patchlevel 3 
 
 23.5.1995
