@@ -577,7 +577,7 @@ LinkMove (short ply, short f,
   
   if ( tas /* own attack array available */ ) {
     /* square t defended by own piece (don't count piece to move) ? */
-    if ( is_drop ? (as = atak[side][t]) : (as = ((atak[side][t] & CNT_MASK) > 1)) )
+    if ( is_drop ? (as = attack[side][t]) : (as = ((attack[side][t] & CNT_MASK) > 1)) )
       s += (ds = in_endgame_stage ? 100 : 10);
   }
   if ( taxs /* opponents attack array available */ ) {
@@ -585,7 +585,7 @@ LinkMove (short ply, short f,
      * defended and only threatened by opponents king ? 
      */
     unsigned long axs;
-    if ( !(axs = atak[xside][t]) ||
+    if ( !(axs = attack[xside][t]) ||
          (tas && as && (axs & control[king]) && (axs & CNT_MASK) == 1) )
       s += (ds = in_endgame_stage ? 200 : 
       			(is_drop ? (InPromotionZone(side,t) ? 40 + relative_value[piece]: 10) : 20));

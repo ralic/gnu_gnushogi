@@ -35,7 +35,7 @@
 void 
 ataks (short side, long *a)
 /*
- * Fill array atak[][] with info about ataks to a square.  Bits 16-31 are set
+ * Fill array attack[][] with info about ataks to a square.  Bits 16-31 are set
  * if the piece (king..pawn) ataks the square.  Bits 0-15 contain a count of
  * total ataks to the square.
  */  
@@ -149,12 +149,12 @@ SqAttacked (short square, short side, short *blockable)
     long a[NO_SQUARES];
     ataks(side,a);
     for ( i = 0, n = -1; i < NO_SQUARES; i++ ) 
-      if (a[i] != atak[side][i]) {
-    	n = i; printf("atak #check error on square %d\n",i);
+      if (a[i] != attack[side][i]) {
+    	n = i; printf("attack #check error on square %d\n",i);
       }
     if ( n >= 0 ) {
       debug_ataks (stdout, a);
-      debug_ataks (stdout, atak[side]);
+      debug_ataks (stdout, attack[side]);
       debug_position (stdout);
       printf("%d pieces\n",PieceCnt[side]);
       for ( i = PieceCnt[side]; i>= 0; i-- ) {
@@ -164,11 +164,11 @@ SqAttacked (short square, short side, short *blockable)
         printf("square %d is %d with piece %d\n", i, sq, piece);
       }
       printf("hashkey = %ld hashbd = %ld\n",hashkey,hashbd);
-      assert(a[n] == atak[side][n]);
+      assert(a[n] == attack[side][n]);
     }
 #endif  
 #ifdef notdef
-    printf("atak array for %s available for SqAttacked!\n",ColorStr[side]);
+    printf("attack array for %s available for SqAttacked!\n",ColorStr[side]);
 #endif
     *blockable = true; /* don't know */
     return(Anyattack(side,square));

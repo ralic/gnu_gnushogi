@@ -46,7 +46,7 @@ typedef small_short fscore_array[NO_STAGES][NO_FEATURES][2];
 
      extern void threats (short side); 
 
-     extern long atak[2][NO_SQUARES];
+     extern long attack[2][NO_SQUARES];
      extern small_short sseed[NO_SQUARES];
  
      extern struct signature threats_signature[2];

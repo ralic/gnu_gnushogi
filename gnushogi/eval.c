@@ -198,11 +198,11 @@ static const short KTHRT[36] =
 
 static small_short fvalue[2][NO_FEATURES];
 
-long atak[2][NO_SQUARES];       /* threats to squares */
+long attack[2][NO_SQUARES];       /* threats to squares */
 small_short sseed[NO_SQUARES];      /* square occupied by a seed piece? */
 
 struct signature threats_signature[2] =    /* statistics valid for position ... */
- {-1, -1, -1, -1};			   /* atak and sseed available */
+ {-1, -1, -1, -1};			   /* attack and sseed available */
 
 small_short starget[2][NO_SQUARES]; /* significance as a target for a side of a square */
 small_short sloose[NO_SQUARES];     /* square occupied by a loose piece? */
@@ -354,7 +354,7 @@ debug_table (FILE *D, small_short *table, char *s)
 void 
 threats (short side)
 /*
- * Fill array atak[side][] with info about ataks to a square.  Bits 16-31 are set
+ * Fill array attack[side][] with info about ataks to a square.  Bits 16-31 are set
  * if the piece (king..pawn) ataks the square.  Bits 0-15 contain a count of
  * total ataks to the square.
  * Fill array sseed[] with info about occupation by a seed piece.
@@ -376,7 +376,7 @@ threats (short side)
     return;
   }
 
-  a = atak[side];
+  a = attack[side];
   xside = side ^ 1;
 
   array_zero (a, NO_SQUARES * sizeof(a[0]));
@@ -430,7 +430,7 @@ static void add_target (short sq, short side, short id)
   tsq = (side == black) ? nunmap[isq+id] : nunmap[isq-id];
   if ( tsq >= 0 ) {
     target[xside = side^1]++;
-    if ( atak[side][tsq] )
+    if ( attack[side][tsq] )
       starget[xside][tsq]++;  /* protected target square */                   
     else
       starget[xside][tsq]+=2; /* unprotected target square */                   
@@ -447,7 +447,7 @@ static void CheckTargetPiece (short sq, short side)
 {
   switch ( board[sq] ) {
     case pawn: /* vertically ahead if unprotected */
-	if ( !atak[side][sq] )  
+	if ( !attack[side][sq] )  
 	  add_target(sq,side,11);
 	break;
     case king: /* diagonally and vertically ahead */
@@ -557,12 +557,12 @@ ExamineSquares (void)
 	if ( (side = color[sq]) == neutral )
 	  {
 	    if ( InWhiteCamp(sq) ) {
-	       if ( !atak[white][sq] ) {
+	       if ( !attack[white][sq] ) {
 		  shole[sq] = 1;
 		  hole[white]++;
 	       }
 	    } else if ( InBlackCamp(sq) ) {
-	       if ( !atak[black][sq] ) {
+	       if ( !attack[black][sq] ) {
 		  shole[sq] = 1;
 		  hole[black]++;
 	       }
@@ -570,7 +570,7 @@ ExamineSquares (void)
 	  }
 	else 
 	  { /* occupied by "side" piece */
-	    if ( !atak[side][sq] ) {
+	    if ( !attack[side][sq] ) {
 	      sloose[sq] = 1;
 	      loose[side]++;
 	    }
@@ -582,8 +582,8 @@ ExamineSquares (void)
     if ( debug_eval ) {
       char buffer[80];
       debug_position (debug_eval_file);
-      debug_ataks (debug_eval_file, atak[black]);
-      debug_ataks (debug_eval_file, atak[white]);
+      debug_ataks (debug_eval_file, attack[black]);
+      debug_ataks (debug_eval_file, attack[white]);
       sprintf(buffer,"%d Black and %d White SEED PIECES",seed[black],seed[white]);
       debug_table (debug_eval_file,sseed,buffer);
       sprintf(buffer,"%d Black TARGETS",target[black]);
@@ -2195,8 +2195,8 @@ ScoreSquares (void)
 
     for ( c1 = black, c2 = white; c1 <= white; c1++, c2-- ) {
 
-	a1 = atak[c1][sq];
-  	a2 = atak[c2][sq];
+	a1 = attack[c1][sq];
+  	a2 = attack[c2][sq];
 	fv1 = fvalue[c1];
 
   	if ( InPromotionZone(c1,sq) ) {
@@ -2265,8 +2265,8 @@ ScoreSquares (void)
 
 	c2 = c1 ^ 1;
 
-	a1 = atak[c1][sq];
-  	a2 = atak[c2][sq];
+	a1 = attack[c1][sq];
+  	a2 = attack[c2][sq];
 	fv1 = fvalue[c1];
 
 	if ( a2 && sloose[sq] ) {
@@ -2405,9 +2405,9 @@ ScorePosition (short side)
 	    {
 		c2 = c1 ^ 1;
 		/* atk1 is array of atacks on squares by my side */
-		atk1 = atak[c1];
+		atk1 = attack[c1];
 		/* atk2 is array of atacks on squares by other side */
-		atk2 = atak[c2];
+		atk2 = attack[c2];
 		/* same for PC1 and PC2 */
 		PC1 = PawnCnt[c1];
 		PC2 = PawnCnt[c2];
@@ -2448,7 +2448,7 @@ ScorePosition (short side)
 
 	      /* Score fifth rank */
               for ( sq = 36, n=0; sq <= 44; sq++ ) 
-	        if ( color[sq] == c1 || atak[c1][sq] != 0 )
+	        if ( color[sq] == c1 || attack[c1][sq] != 0 )
 		  n++;
 
 	      if ( n != 0 ) {
@@ -2462,7 +2462,7 @@ ScorePosition (short side)
 
 	      /* Score holes */
               for ( sq = ((c1==black)?0:54), n=0; sq<=((c1==black)?26:80); sq++ )
-	        if ( board[sq] == no_piece && atak[c1][sq] == 0 )
+	        if ( board[sq] == no_piece && attack[c1][sq] == 0 )
 		  n++;
 
 	      if ( n != 0 ) {

@@ -315,8 +315,8 @@ extern char  *Lang;
 #define ctlK  0x00000100
 
 /* attack functions */
-#define Patak(c, u) (atak[c][u] > ctlP)
-#define Anyattack(c, u) (atak[c][u] != 0)
+#define Patak(c, u) (attack[c][u] > ctlP)
+#define Anyattack(c, u) (attack[c][u] != 0)
 
 /* hashtable flags */
 #define truescore 0x0001
