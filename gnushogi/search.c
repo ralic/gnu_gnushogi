@@ -61,7 +61,7 @@ short zwndw;
 
 #ifdef DEBUG41
 void
-debug41 (short score, short unsigned int xxx[], char ch)
+debug41 (short score, unsigned short xxx[], char ch)
 {
   int i;
   FILE *D;
@@ -727,7 +727,7 @@ search (short side,
 	short depth,
 	short alpha,
 	short beta,
-	short unsigned int *bstline,
+	unsigned short *bstline,
 	short *rpt)
 
 /*

@@ -187,7 +187,7 @@ algbr (short f, short t, short flag)
            
  
 int
-VerifyMove (char *s, VerifyMove_mode iop, short unsigned int *mv)
+VerifyMove (char *s, VerifyMove_mode iop, unsigned short *mv)
 
 /*
  * Compare the string 's' to the list of legal moves available for the

@@ -140,7 +140,7 @@ TerminateSearch (int Sig)
 #endif /* MSDOS */
 }
 void
-ShowLine (short unsigned int *bstline)
+ShowLine (unsigned short *bstline)
 {
 }
 
@@ -429,7 +429,7 @@ ShowNodeCnt (long NodeCnt)
 }
 
 void
-ShowResults (short score, short unsigned int *bstline, char ch)
+ShowResults (short score, unsigned short *bstline, char ch)
 {
   unsigned char d, ply;
 

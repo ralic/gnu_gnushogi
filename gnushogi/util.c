@@ -35,7 +35,7 @@ short ISZERO = 1;
 
 
 int
-parse (FILE * fd, short unsigned int *mv, short side, char *opening)
+parse (FILE * fd, unsigned short *mv, short side, char *opening)
 {
   int c, i, r1, r2, c1, c2;
   char s[128];
@@ -265,7 +265,7 @@ PutInTTable (short side,
 	     short ply,
 	     short alpha,
 	     short beta,
-	     short unsigned int mv)
+	     unsigned short mv)
 
 /*
  * Store the current board position in the transposition table.
@@ -449,8 +449,8 @@ PutInFTable (short side,
 	     short ply,
 	     short alpha,
 	     short beta,
-	     short unsigned int f,
-	     short unsigned int t)
+	     unsigned short f,
+	     unsigned short t)
 
 /*
  * Store the current board position in the persistent transposition table.

@@ -348,7 +348,7 @@ ShowStage (void)
 
 
 void
-ShowLine (short unsigned int *bstline)
+ShowLine (unsigned short *bstline)
 {
   int i;
 
@@ -363,7 +363,7 @@ ShowLine (short unsigned int *bstline)
 }
 
 void
-ShowResults (short score, short unsigned int *bstline, char ch)
+ShowResults (short score, unsigned short *bstline, char ch)
 {
   if (flag.post)
     {

@@ -214,7 +214,7 @@ extern char  *Lang;
 #if defined DEBUG || defined DEBUG_EVAL
      extern void ShowDBLine (char *, short, short,
 	    		short, short, short,
-	    		short unsigned int *);
+	    		unsigned short *);
      extern FILE *debugfd;
      extern short debuglevel;
        
@@ -965,7 +965,7 @@ typedef struct hashval drop_hashcode_array[2][NO_PIECES][NO_SQUARES];
      extern void Initialize_dist (void); /* init.c */
      extern void Initialize_eval (void); /* eval.c */
      extern void NewGame (void);
-     extern int parse (FILE * fd, short unsigned int *mv, short side, char *opening);
+     extern int parse (FILE * fd, unsigned short *mv, short side, char *opening);
      extern void GetOpenings (void);
      extern int OpeningBook (unsigned short *hint, short side);
      
@@ -982,7 +982,7 @@ typedef enum { FOREGROUND_MODE = 1, BACKGROUND_MODE } SelectMove_mode;
 	       short depth,
 	       short alpha,
 	       short beta,
-	       short unsigned int *bstline,
+	       unsigned short *bstline,
 	       short *rpt);
 #ifdef CACHE
 	void
@@ -1007,7 +1007,7 @@ typedef enum { FOREGROUND_MODE = 1, BACKGROUND_MODE } SelectMove_mode;
 		    short ply,
 		    short alpha,
 		    short beta,
-		    short unsigned int mv);
+		    unsigned short mv);
      extern void ZeroTTable (void);
      extern void ZeroRPT (void);
      extern void Initialize_ttable (void);
@@ -1028,8 +1028,8 @@ typedef enum { FOREGROUND_MODE = 1, BACKGROUND_MODE } SelectMove_mode;
 		    short ply,
 		    short alpha,
 		    short beta,
-		    short unsigned int f,
-		    short unsigned int t);
+		    unsigned short f,
+		    unsigned short t);
 
 #endif /* HASHFILE */
 #endif /* ttblsz */
@@ -1108,7 +1108,7 @@ typedef enum { COMPUTE_AND_INIT_MODE = 1, COMPUTE_MODE
      extern void TerminateSearch (int);
      extern void
       ShowResults (short score,
-		    short unsigned int *bstline,
+		    unsigned short *bstline,
 		    char ch);
      extern void PromptForMove (void);
      extern void SetupBoard (void);
@@ -1139,7 +1139,7 @@ typedef enum { COMPUTE_AND_INIT_MODE = 1, COMPUTE_MODE
      extern void skipb (void);
      extern void EnPassant (short xside, short f, short t, short iop);
      extern void ShowNodeCnt (long NodeCnt);
-     extern void ShowLine (short unsigned int *bstline);
+     extern void ShowLine (unsigned short *bstline);
      extern int pick (short p1, short p2);
      extern short repetition (void);
      extern void TimeCalc (void);

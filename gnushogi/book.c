@@ -215,7 +215,7 @@ bkdisplay (s, cnt, moveno)
 #endif /* QUIETBOOKGEN */
 
 int
-BVerifyMove (char *s, short unsigned int *mv, int moveno)
+BVerifyMove (char *s, unsigned short *mv, int moveno)
 
      /*
       * Compare the string 's' to the list of legal moves available for the
