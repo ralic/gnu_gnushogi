@@ -45,7 +45,7 @@
 #define NULLMOVE
 #define VERYBUGGY
 #define QUIETBACKGROUND
-/* #define HASGETTIMEOFDAY */
+/* #define HAVE_GETTIMEOFDAY */
 /* #define clocktime() (100l * clock() / CLOCKS_PER_SEC) */
 #define clocktime() (100l * time(0))
 #if defined NOTABLES
@@ -95,7 +95,7 @@
 #define NULLMOVE
 #define VERYBUGGY
 /* #define QUIETBACKGROUND */
-/* #define HASGETTIMEOFDAY */
+/* #define HAVE_GETTIMEOFDAY */
 #define clocktime() (100l * time(0))
 #define HISTORY
 /* #define EXACTHISTORY */

@@ -49,7 +49,7 @@ char ColorStr[2][10];
 long znodes;
 
 
-#if defined HASGETTIMEOFDAY && defined THINK_C
+#if defined HAVE_GETTIMEOFDAY && defined THINK_C
 
 #define USEC_PER_CLOCK (1000000 / CLOCKS_PER_SEC)
 

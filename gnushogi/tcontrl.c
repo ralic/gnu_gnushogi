@@ -35,7 +35,7 @@
 
 #define ALTERNATIVE_TC
 
-#if !defined OLDTIME && defined HASGETTIMEOFDAY
+#if !defined OLDTIME && defined HAVE_GETTIMEOFDAY
 double pow();
 #endif
 
@@ -285,7 +285,7 @@ void CheckForTimeout (int score, int globalscore, int Jscore, int zwndw)
       if (root->flags & exact)
         flag.timeout = true;
       /*else if (Tree[1].score < -SCORE_LIMIT) flag.timeout = true;*/
-#if defined OLDTIME || !defined HASGETTIMEOFDAY
+#if defined OLDTIME || !defined HAVE_GETTIMEOFDAY
       else if (!(Sdepth < MINDEPTH) && TCflag && ((4 * et) > (2*ResponseTime + ExtraTime)))
                          flag.timeout = true;
 #else

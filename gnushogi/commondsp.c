@@ -27,7 +27,7 @@
 
 #include "gnushogi.h"
 
-#if defined HASGETTIMEOFDAY
+#if defined HAVE_GETTIMEOFDAY
 #include <sys/time.h>
 #endif
 char mvstr[4][6];
@@ -1212,11 +1212,11 @@ void
 #endif
   unsigned i;
   long cnt, rate, t1, t2;
-#ifdef HASGETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
 struct timeval tv;
 #endif
 
-#ifdef HASGETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
   gettimeofday(&tv,NULL);
   t1 = (tv.tv_sec*100+(tv.tv_usec/10000));
 #elif defined THINK_C || defined MSDOS
@@ -1237,7 +1237,7 @@ struct timeval tv;
 #ifdef DEBUG_EVAL
   debug_moves = false;
 #endif
-#ifdef HASGETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
   gettimeofday(&tv,NULL);
   t2 = (tv.tv_sec*100+(tv.tv_usec/10000));
 #elif defined THINK_C || defined MSDOS
@@ -1326,11 +1326,11 @@ void
 {
   short i;
   long cnt, rate, t1, t2;
-#ifdef HASGETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
 struct timeval tv;
 #endif
 
-#ifdef HASGETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
   gettimeofday(&tv,NULL);
   t1 = (tv.tv_sec*100+(tv.tv_usec/10000));
 #elif defined THINK_C || defined MSDOS
@@ -1342,7 +1342,7 @@ struct timeval tv;
     {
       (void) f (opponent);
     }
-#ifdef HASGETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
   gettimeofday(&tv,NULL);
   t2 = (tv.tv_sec*100+(tv.tv_usec/10000));
 #elif defined THINK_C || defined MSDOS
@@ -1946,7 +1946,7 @@ Sdepth = 0;
 
 
 
-#ifdef HASGETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
 void
 ElapsedTime (ElapsedTime_mode iop)
 

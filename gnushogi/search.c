@@ -28,7 +28,7 @@
 #ifdef DEBUG
 #include <assert.h>
 #endif
-#if !defined OLDTIME && defined HASGETTIMEOFDAY
+#if !defined OLDTIME && defined HAVE_GETTIMEOFDAY
 double pow();
 #endif
 short background = 0;

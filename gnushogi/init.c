@@ -29,7 +29,7 @@
 
 
 
-#if defined HASGETTIMEOFDAY && !defined THINK_C
+#if defined HAVE_GETTIMEOFDAY && !defined THINK_C
 #include <sys/time.h>
 #endif
 
@@ -517,7 +517,7 @@ NewGame (void)
 
 {
   short l, c, p, max_opening_sequence;
-#ifdef HASGETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
   struct timeval tv;
 #endif
   compptr = oppptr = 0;
@@ -596,7 +596,7 @@ NewGame (void)
   ClearCaptured ();
   ClrScreen ();
   InitializeStats ();
-#ifdef HASGETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
   gettimeofday(&tv, NULL);
   time0 = tv.tv_sec*100+tv.tv_usec/10000;
 #elif defined THINK_C
