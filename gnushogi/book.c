@@ -162,7 +162,7 @@ bkdisplay (s, cnt, moveno)
      int moveno;
 {
     static short pnt;
-    struct leaf far *node;
+    struct leaf  *node;
     int r, c, l;
 
     pnt = TrPnt[2];
@@ -225,7 +225,7 @@ BVerifyMove (char *s, short unsigned int *mv, int moveno)
 {
     static short pnt, tempb, tempc, tempsf, tempst, cnt;
     static struct leaf xnode;
-    struct leaf far *node;
+    struct leaf  *node;
 
     *mv = 0;
     cnt = 0;

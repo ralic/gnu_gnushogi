@@ -44,7 +44,7 @@ extern int whichway;
 #endif
 #ifdef DEBUG
 unsigned short DBLINE[MAXDEPTH];
-struct leaf far *dbptr;
+struct leaf  *dbptr;
 
 #endif 
 
@@ -66,7 +66,7 @@ debug41 (short int score, short unsigned int xxx[], char ch)
   register int i;
   FILE *D;
   int r, c, l;
-  struct leaf far *xnode;
+  struct leaf  *xnode;
 
   D = fopen ("/tmp/DEBUG", "a+");
   if (D == NULL)
@@ -110,7 +110,7 @@ repetition ()
   short int i, cnt = 0;
 
 #ifndef NOREPETITION
-  struct GameRec far *g;
+  struct GameRec  *g;
 
   if (GameCnt > Game50 + 6)
     {             
@@ -140,7 +140,7 @@ pick (short int p1, short int p2)
  *
  */
 {
-  register struct leaf far *p, *q, *r, *k;
+  register struct leaf  *p, *q, *r, *k;
   register s0;
   struct leaf temp;
 
@@ -225,7 +225,7 @@ SelectMove (short int side, SelectMove_mode iop)
 {
   static short int i, tempb, tempc, tempsf, tempst, xside, rpt;
   static short int alpha, beta, score;
-  static struct GameRec far *g;
+  static struct GameRec  *g;
   short blocked;       
   short sqking, in_check, blockable;
 
@@ -402,7 +402,7 @@ if ( debuglevel & (512 | 1024) ) {
     { short j;
       for (j = TrPnt[1]; j < TrPnt[2]; j++)
         {
-          struct leaf far *node = &Tree[j];
+          struct leaf  *node = &Tree[j];
           algbr (node->f, node->t, node->flags);
           fprintf (debug_eval_file, "%s %s %s %s %d", 
             mvstr[0], mvstr[1], mvstr[2], mvstr[3],node->score);
@@ -535,7 +535,7 @@ if ( debuglevel & (512 | 1024) ) {
 	{
 	  FILE *D;
 	  int r, c, l;
-	  struct leaf far *xnode;
+	  struct leaf  *xnode;
 
 	  D = fopen ("/tmp/DEBUG", "a+");
 	  fprintf (D, " %d ply %d sco %d TC %d gl %d cnt %d\n",
@@ -745,7 +745,7 @@ search (short int side,
   short tempb, tempc, tempsf, tempst;
   short xside, pbst, score, rcnt, slk, in_check, blockable;
   unsigned short mv, nxtline[MAXDEPTH];
-  struct leaf far *node, tmp;
+  struct leaf  *node, tmp;
   short best = -(SCORE_LIMIT+3000);
   short bestwidth = 0;
   short mustcut;
@@ -925,7 +925,7 @@ search (short int side,
 	    {
 	      FILE *D;
 	      int r, c, l;
-	      struct leaf far *xnode;
+	      struct leaf  *xnode;
               short side;
 
 	      D = fopen ("/tmp/DEBUG", "w");
@@ -1022,7 +1022,7 @@ search (short int side,
 	 PV and other variables contain the right value so that the move
 	 ordering works right.
       */
-      register struct GameRec far *g;
+      register struct GameRec  *g;
       
       nxtline[ply + 1] = 0;
       CptrFlag[ply] = 0;
@@ -1452,7 +1452,7 @@ CheckHashKey ()
 
 void
 MakeMove (short int side,
-	  struct leaf far *node,
+	  struct leaf  *node,
 	  short int *tempb,	/* piece at to square */
 	  short int *tempc,	/* color of to square */
 	  short int *tempsf,	/* static value of piece on from */
@@ -1467,7 +1467,7 @@ MakeMove (short int side,
 
 {
   register short f, t, xside, ct, cf;
-  register struct GameRec far *g;
+  register struct GameRec  *g;
   register short int fromb,fromc;
 
   xside = side ^ 1;
@@ -1605,7 +1605,7 @@ MakeMove (short int side,
 
 void
 UnmakeMove (short int side,
-	    struct leaf far *node,
+	    struct leaf  *node,
 	    short int *tempb,
 	    short int *tempc,
 	    short int *tempsf,

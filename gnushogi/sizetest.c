@@ -31,7 +31,7 @@
 #include <time.h>
 #endif
 
-struct leaf far *Tree, *root;
+struct leaf  *Tree, *root;
 
 short FROMsquare, TOsquare;
 
@@ -42,7 +42,7 @@ small_short Pindex[NO_SQUARES];
 short mtl[2], hung[2];
 small_short PieceCnt[2];
 
-struct GameRec far *GameList;
+struct GameRec  *GameList;
 
 char ColorStr[2][10];
 
@@ -97,7 +97,7 @@ char savefile[128] = "";
 char listfile[128] = "";
 
 #if defined HISTORY
-unsigned short far *history;
+unsigned short  *history;
 #endif
 
 short rpthash[2][256];

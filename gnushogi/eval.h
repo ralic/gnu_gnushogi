@@ -41,8 +41,8 @@
 typedef short value_array[NO_STAGES][NO_PIECES];
 typedef small_short fscore_array[NO_STAGES][NO_FEATURES][2];
 
-     extern value_array far *value;
-     extern fscore_array far *fscore;
+     extern value_array  *value;
+     extern fscore_array  *fscore;
 
      extern void threats (short int side); 
 

@@ -366,7 +366,7 @@ threats (short int side)
 #ifdef SAVE_NEXTPOS
   short d;
 #else
-  register unsigned char far *ppos, *pdir;
+  register unsigned char  *ppos, *pdir;
 #endif
   short i, kd, piece, xside; 
   small_short *PL;
@@ -760,7 +760,7 @@ BRLscan (register short int sq, short int *mob)
 #ifdef SAVE_NEXTPOS
     short d, dd;
 #else
-    register unsigned char far *ppos, *pdir;
+    register unsigned char  *ppos, *pdir;
 #endif
     register short s, mobx;
     register short u, xu, pin, ptyp, csq = column(sq);
@@ -1045,7 +1045,7 @@ KingScan (register short int sq)
 #ifdef SAVE_NEXTPOS
     short d;
 #else
-    register unsigned char far *ppos, *pdir;
+    register unsigned char  *ppos, *pdir;
 #endif
     register short int s;
     register short u, ptyp;
@@ -1173,7 +1173,7 @@ trapped (register short int sq)
 #ifdef SAVE_NEXTPOS
     short d;
 #else
-    register unsigned char far *ppos, *pdir;
+    register unsigned char  *ppos, *pdir;
 #endif
     register short int piece;
     short rvalue;

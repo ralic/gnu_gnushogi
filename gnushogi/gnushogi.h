@@ -168,11 +168,11 @@ typedef unsigned long ULONG;
 
 #if defined NOBYTEOPS && defined NOMEMOPS
 #define array_copy(src,dst,len) \
-  { long i; char far *psrc=(char far *)src, *pdst=(char far *)dst;\
+  { long i; char  *psrc=(char  *)src, *pdst=(char  *)dst;\
     for (i=len; i; pdst[--i] = psrc[i]);\
   }
 #define array_zero(dst,len) \
-  { long i; char far *pdst=(char far *)dst;\
+  { long i; char  *pdst=(char  *)dst;\
     for (i=len; i; pdst[--i] = 0);\
   }
 #elif defined NOBYTEOPS
@@ -204,8 +204,8 @@ extern char *binbookfile;
 #endif
 extern char *bookfile;
 extern short int ahead;
-extern char far *xwin;
-extern char far *Lang;
+extern char  *xwin;
+extern char  *Lang;
 
 
 
@@ -631,7 +631,7 @@ extern char far *Lang;
 #if defined CACHE
 extern short use_etable;
 typedef struct etable etable_field[ETABLE];
-extern etable_field far *etab[2];
+extern etable_field  *etab[2];
 #endif
 
 /*
@@ -734,7 +734,7 @@ extern short debug_moves;
 
 #ifdef HISTORY
      extern short use_history;
-     extern unsigned short far *history;
+     extern unsigned short  *history;
 #endif
      extern long znodes;
 
@@ -749,8 +749,8 @@ extern short debug_moves;
      extern short int ahead;
      extern short int xshogi;
      extern struct leaf rootnode;
-     extern struct leaf far *Tree;
-     extern struct leaf far *root;
+     extern struct leaf  *Tree;
+     extern struct leaf  *root;
      extern char savefile[], listfile[];
      extern short TrPnt[];
      extern small_short board[], color[]; 
@@ -792,7 +792,7 @@ extern short debug_moves;
      extern long GenCnt, NodeCnt, ETnodes, EvalNodes, HashAdd, HashCnt, HashCol, THashCol,
       FHashCnt, FHashAdd;
      extern short HashDepth, HashMoveLimit;
-     extern struct GameRec far *GameList;
+     extern struct GameRec  *GameList;
      extern short GameCnt, Game50;
      extern short Sdepth, MaxSearchDepth;
      extern int Book;
@@ -851,21 +851,21 @@ typedef small_short distdata_array[NO_SQUARES][NO_SQUARES];
      extern short next_position(short ptyp, short *d, short sq, short u);
 #else
      extern short use_nextpos;
-     extern next_array far *nextpos[NO_PTYPE_PIECES];
-     extern next_array far *nextdir[NO_PTYPE_PIECES];
+     extern next_array  *nextpos[NO_PTYPE_PIECES];
+     extern next_array  *nextdir[NO_PTYPE_PIECES];
 #endif
 
-     extern value_array far *value;
-     extern fscore_array far *fscore;
+     extern value_array  *value;
+     extern fscore_array  *fscore;
 
 #ifndef SAVE_DISTDATA
      extern short use_distdata;
-     extern distdata_array far *distdata;
+     extern distdata_array  *distdata;
 #endif
 
 #ifndef SAVE_PTYPE_DISTDATA
      extern short use_ptype_distdata;
-     extern distdata_array far *ptype_distdata[NO_PTYPE_PIECES];
+     extern distdata_array  *ptype_distdata[NO_PTYPE_PIECES];
 #endif
 
      extern const small_short ptype[2][NO_PIECES];
@@ -906,16 +906,16 @@ typedef small_short Mpiece_array[2][NO_SQUARES];
 typedef struct hashval hashcode_array[2][NO_PIECES][NO_SQUARES];
 typedef struct hashval drop_hashcode_array[2][NO_PIECES][NO_SQUARES];
 
-     extern hashcode_array far *hashcode;
-     extern drop_hashcode_array far *drop_hashcode;
-     extern char far *CP[];
+     extern hashcode_array  *hashcode;
+     extern drop_hashcode_array  *drop_hashcode;
+     extern char  *CP[];
 #ifdef QUIETBACKGROUND
      extern short background;
 #endif /* QUIETBACKGROUND */
 
 #if ttblsz
      extern short use_ttable;
-     extern struct hashentry far *ttable[2];
+     extern struct hashentry  *ttable[2];
 #endif
 
 /*
@@ -1049,7 +1049,7 @@ typedef enum { FOREGROUND_MODE = 1, BACKGROUND_MODE } SelectMove_mode;
      
 extern void
       MakeMove (short int side,
-		 struct leaf far *node,
+		 struct leaf  *node,
 		 short int *tempb,
 		 short int *tempc,
 		 short int *tempsf,
@@ -1057,7 +1057,7 @@ extern void
 		 short int *INCscore);
      extern void
       UnmakeMove (short int side,
-		   struct leaf far *node,
+		   struct leaf  *node,
 		   short int *tempb,
 		   short int *tempc,
 		   short int *tempsf,

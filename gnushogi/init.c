@@ -80,7 +80,7 @@ const small_short sweep[NO_PIECES] =
 
 #if !defined EXTLANGFILE
 
-char far *CP[CPSIZE] = 
+char  *CP[CPSIZE] = 
 
 {             
 /* 000:eng: */ "",
@@ -93,7 +93,7 @@ char far *CP[CPSIZE] =
 
 #else
 
-char far *CP[CPSIZE];
+char  *CP[CPSIZE];
 
 #endif
 
@@ -420,7 +420,7 @@ Initialize_moves (void)
 
 {
   short ptyp, po, p0, d, di, s, delta, i;
-  unsigned char far *ppos, *pdir;       
+  unsigned char  *ppos, *pdir;       
   short dest[8][9];
   short sorted[9];              
   short steps[8];
@@ -935,7 +935,7 @@ InitConst (char *lang)
           ShowMessage(buffer);
 	  exit (0);
 	}
-      CP[entry] = (char far *) GLOBAL_ALLOC ((unsigned) strlen (&s[9]) + 1);
+      CP[entry] = (char  *) GLOBAL_ALLOC ((unsigned) strlen (&s[9]) + 1);
       if (CP[entry] == NULL)
 	{
 	  char buffer[80];
@@ -1029,7 +1029,7 @@ InitConst (char *lang)
           ShowMessage(buffer);
 	  exit (0);
 	}
-      CP[entry] = (char far *) GLOBAL_ALLOC ((unsigned) strlen (&s[16]) + 1);
+      CP[entry] = (char  *) GLOBAL_ALLOC ((unsigned) strlen (&s[16]) + 1);
       if (CP[entry] == NULL)
 	{
 	  char buffer[80];

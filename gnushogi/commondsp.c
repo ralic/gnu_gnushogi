@@ -197,7 +197,7 @@ VerifyMove (char *s, VerifyMove_mode iop, short unsigned int *mv)
 {
   static short pnt, tempb, tempc, tempsf, tempst, cnt;
   static struct leaf xnode;
-  struct leaf far *node;
+  struct leaf  *node;
   char buffer[60],buf2[60];
   short i,l, local_flags;
 
@@ -528,7 +528,7 @@ GetGame (void)
       fgets (fname, 256, fd);   /*  move score ... */
       while (fgets (fname, 256, fd))
 	{
-	  struct GameRec far *g;
+	  struct GameRec  *g;
 	  int side = computer;
 	  short f;
 
@@ -668,7 +668,7 @@ SaveGame (void)
       fprintf (fd, CP[126]);
       for (i = 1; i <= GameCnt; i++)
 	{
-	  struct GameRec far *g = &GameList[i];
+	  struct GameRec  *g = &GameList[i];
 
 	  f = g->gmove >> 8;
 	  t = (g->gmove & 0xFF);
@@ -917,7 +917,7 @@ BookSave (void)
       fprintf(fd,"#\n");
       for (i = 1; i <= GameCnt; i++)
         {
-          struct GameRec far *g = &GameList[i];
+          struct GameRec  *g = &GameList[i];
           char mvnr[20], mvs[20];
           if (i % 2)
             sprintf(mvnr,"%d.",(i+1)/2);
@@ -1261,7 +1261,7 @@ struct timeval tv;
 #ifdef DEBUG9
   for (j = TrPnt[2]; j < TrPnt[3]; j++)
     {
-      struct leaf far *node = &Tree[j];
+      struct leaf  *node = &Tree[j];
       algbr (node->f, node->t, node->flags);
 #ifdef DEBUG_EVAL
       if ( debug_eval )
@@ -1495,7 +1495,7 @@ InputCommand (char *command)
 	    FILE *D;
 	    int r, c, l;
 	    extern unsigned short int PrVar[];
-	    extern struct leaf far *root;
+	    extern struct leaf  *root;
 	    D = fopen ("/tmp/DEBUGA", "a+");
 	    fprintf (D, "score = %d\n", root->score);
 	    fprintf (D, "inout move is %s\n", s);

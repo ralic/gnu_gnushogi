@@ -190,7 +190,7 @@ ProbeTTable (short int side,
  */
 
 {
-  register struct hashentry far *ptbl;
+  register struct hashentry  *ptbl;
   register /*unsigned*/ short i = 0;  /*to match new type of rehash --tpm*/
 
 #ifdef DEBUG_TTABLE
@@ -272,7 +272,7 @@ PutInTTable (short int side,
  */
 
 {
-  register struct hashentry far *ptbl;
+  register struct hashentry  *ptbl;
   register /*unsigned*/ short i = 0;  /*to match new type of rehash --tpm*/
 
   ptbl = &ttable[side][hashkey % ttblsize];
@@ -337,14 +337,14 @@ PutInTTable (short int side,
 
                                   
 #if ttblsz
-static struct hashentry far *ttageb, *ttagew;
+static struct hashentry  *ttageb, *ttagew;
 #endif
 
 void
 ZeroTTable (void)
 {
 #ifdef notdef
-   register struct hashentry far *w, *b;
+   register struct hashentry  *w, *b;
    for ( b=ttable[black], w=ttable[white]; b < &ttable[black][ttblsize]; w++, b++)
      { 
         w->depth = 0; 
@@ -536,7 +536,7 @@ PutInEETable (short int side,int score)
  */
 
 {
-    register struct etable far *ptbl;
+    register struct etable  *ptbl;
     ptbl = &(*etab[side])[hashkey % (ETABLE)];
     ptbl->ehashbd = hashbd;
     ptbl->escore[black] = pscore[black];
@@ -559,7 +559,7 @@ CheckEETable (short int side)
 
 /* Get an evaluation from the transposition table */
 {
-    register struct etable far *ptbl;
+    register struct etable  *ptbl;
     ptbl = &(*etab[side])[hashkey % (ETABLE)];
     if (hashbd == ptbl->ehashbd) 
       {
@@ -574,7 +574,7 @@ ProbeEETable (short int side, short int *score)
 
 /* Get an evaluation from the transposition table */
 {
-    register struct etable far *ptbl;
+    register struct etable  *ptbl;
     ptbl = &(*etab[side])[hashkey % (ETABLE)];
     if (hashbd == ptbl->ehashbd)
       {

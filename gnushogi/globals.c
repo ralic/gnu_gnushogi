@@ -29,8 +29,8 @@
 
 
 short int ahead = true, hash = true;
-char far *xwin = 0;
-char far *Lang = NULL;
+char  *xwin = 0;
+char  *Lang = NULL;
 
 
 short FROMsquare, TOsquare;
@@ -127,48 +127,48 @@ int timeopp[MINGAMEIN], timecomp[MINGAMEIN];
 int compptr, oppptr;
 
 
-struct leaf far *Tree = NULL;
+struct leaf  *Tree = NULL;
 
-hashcode_array far *hashcode = NULL;
-drop_hashcode_array far *drop_hashcode = NULL;
+hashcode_array  *hashcode = NULL;
+drop_hashcode_array  *drop_hashcode = NULL;
 
-struct leaf far *root = NULL;
+struct leaf  *root = NULL;
 
-struct GameRec far *GameList = NULL;
+struct GameRec  *GameList = NULL;
 
-value_array far *value = NULL;
-fscore_array far *fscore = NULL;
+value_array  *value = NULL;
+fscore_array  *fscore = NULL;
 
 #ifndef SAVE_DISTDATA
 short use_distdata = true;
-distdata_array far *distdata = NULL;
+distdata_array  *distdata = NULL;
 #endif
 
 #ifndef SAVE_PTYPE_DISTDATA
 short use_ptype_distdata = true;
-distdata_array far *ptype_distdata[NO_PTYPE_PIECES];
+distdata_array  *ptype_distdata[NO_PTYPE_PIECES];
 #endif
 
 #if !defined SAVE_NEXTPOS
-next_array far *nextdir[NO_PTYPE_PIECES];
-next_array far *nextpos[NO_PTYPE_PIECES];
+next_array  *nextdir[NO_PTYPE_PIECES];
+next_array  *nextpos[NO_PTYPE_PIECES];
 short use_nextpos = true;
 #endif
 
 #if defined HISTORY
 short use_history = true;
-unsigned short far *history = NULL;
+unsigned short  *history = NULL;
 #endif
 
 #ifdef CACHE
 short use_etable = true;
-etable_field far *etab[2] = {NULL,NULL};
+etable_field  *etab[2] = {NULL,NULL};
 #endif
 
 #if ttblsz
 short use_ttable = true;
 unsigned int ttblsize = ttblsz;
-struct hashentry far *ttable[2] = {NULL,NULL};
+struct hashentry  *ttable[2] = {NULL,NULL};
 #endif
 
 

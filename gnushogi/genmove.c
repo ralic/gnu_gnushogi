@@ -35,7 +35,7 @@
 
 short *TrP;
 
-static struct leaf far *node;
+static struct leaf  *node;
 static short sqking, sqxking;
 static short InCheck = false, GenerateAllMoves = false;     
 static short check_determined = false;
@@ -801,7 +801,7 @@ SortMoves(short int ply)
 static void
 DontUseMoves(short int ply, short int n)
 {
-  register struct leaf far *p;
+  register struct leaf  *p;
   short int i,k;
 #ifdef DEBUG
   short j = 0;
@@ -1084,7 +1084,7 @@ MoveList (short int side, register short int ply,
 
 {
   register short i, xside, f, u;
-  struct leaf far *firstnode;
+  struct leaf  *firstnode;
   short flag_tsume, num;
 
 #ifdef HISTORY
@@ -1380,7 +1380,7 @@ IsCheckmate (short int side, short int in_check, short int blockable)
 #endif
   short i, piece, flag_tsume;
   small_short *PL;
-  struct leaf far *firstnode;
+  struct leaf  *firstnode;
   short tempb, tempc, ksq, threat, dummy, sqking;
   short InCheck;
 
