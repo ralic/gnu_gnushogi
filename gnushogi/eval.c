@@ -693,7 +693,7 @@ evaluate (short side,
   	seed[0] = seed[1] = 0;
 	threats (side);
 	if (Anyatak (side, sq=PieceList[xside][0]) && board[sq] == king) {
-	  *InChk = (board[sq=PieceList[side][0]] == king) ? SqAtakd (sq, xside, blockable) : false;
+	  *InChk = (board[sq=PieceList[side][0]] == king) ? SqAttacked (sq, xside, blockable) : false;
 	  return ((SCORE_LIMIT+1001) - ply);
 	}
 	threats (xside);
@@ -716,8 +716,8 @@ evaluate (short side,
         if ( debug_eval )
           fprintf (debug_eval_file, "use the estimete\n");
 #endif
-	*InChk = (board[sq=PieceList[side][0]] == king) ? SqAtakd (sq, xside, blockable) : false; 
-	if ( board[sq=PieceList[xside][0]] == king && SqAtakd (sq, side, blockable) ) {
+	*InChk = (board[sq=PieceList[side][0]] == king) ? SqAttacked (sq, xside, blockable) : false; 
+	if ( board[sq=PieceList[xside][0]] == king && SqAttacked (sq, side, blockable) ) {
 	  return ((SCORE_LIMIT+1001) - ply);
 	}
       }

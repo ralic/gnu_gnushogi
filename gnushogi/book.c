@@ -248,7 +248,7 @@ BVerifyMove (char *s, unsigned short *mv, int moveno)
     if (cnt == 1)
       {   short blockable;
 	  MakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst, &INCscore);
-	  if (SqAtakd (PieceList[opponent][0], computer, &blockable))
+	  if (SqAttacked (PieceList[opponent][0], computer, &blockable))
 	    {
 		UnmakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
 		/* Illegal move in check */

@@ -238,7 +238,7 @@ VerifyMove (char *s, VerifyMove_mode iop, unsigned short *mv)
     {                     
       short blocked;
       MakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst, &INCscore);
-      if (SqAtakd (PieceList[opponent][0], computer, &blocked))
+      if (SqAttacked (PieceList[opponent][0], computer, &blocked))
 	{
 	  UnmakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
 #ifdef NONDSP

@@ -235,7 +235,7 @@ gives_check_flag (unsigned short *flags, short side, short f, short t)
   short tempb, tempc, blockable, promote_piece;
   promote_piece = (*flags & promote) != 0;
   GenMakeMove (side, f, t, &tempb, &tempc, promote_piece);
-  if ( SqAtakd(sqxking, side, &blockable) )
+  if ( SqAttacked(sqxking, side, &blockable) )
      *flags |= check;
   GenUnmakeMove (side, f, t, tempb, tempc, promote_piece);
 }
@@ -278,7 +278,7 @@ Link (short side, short piece,
 	  promote_piece = (node->flags & promote) != 0;
           GenMakeMove (side, node->f, node->t, &tempb, &tempc, promote_piece);
           sq = (from == sqking) ? to : sqking;
-	  threat = SqAtakd(sq, side ^ 1, &blockable);
+	  threat = SqAttacked(sq, side ^ 1, &blockable);
           GenUnmakeMove (side, node->f, node->t, tempb, tempc, promote_piece);
           if ( !threat ) 
 	    (*TrP)++, node++;
@@ -1101,7 +1101,7 @@ MoveList (short side, short ply,
   if ( in_check >= 0 )
     InCheck = in_check;
   else
-    InCheck = (board[sqking] == king) ? SqAtakd(sqking,xside, &blockable) : false;
+    InCheck = (board[sqking] == king) ? SqAttacked(sqking,xside, &blockable) : false;
 
   GenerateAllMoves = (in_check == -2) || generate_move_flags;
 
@@ -1270,7 +1270,7 @@ CaptureList (short side, short ply,
   if ( in_check >= 0 )
     InCheck = in_check;
   else
-    InCheck = (board[sqking] == king) ? SqAtakd(sqking,xside,&blockable) : false;
+    InCheck = (board[sqking] == king) ? SqAttacked(sqking,xside,&blockable) : false;
 
   GenerateAllMoves = (in_check == -2);
 
@@ -1395,7 +1395,7 @@ IsCheckmate (short side, short in_check, short blockable)
   if ( in_check >= 0 )
       InCheck = in_check;
   else if ( board[sqking] == king )
-      InCheck = SqAtakd(sqking,xside,&blockable);
+      InCheck = SqAttacked(sqking,xside,&blockable);
   else
       InCheck = false;
 
@@ -1426,7 +1426,7 @@ IsCheckmate (short side, short in_check, short blockable)
 	    {          
               GenMakeMove (side, sq, u, &tempb, &tempc, false);
               ksq = (sq == sqking) ? u : sqking;
-	      threat = SqAtakd(ksq,xside,&dummy);
+	      threat = SqAttacked(ksq,xside,&dummy);
               GenUnmakeMove (side, sq, u, tempb, tempc, false);
 	      if ( !threat )
 		return (false);
@@ -1456,7 +1456,7 @@ IsCheckmate (short side, short in_check, short blockable)
 		  f = NO_SQUARES + piece;
 		  if ( side == white ) f += NO_PIECES;
 		  GenMakeMove (side, f, u, &tempb, &tempc, false); 
-	          threat = SqAtakd(sqking,xside,&dummy);
+	          threat = SqAttacked(sqking,xside,&dummy);
                   GenUnmakeMove (side, f, u, tempb, tempc, false);
 	          if ( !threat )
 		    return (false);

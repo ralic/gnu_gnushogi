@@ -1045,7 +1045,7 @@ typedef enum { FOREGROUND_MODE = 1, BACKGROUND_MODE } SelectMove_mode;
 			      short in_check, short blockable);
 
      /* from ataks.c */
-     extern int SqAtakd (short square, short side, short *blockable);
+     extern int SqAttacked (short square, short side, short *blockable);
      
 extern void
       MakeMove (short side,

@@ -390,7 +390,7 @@ if ( debuglevel & (512 | 1024) ) {
   root = &Tree[0];          
                      
   sqking = PieceList[side][0];
-  in_check = (board[sqking] == king) ? SqAtakd(sqking, side^1, &blockable) : false;
+  in_check = (board[sqking] == king) ? SqAttacked(sqking, side^1, &blockable) : false;
 
   MoveList (side, 1, in_check, blockable);
   for (i = TrPnt[1]; i < TrPnt[2]; i++)
@@ -624,7 +624,7 @@ if ( debuglevel & (512 | 1024) ) {
   else
     /* if no moves and not in check then mate for shogi (draw for chess) */
 #ifdef notdef 
-  if ((score == -(SCORE_LIMIT+999)) && !(SqAtakd (PieceList[side][0], xside, &blocked)))
+  if ((score == -(SCORE_LIMIT+999)) && !(SqAttacked (PieceList[side][0], xside, &blocked)))
     {
       root->flags |= mate;
       DRAW = CP[87];		/* No moves */

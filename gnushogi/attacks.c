@@ -128,7 +128,7 @@ debug_ataks (FILE *D, long *atk)
 
 
 int
-SqAtakd (short square, short side, short *blockable)
+SqAttacked (short square, short side, short *blockable)
 
 /*
  * See if any piece with color 'side' ataks sq.
@@ -168,7 +168,7 @@ SqAtakd (short square, short side, short *blockable)
     }
 #endif  
 #ifdef notdef
-    printf("atak array for %s available for SqAtakd!\n",ColorStr[side]);
+    printf("atak array for %s available for SqAttacked!\n",ColorStr[side]);
 #endif
     *blockable = true; /* don't know */
     return(Anyatak(side,square));
