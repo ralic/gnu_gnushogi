@@ -107,17 +107,17 @@ all:
 #
 
 COMMONFILES = \
-                ataks.o      \
+                attacks.o      \
                 book.o         \
-                dspcom.o    \
-                uxdsp.o    \
+                commondsp.o    \
+                cursesdsp.o    \
                 eval.o         \
                 genmove.o      \
                 globals.o      \
                 init.o         \
                 main.o         \
                 pattern.o      \
-                nondsp.o       \
+                rawdsp.o       \
                 search.o       \
                 tcontrl.o      \
                 util.o
