@@ -540,7 +540,7 @@ OutputMove (void)
   ClrEoln ();
   if (flag.post)
     {
-      register short h, l, t;
+      short h, l, t;
 
       h = TREE;
       l = 0;
@@ -645,7 +645,7 @@ param (short n)
 {
   if (n >= 10)
     {
-      register short d, q;
+      short d, q;
 
       q = n / 10;
       d = n % 10;
@@ -661,7 +661,7 @@ param (short n)
 void
 DrawPiece (short int sq)
 {
-  register char x, y;
+  char x, y;
 
   char piece,l,r,p; 
 

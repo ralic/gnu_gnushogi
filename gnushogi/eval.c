@@ -360,13 +360,13 @@ threats (short int side)
  * Fill array sseed[] with info about occupation by a seed piece.
  */  
 {                                                            
-  register short u, sq;
+  short u, sq;
   long int c; 
   long int *a;
 #ifdef SAVE_NEXTPOS
   short d;
 #else
-  register unsigned char  *ppos, *pdir;
+  unsigned char  *ppos, *pdir;
 #endif
   short i, kd, piece, xside; 
   small_short *PL;
@@ -539,7 +539,7 @@ static
 ExamineSquares (void)
 
 {
-  register short sq, side, piece, n;
+  short sq, side, piece, n;
 
   if ( MatchSignature(squares_signature) ) {
     /* data valid for current positional signature */
@@ -642,10 +642,10 @@ ExamineSquares (void)
 
 
 int
-evaluate (register short int side,
-	  register short int ply,
-	  register short int alpha,
-	  register short int beta,
+evaluate (short int side,
+	  short int ply,
+	  short int alpha,
+	  short int beta,
 	  short int INCscore,
 	  short int *InChk,	/* output Check flag */
 	  short int *blockable)	/* king threat blockable */
@@ -660,7 +660,7 @@ evaluate (register short int side,
  */
 
 {
-    register short evflag, xside;
+    short evflag, xside;
     short s, sq;
 
     xside = side ^ 1;
@@ -730,7 +730,7 @@ evaluate (register short int side,
 
 static short value_of_weakest_attacker (long a2)
 {     
-  register short piece;  
+  short piece;  
   short min_value, v;
   min_value = SCORE_LIMIT;
   for ( piece = pawn; piece <= king; piece++ )
@@ -745,7 +745,7 @@ static short value_of_weakest_attacker (long a2)
 
 inline
 int
-BRLscan (register short int sq, short int *mob)
+BRLscan (short int sq, short int *mob)
 
 /*
  * Find (promoted) Bishop, (promoted) Rook, and Lance mobility, XRAY attacks, and pins. 
@@ -760,10 +760,10 @@ BRLscan (register short int sq, short int *mob)
 #ifdef SAVE_NEXTPOS
     short d, dd;
 #else
-    register unsigned char  *ppos, *pdir;
+    unsigned char  *ppos, *pdir;
 #endif
-    register short s, mobx;
-    register short u, xu, pin, ptyp, csq = column(sq);
+    short s, mobx;
+    short u, xu, pin, ptyp, csq = column(sq);
     short piece, upiece, xupiece, rvalue, ds;
     small_short *Kd = Kdist[c2];
     mobx = s = 0;
@@ -1001,7 +1001,7 @@ BRLscan (register short int sq, short int *mob)
 
 inline
 short int
-KingScan (register short int sq)
+KingScan (short int sq)
 
 /*
  * Assign penalties if king can be threatened by checks, if squares near the
@@ -1041,14 +1041,14 @@ KingScan (register short int sq)
 
 
 {
-    register short cnt;
+    short cnt;
 #ifdef SAVE_NEXTPOS
     short d;
 #else
-    register unsigned char  *ppos, *pdir;
+    unsigned char  *ppos, *pdir;
 #endif
-    register short int s;
-    register short u, ptyp;
+    short int s;
+    short u, ptyp;
     short int ok, ds;
 #ifdef DEBUG_EVAL
     short s0;
@@ -1161,7 +1161,7 @@ static short checked_trapped;
 
 inline
 int
-trapped (register short int sq)
+trapped (short int sq)
 
 /*
  * See if the attacked piece has unattacked squares to move to. The following
@@ -1169,13 +1169,13 @@ trapped (register short int sq)
  */
 
 {
-    register short u, ptyp;
+    short u, ptyp;
 #ifdef SAVE_NEXTPOS
     short d;
 #else
-    register unsigned char  *ppos, *pdir;
+    unsigned char  *ppos, *pdir;
 #endif
-    register short int piece;
+    short int piece;
     short rvalue;
 
     piece = board[sq];
@@ -1210,7 +1210,7 @@ trapped (register short int sq)
 
 
 
-static int AttackedPieceValue (register short int sq, short int side)
+static int AttackedPieceValue (short int sq, short int side)
 {              
    short s, ds;
 
@@ -1242,7 +1242,7 @@ static int AttackedPieceValue (register short int sq, short int side)
 
 
 static inline int
-OpenFileValue (register short sq, short hopn, short hopnx)
+OpenFileValue (short sq, short hopn, short hopnx)
 {
     short s=0, fyle;
 
@@ -1330,13 +1330,13 @@ OpenFileValue (register short sq, short hopn, short hopnx)
 
 
 static inline int
-PawnValue (register short int sq, short int side)
+PawnValue (short int sq, short int side)
 /*
  * Calculate the positional value for a pawn on 'sq'.
  */
 
 {
-    register short s=0;
+    short s=0;
     short ds;
     short n;
     short ccol = ccolumn(c1,sq);  
@@ -1415,13 +1415,13 @@ PawnValue (register short int sq, short int side)
 
 
 static inline int
-LanceValue (register short int sq, short int side)
+LanceValue (short int sq, short int side)
 /*
  * Calculate the positional value for a lance on 'sq'.
  */
 
 {
-    register short s=0, ds, ad;
+    short s=0, ds, ad;
 
     OwnKingDistanceValue(sq,1,2);
 
@@ -1451,13 +1451,13 @@ LanceValue (register short int sq, short int side)
 }
 
 static inline int
-KnightValue (register short int sq, short int side)
+KnightValue (short int sq, short int side)
 /*
  * Calculate the positional value for a knight on 'sq'.
  */
 
 {
-    register short s = 0, ad;
+    short s = 0, ad;
     short ds, checked_trapped = false;
     short c = column(sq);
 
@@ -1496,13 +1496,13 @@ KnightValue (register short int sq, short int side)
 }
 
 static inline int
-SilverValue (register short int sq, short int side)
+SilverValue (short int sq, short int side)
 /*
  * Calculate the positional value for a silver on 'sq'.
  */
 
 {
-    register short s= 0, ds, ad;
+    short s= 0, ds, ad;
 
     OwnKingDistanceValue(sq,2,3);
 
@@ -1536,13 +1536,13 @@ SilverValue (register short int sq, short int side)
 }
 
 static inline int
-GoldValue (register short int sq, short int side)
+GoldValue (short int sq, short int side)
 /*
  * Calculate the positional value for a gold on 'sq'.
  */
 
 {
-    register short s=0, ds, ad;
+    short s=0, ds, ad;
 
     OwnKingDistanceValue(sq,2,3);
 
@@ -1572,13 +1572,13 @@ GoldValue (register short int sq, short int side)
 }
 
 static inline int
-BishopValue (register short int sq, short int side)
+BishopValue (short int sq, short int side)
 /*
  * Calculate the positional value for a bishop on 'sq'.
  */
 
 {
-    register short s=0, ds, ad;
+    short s=0, ds, ad;
 
     if ( in_opening_stage ) {
 	if ( GameType[c1] == RANGING_ROOK )
@@ -1618,13 +1618,13 @@ BishopValue (register short int sq, short int side)
 }
 
 static inline int
-RookValue (register short int sq, short int side)
+RookValue (short int sq, short int side)
 /*
  * Calculate the positional value for a rook on 'sq'.
  */
 
 {
-    register short s=0, ds, ad;
+    short s=0, ds, ad;
 
     OpenFileValue (sq, 2*fv1[HOPN], 4*fv1[HOPN]);
                                
@@ -1684,13 +1684,13 @@ RookValue (register short int sq, short int side)
 }
 
 static inline int
-PPawnValue (register short int sq, short int side)
+PPawnValue (short int sq, short int side)
 /*
  * Calculate the positional value for a promoted pawn on 'sq'.
  */
 
 {
-    register short s = 0, ds, ad;
+    short s = 0, ds, ad;
 
     EnemyKingDistanceValue(sq,3,10);
 
@@ -1698,13 +1698,13 @@ PPawnValue (register short int sq, short int side)
 }
 
 static inline int
-PLanceValue (register short int sq, short int side)
+PLanceValue (short int sq, short int side)
 /*
  * Calculate the positional value for a promoted lance on 'sq'.
  */
 
 {
-    register short s = 0, ds, ad;
+    short s = 0, ds, ad;
 
     EnemyKingDistanceValue(sq,3,10);
 
@@ -1712,13 +1712,13 @@ PLanceValue (register short int sq, short int side)
 }
 
 static inline int
-PKnightValue (register short int sq, short int side)
+PKnightValue (short int sq, short int side)
 /*
  * Calculate the positional value for a promoted knight on 'sq'.
  */
 
 {
-    register short s = 0, ds, ad;
+    short s = 0, ds, ad;
 
     EnemyKingDistanceValue(sq,3,10);
 
@@ -1726,13 +1726,13 @@ PKnightValue (register short int sq, short int side)
 }
 
 static inline int
-PSilverValue (register short int sq, short int side)
+PSilverValue (short int sq, short int side)
 /*
  * Calculate the positional value for a promoted silver on 'sq'.
  */
 
 {
-    register short s = 0, ds, ad;
+    short s = 0, ds, ad;
 
     EnemyKingDistanceValue(sq,3,10);
 
@@ -1740,13 +1740,13 @@ PSilverValue (register short int sq, short int side)
 }
 
 static inline int
-PBishopValue (register short int sq, short int side)
+PBishopValue (short int sq, short int side)
 /*
  * Calculate the positional value for a promoted bishop on 'sq'.
  */
 
 {
-    register short s = 0, ds, ad;
+    short s = 0, ds, ad;
 
     EnemyKingDistanceValue(sq,3,4);
 
@@ -1754,13 +1754,13 @@ PBishopValue (register short int sq, short int side)
 }
 
 static inline int
-PRookValue (register short int sq, short int side)
+PRookValue (short int sq, short int side)
 /*
  * Calculate the positional value for a promoted rook on 'sq'.
  */
 
 {
-    register short s = 0, ds, ad;
+    short s = 0, ds, ad;
 
     EnemyKingDistanceValue(sq,3,4);
 
@@ -1770,12 +1770,12 @@ PRookValue (register short int sq, short int side)
 }
 
 static inline int
-KingValue (register short int sq, short int side)
+KingValue (short int sq, short int side)
 /*
  * Calculate the positional value for a king on 'sq'.
  */
 {
-    register short s = 0, ds;
+    short s = 0, ds;
 
     if ( fv1[KSFTY] != 0 )
 	s += KingScan (sq);
@@ -1811,13 +1811,13 @@ KingValue (register short int sq, short int side)
 
 
 static inline int
-PieceValue (register short int sq, short int side)
+PieceValue (short int sq, short int side)
 /*
  * Calculate the positional value for a piece on 'sq'.
  */
 
 {
-    register short s, piece, ds;
+    short s, piece, ds;
     short mob;
 
     piece = board[sq];
@@ -2188,7 +2188,7 @@ static
 void
 ScoreSquares (void)
 {
-  register short sq;
+  short sq;
   short ds, n, m;
 
   for ( sq = 0; sq < NO_SQUARES; sq++ ) {
@@ -2365,7 +2365,7 @@ ScoreCaptures (void)
 
 
 short int
-ScorePosition (register short int side)
+ScorePosition (short int side)
 
 /*
  * Perform normal static evaluation of board position. A score is generated
@@ -2373,8 +2373,8 @@ ScorePosition (register short int side)
  */
 
 {
-    register short int score;
-    register short sq, i, xside;
+    short int score;
+    short sq, i, xside;
     short int s;
     short int escore;
     short int ds;
@@ -2718,7 +2718,7 @@ ExaminePosition (short side)
  */
 
 {
-    register short c1, piece, sq, i, bsq, wsq;
+    short c1, piece, sq, i, bsq, wsq;
 
     /* Build enemy king distance tables. */
                                     
@@ -3061,7 +3061,7 @@ static short linear_feature_value (short feature, short stage, short i, short j)
 void
 Initialize_eval (void)
 {     
-  register short stage, piece, feature, i;
+  short stage, piece, feature, i;
   
   for ( stage = 0; stage < NO_STAGES; stage++ ) {
     for ( i = 0; i < MAIN_STAGES; i++ ) {

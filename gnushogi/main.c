@@ -43,8 +43,8 @@
 
 void DebugInits ()
 {                    
-   register short u, sq;
-   register unsigned char *ppos, *pdir;
+   short u, sq;
+   unsigned char *ppos, *pdir;
    char s[10];
    short piece, ptyp;
 

@@ -350,7 +350,7 @@ ShowStage (void)
 void
 ShowLine (short unsigned int *bstline)
 {
-  register int i;
+  int i;
 
   for (i = 1; bstline[i] > 0; i++)
     {
@@ -452,7 +452,7 @@ OutputMove (void)
 #ifdef notdef /* optional pass best line to frontend with move */
   if (flag.post)
     {
-      register int i;
+      int i;
 
       printz (" %6d%c ", MSCORE, MV[30]);
       for (i = 1; MV[i] > 0; i++)

@@ -41,12 +41,12 @@ ataks (short int side, long int *a)
  */  
                                                             
 {
-  register short u, sq;
+  short u, sq;
   long int c;
 #ifdef SAVE_NEXTPOS
   short d;
 #else
-  register unsigned char *ppos, *pdir;
+  unsigned char *ppos, *pdir;
 #endif
   short i, piece; 
   small_short *PL;
@@ -139,9 +139,9 @@ SqAtakd (short int square, short int side, short int *blockable)
 #ifdef SAVE_NEXTPOS
   short d;
 #else
-  register unsigned char *ppos, *pdir;
+  unsigned char *ppos, *pdir;
 #endif
-  register short u, ptyp;
+  short u, ptyp;
 
   if ( MatchSignature(threats_signature[side]) ) {
 #ifdef DEBUG  

@@ -63,7 +63,7 @@ short int zwndw;
 void
 debug41 (short int score, short unsigned int xxx[], char ch)
 {
-  register int i;
+  int i;
   FILE *D;
   int r, c, l;
   struct leaf  *xnode;
@@ -140,8 +140,8 @@ pick (short int p1, short int p2)
  *
  */
 {
-  register struct leaf  *p, *q, *r, *k;
-  register s0;
+  struct leaf  *p, *q, *r, *k;
+  s0;
   struct leaf temp;
 
   k = p = &Tree[p1];
@@ -723,8 +723,8 @@ if ( debuglevel & (512 | 1024) ) {
                  
 int
 search (short int side,
-	register short int ply,
-	register short int depth,
+	short int ply,
+	short int depth,
 	short int alpha,
 	short int beta,
 	short unsigned int *bstline,
@@ -741,7 +741,7 @@ search (short int side,
 
 
 {
-  register short j, pnt;
+  short j, pnt;
   short tempb, tempc, tempsf, tempst;
   short xside, pbst, score, rcnt, slk, in_check, blockable;
   unsigned short mv, nxtline[MAXDEPTH];
@@ -1022,7 +1022,7 @@ search (short int side,
 	 PV and other variables contain the right value so that the move
 	 ordering works right.
       */
-      register struct GameRec  *g;
+      struct GameRec  *g;
       
       nxtline[ply + 1] = 0;
       CptrFlag[ply] = 0;
@@ -1321,7 +1321,7 @@ UpdatePieceList (short int side, short int sq, UpdatePieceList_mode iop)
  */
 
 {
-  register short i;
+  short i;
 
   if (iop == REMOVE_PIECE)
     {
@@ -1466,9 +1466,9 @@ MakeMove (short int side,
  */
 
 {
-  register short f, t, xside, ct, cf;
-  register struct GameRec  *g;
-  register short int fromb,fromc;
+  short f, t, xside, ct, cf;
+  struct GameRec  *g;
+  short int fromb,fromc;
 
   xside = side ^ 1;
   g = &GameList[++GameCnt];
@@ -1616,7 +1616,7 @@ UnmakeMove (short int side,
  */
 
 {
-  register short f, t, xside;
+  short f, t, xside;
 
   xside = side ^ 1;
   f = node->f;
@@ -1734,7 +1734,7 @@ InitializeStats (void)
  */
 
 {
-  register short i, sq;
+  short i, sq;
   
   for (i = 0; i < NO_COLS; i++)
     {

@@ -248,7 +248,7 @@ short piece_distance(short side,short piece,short f,short t)
 void
 Initialize_dist (void)
 {
-  register short a, b, d, di, ptyp;
+  short a, b, d, di, ptyp;
 #ifndef SAVE_DISTDATA  
   for (a = 0; a < NO_SQUARES; a++)
     for (b = 0; b < NO_SQUARES; b++)

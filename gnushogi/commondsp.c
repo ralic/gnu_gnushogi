@@ -1373,7 +1373,7 @@ SetOppTime (char *s)
 {
   char *time;
   char buffer[20];
-  register tmp = 0;
+  tmp = 0;
   int m, t,sec;
   sec = 0;
   time = &s[strlen (CP[228])];
@@ -1916,7 +1916,7 @@ Sdepth = 0;
 #if !defined NOPOST
   if (flag.post && !flag.mate)
     {
-      register int i;
+      int i;
 
       printz (" %6d ", MSCORE);
       for (i = 1; MV[i] > 0; i++)

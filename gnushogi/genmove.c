@@ -103,7 +103,7 @@ GenMakeMove (short int side,
  */
 
 {
-  register short int piece, upiece, n;
+  short int piece, upiece, n;
 
   t = t & 0x7f;
       
@@ -173,7 +173,7 @@ GenUnmakeMove (short int side,
  */
 
 {
-  register short piece, upiece, n;
+  short piece, upiece, n;
 
   t = t & 0x7f;
 
@@ -359,9 +359,9 @@ field_bonus (short int ply, short int side, short int piece, short int f, short 
 /* bonus for possible next moves */
 
 {
-  register short s, u, ptyp;
-  register unsigned char *ppos, *pdir;
-  register short c1, c2;
+  short s, u, ptyp;
+  unsigned char *ppos, *pdir;
+  short c1, c2;
 #ifdef SAVE_NEXTPOS
   short d;
 #endif
@@ -492,7 +492,7 @@ field_bonus (short int ply, short int side, short int piece, short int f, short 
 
 /* inline */ void
 LinkMove (short int ply, short int f,
-	  register short int t,
+	  short int t,
 	  unsigned short local_flag,
 	  short int xside,
 	  short int score_if_impossible)
@@ -506,8 +506,8 @@ LinkMove (short int ply, short int f,
  */
 
 {
-  register short s = 0;
-  register short side, piece, mv;
+  short s = 0;
+  short side, piece, mv;
   short flag_tsume, try_link = true;
   short c1, c2, ds, is_drop = f > NO_SQUARES;
   unsigned long as = 0;
@@ -801,7 +801,7 @@ SortMoves(short int ply)
 static void
 DontUseMoves(short int ply, short int n)
 {
-  register struct leaf  *p;
+  struct leaf  *p;
   short int i,k;
 #ifdef DEBUG
   short j = 0;
@@ -838,7 +838,7 @@ DontUseMoves(short int ply, short int n)
 
 inline
 void
-GenMoves (register short int ply, register short int sq, short int side, 
+GenMoves (short int ply, short int sq, short int side, 
 	  short int xside)
 
 /*
@@ -848,12 +848,12 @@ GenMoves (register short int ply, register short int sq, short int side,
  */
 
 {
-  register short u, piece, col;
+  short u, piece, col;
   short ptyp, possible;
 #ifdef SAVE_NEXTPOS
   short d;
 #else
-  register unsigned char *ppos, *pdir;
+  unsigned char *ppos, *pdir;
 #endif
 
   piece = board[sq];
@@ -931,9 +931,9 @@ LinkPreventCheckDrops (short side, short xside, short ply)
 #ifdef SAVE_NEXTPOS
   short d, dd;
 #else
-  register unsigned char *ppos, *pdir;
+  unsigned char *ppos, *pdir;
 #endif
-  register short piece, u, xu, square, ptyp;      
+  short piece, u, xu, square, ptyp;      
   short i, n, drop_square[9];
 
   if ( board[square = PieceList[side][0]] != king )
@@ -1014,9 +1014,9 @@ LinkCheckDrops (short side, short xside, short ply)
 #ifdef SAVE_NEXTPOS
   short d;
 #else
-  register unsigned char *ppos, *pdir;
+  unsigned char *ppos, *pdir;
 #endif
-  register short u, ptyp;
+  short u, ptyp;
   short square, piece;
 
   if ( board[square = PieceList[xside][0]] != king )
@@ -1070,7 +1070,7 @@ LinkCheckDrops (short side, short xside, short ply)
 
 
 void
-MoveList (short int side, register short int ply, 
+MoveList (short int side, short int ply, 
           short int in_check, short int blockable)
 
 /*
@@ -1083,7 +1083,7 @@ MoveList (short int side, register short int ply,
  */
 
 {
-  register short i, xside, f, u;
+  short i, xside, f, u;
   struct leaf  *firstnode;
   short flag_tsume, num;
 
@@ -1231,7 +1231,7 @@ MoveList (short int side, register short int ply,
 }
 
 void
-CaptureList (register short int side, short int ply, 
+CaptureList (short int side, short int ply, 
 	     short int in_check, short int blockable)
 
 /*
@@ -1247,11 +1247,11 @@ CaptureList (register short int side, short int ply,
  */
 
 {
-  register short u, sq, xside;
+  short u, sq, xside;
 #ifdef SAVE_NEXTPOS
   short d;
 #else
-  register unsigned char *ppos, *pdir;
+  unsigned char *ppos, *pdir;
 #endif
   short i, piece, flag_tsume;
   small_short *PL;
@@ -1372,11 +1372,11 @@ IsCheckmate (short int side, short int in_check, short int blockable)
  */
 
 {
-  register short u, sq, xside;
+  short u, sq, xside;
 #ifdef SAVE_NEXTPOS
   short d;
 #else
-  register unsigned char *ppos, *pdir;
+  unsigned char *ppos, *pdir;
 #endif
   short i, piece, flag_tsume;
   small_short *PL;

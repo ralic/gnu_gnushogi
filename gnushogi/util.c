@@ -37,7 +37,7 @@ short int ISZERO = 1;
 int
 parse (FILE * fd, short unsigned int *mv, short int side, char *opening)
 {
-  register int c, i, r1, r2, c1, c2;
+  int c, i, r1, r2, c1, c2;
   char s[128];
   char *p;
 
@@ -97,7 +97,7 @@ inline
 unsigned char
 CB (short sq)
 {           
-  register short i = sq;
+  short i = sq;
   if ( i < NO_SQUARES ) {
     return ( (color[i] == white) ? (0x80 | board[i]) : board[i] );
   } else {
@@ -140,7 +140,7 @@ BDpromoted(unsigned char p)
 void
 ShowBD(unsigned char bd[])
 {
-  register short i;
+  short i;
   for ( i = 0; i < PTBLBDSIZE; i++) 
     {                   
 	if ( i < NO_SQUARES )
@@ -190,8 +190,8 @@ ProbeTTable (short int side,
  */
 
 {
-  register struct hashentry  *ptbl;
-  register /*unsigned*/ short i = 0;  /*to match new type of rehash --tpm*/
+  struct hashentry  *ptbl;
+  /*unsigned*/ short i = 0;  /*to match new type of rehash --tpm*/
 
 #ifdef DEBUG_TTABLE
       /* printf("FOR hk=%lx hb=%lx d=%d\n",hashkey,hashbd,depth); */
@@ -272,8 +272,8 @@ PutInTTable (short int side,
  */
 
 {
-  register struct hashentry  *ptbl;
-  register /*unsigned*/ short i = 0;  /*to match new type of rehash --tpm*/
+  struct hashentry  *ptbl;
+  /*unsigned*/ short i = 0;  /*to match new type of rehash --tpm*/
 
   ptbl = &ttable[side][hashkey % ttblsize];
 
@@ -344,7 +344,7 @@ void
 ZeroTTable (void)
 {
 #ifdef notdef
-   register struct hashentry  *w, *b;
+   struct hashentry  *w, *b;
    for ( b=ttable[black], w=ttable[white]; b < &ttable[black][ttblsize]; w++, b++)
      { 
         w->depth = 0; 
@@ -352,7 +352,7 @@ ZeroTTable (void)
      }
    ttageb = ttable[black]; 
    ttagew = ttable[white];
-   register unsigned int a;
+   unsigned int a;
    for (a = 0; a < ttblsize + (unsigned int)rehash; a++)
      {
        (ttable[black])[a].depth = 0;
@@ -374,7 +374,7 @@ ZeroTTable (void)
 #ifdef HASHFILE
 int Fbdcmp(unsigned char *a,unsigned char *b)
 {
-	register int i;
+	int i;
 	for(i = 0; i < PTBLBDSIZE; i++)
 		if(a[i] != b[i]) return false;
 	return true;
@@ -392,8 +392,8 @@ ProbeFTable (short int side,
  */
 
 {
-  register short int i;
-  register unsigned long hashix;
+  short int i;
+  unsigned long hashix;
   struct fileentry new, t;
 
   hashix = ((side == black) ? (hashkey & 0xFFFFFFFE) : (hashkey | 1)) % filesz;
@@ -457,8 +457,8 @@ PutInFTable (short int side,
  */
 
 {
-  register unsigned short i;
-  register unsigned long hashix;
+  unsigned short i;
+  unsigned long hashix;
   struct fileentry new, tmp;
 
   hashix = ((side == black) ? (hashkey & 0xFFFFFFFE) : (hashkey | 1)) % filesz;
@@ -536,7 +536,7 @@ PutInEETable (short int side,int score)
  */
 
 {
-    register struct etable  *ptbl;
+    struct etable  *ptbl;
     ptbl = &(*etab[side])[hashkey % (ETABLE)];
     ptbl->ehashbd = hashbd;
     ptbl->escore[black] = pscore[black];
@@ -559,7 +559,7 @@ CheckEETable (short int side)
 
 /* Get an evaluation from the transposition table */
 {
-    register struct etable  *ptbl;
+    struct etable  *ptbl;
     ptbl = &(*etab[side])[hashkey % (ETABLE)];
     if (hashbd == ptbl->ehashbd) 
       {
@@ -574,7 +574,7 @@ ProbeEETable (short int side, short int *score)
 
 /* Get an evaluation from the transposition table */
 {
-    register struct etable  *ptbl;
+    struct etable  *ptbl;
     ptbl = &(*etab[side])[hashkey % (ETABLE)];
     if (hashbd == ptbl->ehashbd)
       {
