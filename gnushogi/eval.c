@@ -93,7 +93,7 @@ static small_short ispvalue[NO_PIECES][MAIN_STAGES] =
                                 
 /* Features and Weights */
 
-#define ATAKD       0
+#define ATTACKED       0
 #define HUNGP       1
 #define HUNGX       2
 #define CNTRL5TH    3
@@ -126,7 +126,7 @@ static small_short ispvalue[NO_PIECES][MAIN_STAGES] =
 #define OPPDROP    30
 
 static small_short weight[NO_FEATURES+1][MAIN_STAGES+2] =
-  {  80, 100, 100,  40, 10, 15, /* ATAKD */
+  {  80, 100, 100,  40, 10, 15, /* ATTACKED */
      80, 100, 100,  50, 14, 10, /* HUNGP */
      80, 100, 100,  50, 18, 12, /* HUNGX */
     100,  50,   0,   0,  2,  1, /* CNTRL5TH */
@@ -1353,7 +1353,7 @@ PawnValue (short sq, short side)
     }
     
     if ( (a1 & ((ctlR | ctlRp) | ctlL)) ) {
-      s += (ds = fv1[ATAKD]);
+      s += (ds = fv1[ATTACKED]);
 #ifdef DEBUG_EVAL
       if ( debug_eval && ds )
         fprintf(debug_eval_file,"%d for rook/lance-supported pawn\n",ds);
@@ -1381,7 +1381,7 @@ PawnValue (short sq, short side)
       if ( GameType[c1] == STATIC_ROOK && sq == csquare(c1,43) )
         if ( (atk2[csquare(c1,52)] & CNT_MASK) < 2 ) 
 	  {
-             s += (ds = fv1[ATAKD]);
+             s += (ds = fv1[ATTACKED]);
 #ifdef DEBUG_EVAL
 	     if ( debug_eval )
                fprintf(debug_eval_file,"%d for attacking pawn on 2nd col\n",ds);
@@ -1392,7 +1392,7 @@ PawnValue (short sq, short side)
 	{
 	  if ( sq == csquare(c1,28) )
 	    {
-              s += (ds = -fv1[ATAKD]);
+              s += (ds = -fv1[ATTACKED]);
 #ifdef DEBUG_EVAL
 	      if ( debug_eval )
                 fprintf(debug_eval_file,"%d for pushed pawn on 8th file\n",ds);
@@ -1400,7 +1400,7 @@ PawnValue (short sq, short side)
 	    }
           if ( (atk1[csquare(c1,19)] & CNT_MASK) < 2 && (atk1[csquare(c1,28)] & CNT_MASK) < 2 ) 
 	    {   
-              s += (ds = -2*fv1[ATAKD]);
+              s += (ds = -2*fv1[ATTACKED]);
 #ifdef DEBUG_EVAL
 	      if ( debug_eval )
                 fprintf(debug_eval_file,"%d for weak pawn on 8th col\n",ds);
@@ -1431,7 +1431,7 @@ LanceValue (short sq, short side)
       {          
 	if (in_opening_stage || trapped (sq))
 	  {
-	    s += (ds = -3*fv1[ATAKD]);
+	    s += (ds = -3*fv1[ATTACKED]);
 #ifdef DEBUG_EVAL     
 	    if ( debug_eval )
                 fprintf(debug_eval_file,"%d for lance in danger\n",ds);
@@ -1439,7 +1439,7 @@ LanceValue (short sq, short side)
 	  }
 	else 
 	  {
-	    s += (ds = -2*fv1[ATAKD]);
+	    s += (ds = -2*fv1[ATTACKED]);
 #ifdef DEBUG_EVAL     
 	    if ( debug_eval )
                 fprintf(debug_eval_file,"%d for lance in danger\n",ds);
@@ -1468,7 +1468,7 @@ KnightValue (short sq, short side)
       {          
 	if (trapped (sq))
 	  {
-	    s += (ds = -4*fv1[ATAKD]);
+	    s += (ds = -4*fv1[ATTACKED]);
 #ifdef DEBUG_EVAL     
 	    if ( debug_eval )
                 fprintf(debug_eval_file,"%d for knight in danger\n",ds);
@@ -1476,7 +1476,7 @@ KnightValue (short sq, short side)
 	  }
 	else
 	  {
-	    s += (ds = -3*fv1[ATAKD]);
+	    s += (ds = -3*fv1[ATTACKED]);
 #ifdef DEBUG_EVAL     
 	    if ( debug_eval && ds )
                 fprintf(debug_eval_file,"%d for knight in danger\n",ds);
@@ -1485,7 +1485,7 @@ KnightValue (short sq, short side)
       }
       
     if ( c == 0 || c == 8 ) {
-      s += (ds = -fv1[ATAKD]);
+      s += (ds = -fv1[ATTACKED]);
 #ifdef DEBUG_EVAL
       if ( debug_eval )
         fprintf(debug_eval_file,"%d for knight on edge file\n",ds);
@@ -1876,7 +1876,7 @@ PieceValue (short sq, short side)
 	      else if ( abs(attack_value - piece_value) < 10 )
 		{
 		  /* opponent has the option to exchange equal pieces */
-		  s += (ds = -fv1[ATAKD]);
+		  s += (ds = -fv1[ATTACKED]);
 #ifdef DEBUG_EVAL
                   if ( debug_eval )
                     fprintf(debug_eval_file,"exchange option: %d\n", ds);
@@ -1885,7 +1885,7 @@ PieceValue (short sq, short side)
 #ifdef notdef
 	      else if (a1 < ctlP)
 		{ /* piece is not defended by a pawn */
-	          s += (ds = -fv1[ATAKD]);
+	          s += (ds = -fv1[ATTACKED]);
 #ifdef DEBUG_EVAL
                   if ( debug_eval )
                     fprintf(debug_eval_file,"not defended by pawn: %d\n", ds);
@@ -1924,13 +1924,13 @@ PieceValue (short sq, short side)
 
       if ( starget[c1][sq] ) {
 	if ( sweep[piece] ) {
-	  s -= (ds = -fv1[ATAKD]/2);
+	  s -= (ds = -fv1[ATTACKED]/2);
 #ifdef DEBUG_EVAL
           if ( debug_eval )
             fprintf(debug_eval_file,"%d for sweeping piece on own target square\n", ds);
 #endif
 	} else if ( piece == pawn ) {
-	  s += (ds = fv1[ATAKD]);
+	  s += (ds = fv1[ATTACKED]);
 #ifdef DEBUG_EVAL
           if ( debug_eval )
             fprintf(debug_eval_file,"%d for pawn on own target square\n", ds);
@@ -1940,13 +1940,13 @@ PieceValue (short sq, short side)
 
       if ( starget[c2][sq] ) {
 	if ( piece != pawn ) {
-	  s -= (ds = -fv1[ATAKD]/3);
+	  s -= (ds = -fv1[ATTACKED]/3);
 #ifdef DEBUG_EVAL
           if ( debug_eval )
             fprintf(debug_eval_file,"%d for non-pawn on opponents target square\n", ds);
 #endif
 	} else {
-	  s += (ds = fv1[ATAKD]);
+	  s += (ds = fv1[ATTACKED]);
 #ifdef DEBUG_EVAL
           if ( debug_eval )
             fprintf(debug_eval_file,"%d for pawn on opponents target square\n", ds);
