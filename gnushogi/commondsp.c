@@ -1,7 +1,11 @@
 /*
- * dspcom.c - C source for GNU SHOGI
+ * FILE: commondsp.c
  *
+ *     Common display routines for GNU Shogi.
+ *
+ * ----------------------------------------------------------------------
  * Copyright (c) 1993, 1994, 1995 Matthias Mutz
+ * Copyright (c) 1999 Michael Vanier and the Free Software Foundation
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -23,6 +27,8 @@
  * You should have received a copy of the GNU General Public License along
  * with GNU Shogi; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * ----------------------------------------------------------------------
+ *
  */
 
 #include "gnushogi.h"
@@ -38,30 +44,15 @@ int InBackground = false;
 
 #include <ctype.h>
 #include <signal.h>
-#if defined THINK_C
-#include <time.h>
-#define BOOKTEST
-#elif defined MSDOS
-#include <dos.h>
-#include <conio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#else
+
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/file.h>
-#include <sys/ioctl.h>
-#endif
 
-#if defined DEBUG || defined DEBUG_EVAL
-short debug_eval = false;
-FILE  *debug_eval_file = NULL;
-short debug_moves = false;
-#endif
+#include <curses.h>
 
 
-#if defined DEBUG || defined BOOKTEST || defined DEBUG_EVAL
+#if defined(BOOKTEST)
 
 void
 movealgbr(short m, char *s)
@@ -132,7 +123,7 @@ movealgbr(short m, char *s)
     *s = '\0';
 }
 
-#endif
+#endif /* BOOKTEST */
 
 
 
@@ -144,8 +135,6 @@ movealgbr(short m, char *s)
 void
 algbr(short f, short t, short flag)
 {
-  int m3p;
-
     if (f > NO_SQUARES)
     {
         short piece;
@@ -166,9 +155,14 @@ algbr(short f, short t, short flag)
 
     if ((f == t) && ((f != 0) || (t != 0)))
     {
-#if !defined BAREBONES
-      printz("error in algbr: FROM=TO=%d, flag=0x%4x\n",t,flag);
-#endif
+        if (!barebones)
+        {
+            if (NOT_CURSES)
+                printf("error in algbr: FROM=TO=%d, flag=0x%4x\n", t, flag);
+            else
+                printw("error in algbr: FROM=TO=%d, flag=0x%4x\n", t, flag);
+        }
+
         mvstr[0][0] = mvstr[1][0] = mvstr[2][0] = mvstr[3][0] = '\0';
     }
     else if ((flag & dropmask) != 0)
@@ -231,7 +225,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
     static struct leaf xnode;
     struct leaf  *node;
     short i, l, local_flags;
-    char buffer[60], buf2[60];
+    char buffer[60];
 
     /* check and remove quality flags */
     for (i = local_flags = 0, l = strlen(s); i < l; i++)
@@ -300,19 +294,18 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
         {
             UnmakeMove(opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
 
-#ifdef NONDSP
-/* Illegal move in check */
-#ifdef XSHOGI
-	  printz ("Illegal move (in check) %s",mvstr[0]);
-#else
-	  printz (CP[77], mvstr[0]);
-#endif
-          printz ("\n");
-#else
+            if (NOT_CURSES)
+            {
+                /* Illegal move in check */
+                printf(CP[77], mvstr[0]);
+                printf("\n");
+            }
+            else
+            {
                 /* Illegal move in check */
                 sprintf(buffer, CP[77], s);
                 ShowMessage(buffer);
-#endif
+            }
 
             return false;
         }
@@ -343,7 +336,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
             {
                 if (IsCheckmate(opponent ^ 1, -1, -1))
                 {
-                    char buf[20], buf2[20];
+                    char buf[20];
 
                     sprintf(buf, "%s mates!\n", ColorStr[opponent]);
                     ShowMessage(buf);
@@ -354,57 +347,26 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
             return true;
         }
     }
-#ifdef NONDSP
-/* Illegal move */
-#ifdef XSHOGI
-  printz ("Illegal move (no match) %s\n", s);
-#else
-  printz (CP[75], s);
-#endif
-#ifdef DEBUG8
-  if (1)
+
+    if (NOT_CURSES)
     {
-      FILE *D;
-      int r, c, side, l;
-      extern unsigned short PrVar[];
-      D = fopen ("/tmp/DEBUG", "a+");
-      pnt = TrPnt[2];
-      fprintf (D, "resp = %d\n", ResponseTime);
-      fprintf (D, "iop = %d\n", iop);
-      fprintf (D, "matches = %d\n", cnt);
-      algbr (hint >> 8, hint & 0xff, (short) 0);
-      fprintf (D, "hint %s\n", mvstr[0]);
-      fprintf (D, "inout move is %s\n", s);
-      for (r = 1; PrVar[r]; r++)
-	{
-	  algbr (PrVar[r] >> 8, PrVar[r] & 0xff, (short) 0);
-	  fprintf (D, " %s", mvstr[0]);
-	}
-      fprintf (D, "\n");
-      fprintf (D, "legal move are \n");
-      while (pnt < TrPnt[3])
-	{
-	  node = &Tree[pnt++];
-	  algbr (node->f, node->t, (short) node->flags);
-	  fprintf (D, "%s %s %s %s\n", mvstr[0], mvstr[1], mvstr[2], mvstr[3]);
-	}
-      debug_position (D);
-      fclose (D);
-      abort ();
+        /* Illegal move */
+        printf (CP[75], s);
     }
-#endif
-#else
-/* Illegal move */
-  sprintf(buffer,CP[76],s);
-  ShowMessage (buffer);
-#endif
-#if !defined BAREBONES
-  if (cnt > 1) {
-    sprintf(buffer,CP[32],s);
-    ShowMessage(buffer);
-  }
-#endif 
-  return (false);
+    else /* Curses. */
+    {
+        /* Illegal move */
+        sprintf(buffer, CP[76], s);
+        ShowMessage(buffer);
+    }
+
+    if (!barebones && (cnt > 1))
+    {
+        sprintf(buffer, CP[32], s);
+        ShowMessage(buffer);
+    }
+
+    return false;
 }
 
 
@@ -485,7 +447,16 @@ GetGame(void)
     {
         /* Enter file name */
         ShowMessage(CP[63]);
-      scanz ("%s", fname);
+
+        if (NOT_CURSES)
+        {
+            scanf("%s", fname);
+        }
+        else
+        {
+            fflush(stdout);
+            scanw("%s", fname);
+        }
     }
 
     /* shogi.000 */
@@ -505,6 +476,8 @@ GetGame(void)
         else
             opponent = white;
 
+        /* FIXME: write a skipn() function so that we can get
+         * 3 skips by doing skipn(3) */
         skip();
         skip();
         skip();
@@ -627,7 +600,6 @@ GetGame(void)
         {
             struct GameRec  *g;
             int side = computer;
-            short f;
 
             side = side ^ 1;
             ++GameCnt;
@@ -693,6 +665,7 @@ GetGame(void)
 }
 
 
+
 void
 SaveGame(void)
 {
@@ -711,7 +684,16 @@ SaveGame(void)
     {
         /* Enter file name */
         ShowMessage(CP[63]);
-      scanz ("%s", fname);
+
+        if (NOT_CURSES)
+        {
+            scanf("%s", fname);
+        }
+        else
+        {
+            fflush(stdout);
+            scanw("%s", fname);
+        }
     }
 
     if (fname[0] == '\0')        /* shogi.000 */
@@ -803,11 +785,7 @@ SaveGame(void)
             t = (g->gmove & 0xFF);
             algbr(f, t, g->flags);
 
-#ifdef THINK_C
             fprintf(fd, "%c%c%-5s %6d %5d %7ld %6ld %5d  0x%08lx 0x%08lx",
-#else
-	  fprintf (fd, "%c%c%-5s %6d %5d %7ld %6ld %5d  0x%08x 0x%08x",
-#endif
                     ((f > NO_SQUARES)
                      ? ' '
                      : (is_promoted[g->fpiece] ? '+' : ' ')),
@@ -843,9 +821,10 @@ SaveGame(void)
 
 
 
-
-#if !defined XSHOGI
-
+/*
+ * GetXGame, SaveXGame and BookGame used to only be defined if
+ * xshogi wasn't defined -- wonder why?
+ */
 
 void
 GetXGame(void)
@@ -858,7 +837,17 @@ GetXGame(void)
 
     /* Enter file name */
     ShowMessage(CP[63]);
-  scanz ("%s", fname);
+
+    if (NOT_CURSES)
+    {
+        scanf("%s", fname);
+    }
+    else
+    {
+        fflush(stdout);
+        scanw("%s", fname);
+    }
+
     if (fname[0] == '\0') /* XSHOGI.position.read */
         strcpy(fname, CP[205]);
 
@@ -985,7 +974,16 @@ SaveXGame(void)
 
     /* Enter file name */
     ShowMessage(CP[63]);
-  scanz ("%s", fname);
+
+    if (NOT_CURSES)
+    {
+        scanf("%s", fname);
+    }
+    else
+    {
+        fflush(stdout);
+        scanw("%s", fname);
+    }
 
     if (fname[0] == '\0') /* XSHOGI.position.read */
         strcpy(fname, CP[205]);
@@ -1051,23 +1049,12 @@ SaveXGame(void)
 }
 
 
-
-#endif /* !XSHOGI */
-
-
-
-
-#if !defined XSHOGI
-
-
 void
 BookSave(void)
 {
     FILE *fd;
     char fname[256], sflags[4];
-  short sq, i, j, c, f, t;
-  char p;
-  short side, piece;
+    short i, j, f, t;
 
     if (savefile[0])
     {
@@ -1077,7 +1064,16 @@ BookSave(void)
     {
         /* Enter file name */
         ShowMessage(CP[63]);
-      scanz ("%s", fname);
+
+        if (NOT_CURSES)
+        {
+            scanf("%s", fname);
+        }
+        else
+        {
+            fflush(stdout);
+            scanw("%s", fname);
+        }
     }
 
     if (fname[0] == '\0')
@@ -1159,28 +1155,21 @@ BookSave(void)
 }
 
 
-#endif /* !XSHOGI */
-
 
 void
 ListGame(void)
 {
     FILE *fd;
     short i, f, t;
-#ifndef MSDOS
     time_t when;
     char fname[256], dbuf[256];
-#else
-  char fname[256];
-#endif
 
-  if (listfile[0])
-    strcpy (fname, listfile);
-  else
+    if (listfile[0])
     {
-#ifdef MSDOS
-      sprintf (fname, "shogi.lst");
-#else
+        strcpy(fname, listfile);
+    }
+    else
+    {
         time(&when);
         strncpy(dbuf, ctime(&when), 20);
         dbuf[7]  = '\0';
@@ -1204,7 +1193,6 @@ ListGame(void)
             if (fname[i] == ' ')
                 fname[i] = '0';
         }
-#endif /* MSDOS */
     }
 
     fd = fopen(fname, "w");
@@ -1254,26 +1242,6 @@ ListGame(void)
         if ((i % 2) == 0)
         {
             fprintf(fd, "\n");
-#ifdef DEBUG40
-	  if (computer == white)
-	    fprintf (fd, " %d %d %d %d %d %d %d\n",
-		     GameList[i].d1,
-		     GameList[i].d2,
-		     GameList[i].d3,
-		     GameList[i].d4,
-		     GameList[i].d5,
-		     GameList[i].d6,
-		     GameList[i].d7);
-	  else
-	    fprintf (fd, " %d %d %d %d %d %d %d\n",
-		     GameList[i - 1].d1,
-		     GameList[i - 1].d2,
-		     GameList[i - 1].d3,
-		     GameList[i - 1].d4,
-		     GameList[i - 1].d5,
-		     GameList[i - 1].d6,
-		     GameList[i - 1].d7);
-#endif
         }
         else
         {
@@ -1401,7 +1369,6 @@ Undo(void)
         Book = false;
 }
 
-#if !defined XSHOGI
 
 
 void
@@ -1476,15 +1443,10 @@ TestSpeed(void(*f)(short side, short ply,
 #ifdef HAVE_GETTIMEOFDAY
     gettimeofday(&tv, NULL);
     t1 = (tv.tv_sec*100 + (tv.tv_usec/10000));
-#elif defined THINK_C || defined MSDOS
-  t1 = clocktime();
 #else
     t1 = time(0);
 #endif
 
-#ifdef DEBUG_EVAL
-  debug_moves = true;
-#endif
     for (i = 0; i < j; i++)
     {
         f(opponent, 2, -1, true);
@@ -1498,14 +1460,9 @@ TestSpeed(void(*f)(short side, short ply,
 #endif
     }
 
-#ifdef DEBUG_EVAL
-  debug_moves = false;
-#endif
 #ifdef HAVE_GETTIMEOFDAY
     gettimeofday(&tv, NULL);
     t2 = (tv.tv_sec * 100 + (tv.tv_usec / 10000));
-#elif defined THINK_C || defined MSDOS
-  t2 = clocktime();
 #else
     t2 = time(0);
 #endif
@@ -1520,73 +1477,14 @@ TestSpeed(void(*f)(short side, short ply,
     rate = (((et) ? ((cnt * 100) / et) : 0));
 
 #ifdef DYNAMIC_ZNODES
-  if ( rate > 0 )
-    znodes = rate;
+    if (rate > 0)
+        znodes = rate;
 #endif
-  /*printz ("Nodes= %ld Nodes/sec= %ld\n", cnt, rate);*/
-#ifdef NONDSP
-  printz (CP[91], cnt, rate);
-#ifdef DEBUG9
-  for (j = TrPnt[2]; j < TrPnt[3]; j++)
-    {
-      struct leaf  *node = &Tree[j];
-      algbr (node->f, node->t, node->flags);
-#ifdef DEBUG_EVAL
-      if ( debug_eval )
- 	{                                        
-#if defined FIELDBONUS || defined DROPBONUS
-	  if ( node->score <= DONTUSE )
-            fprintf (debug_eval_file, "%s %s %s %s DONTUSE", 
-              mvstr[0], mvstr[1], mvstr[2], mvstr[3]);
-          else
-            fprintf (debug_eval_file, "%s %s %s %s score %d INC %d", 
-              mvstr[0], mvstr[1], mvstr[2], mvstr[3],node->score,node->INCscore);
-#else
-	  if ( node->score <= DONTUSE )
-            fprintf (debug_eval_file, "%s %s %s %s DONTUSE", 
-              mvstr[0], mvstr[1], mvstr[2], mvstr[3]);    
-	  else
-            fprintf (debug_eval_file, "%s %s %s %s score %d", 
-              mvstr[0], mvstr[1], mvstr[2], mvstr[3], node->score);
-#endif
-          if ( node->flags )
-	    { char s[80];
-	      FlagString(node->flags, s);
-	      fprintf(debug_eval_file,"%s",s);
-	    } 
-#ifdef HISTORY
-          { short mv;
-            unsigned short hi0, hi1;
-            mv = (node->f << 8) | node->t;
-            if ( node->flags & promote ) mv |= 0x80;
-            hi0 = hindex(0,mv);
-            hi1 = hindex(1,mv);
-            fprintf (debug_eval_file, " mv=%x hi0=%x hi1=%x",mv, hi0, hi1); 
-          }
-#endif 
-          fprintf (debug_eval_file, "\n");
-	} else
-#endif                          
-#if defined FIELDBONUS || defined DROPBONUS
-	  if ( node->score <= DONTUSE )
-            printf ("%s %s %s %s DONTUSE %x\n", 
-              mvstr[0], mvstr[1], mvstr[2], mvstr[3],node->flags);
-	  else
-            printf ("%s %s %s %s score %d INC %d %x\n", 
-              mvstr[0], mvstr[1], mvstr[2], mvstr[3],node->score,node->INCscore,node->flags);
-#else                                               
-	  if ( node->score <= DONTUSE )
-            printf ("%s %s %s %s DONTUSE %x\n", 
-              mvstr[0], mvstr[1], mvstr[2], mvstr[3],node->flags);
-	  else
-            printf ("%s %s %s %s score %d %x\n", 
-              mvstr[0], mvstr[1], mvstr[2], mvstr[3],node->score,node->flags);
-#endif
-    }
-#endif
-#else
-  ShowNodeCnt (cnt);
-#endif
+
+    if (NOT_CURSES)
+        printf(CP[91], cnt, rate);
+    else
+        ShowNodeCnt(cnt);
 }
 
 
@@ -1603,8 +1501,6 @@ TestPSpeed(short(*f) (short side), unsigned j)
 #ifdef HAVE_GETTIMEOFDAY
     gettimeofday(&tv, NULL);
     t1 = (tv.tv_sec * 100 + (tv.tv_usec / 10000));
-#elif defined THINK_C || defined MSDOS
-  t1 = clocktime();
 #else
     t1 = time(0);
 #endif
@@ -1615,8 +1511,6 @@ TestPSpeed(short(*f) (short side), unsigned j)
 #ifdef HAVE_GETTIMEOFDAY
     gettimeofday(&tv, NULL);
     t2 = (tv.tv_sec * 100 + (tv.tv_usec / 10000));
-#elif defined THINK_C || defined MSDOS
-  t2 = clocktime();
 #else
     t2 = time(0);
 #endif
@@ -1630,24 +1524,20 @@ TestPSpeed(short(*f) (short side), unsigned j)
 
     rate = (et) ? ((cnt * 100) / et) : 0;
 
-  /*printz ("Nodes= %ld Nodes/sec= %ld\n", cnt, rate);*/
-#ifdef NONDSP
-  printz (CP[91], cnt, rate);
-#else
-  ShowNodeCnt (cnt);
-#endif
+    /* printf("Nodes= %ld Nodes/sec= %ld\n", cnt, rate); */
+
+    if (NOT_CURSES)
+        printf(CP[91], cnt, rate);
+    else
+        ShowNodeCnt(cnt);
 }
 
-
-#endif /* XSHOGI */
 
 
 void
 SetOppTime(char *s)
 {
     char *time;
-  char buffer[20];
-  tmp = 0;
     int m, t, sec;
 
     sec = 0;
@@ -1670,10 +1560,11 @@ SetOppTime(char *s)
 
     ElapsedTime(COMPUTE_AND_INIT_MODE);
 
-#if defined XSHOGI
-  /* just to inform xshogi about availability of otime command */
-  printz ("otime %d %d\n", t, m);
-#endif
+    if (XSHOGI)
+    {
+        /* just to inform xshogi about availability of otime command */
+        printf("otime %d %d\n", t, m);
+    }
 }
 
 
@@ -1682,7 +1573,6 @@ void
 SetMachineTime(char *s)
 {
     char *time;
-  long tmp = 0;
     int m, t, sec;
 
     time = &s[strlen(CP[197])];
@@ -1705,53 +1595,18 @@ SetMachineTime(char *s)
 
     ElapsedTime(COMPUTE_AND_INIT_MODE);
 
-#if defined XSHOGI
-  /* just to inform xshogi about availability of time command */
-  printz ("time %d %d\n", t, m);
-#endif
+    if (XSHOGI)
+    {
+        /* just to inform xshogi about availability of time command */
+        printf("time %d %d\n", t, m);
+    }
 }
 
 
-#if defined DEBUG || defined DEBUG_EVAL
-void debug_position (FILE *D)
-{       
-  short r, c, side, piece, l;
-  fprintf (D, "\n current board is\n\n");
-  for (piece = pawn; piece <= king; piece++)
-    if (c = Captured[white][piece]) 
-	  fprintf(D, "%i%c ",c,pxx[piece]);
-  fprintf (D, "\n");
-  for (c = 0; c < NO_COLS; c++)
-	fprintf (D, " %d", PawnCnt[white][c]); 
-  fprintf (D, "\n\n");
-  for (r = NO_ROWS-1; r >= 0; r--)
-      { char pc;
-	for (c = 0; c <= NO_COLS-1; c++)
-	  {
-	    l = locn (r, c);
-      	    pc = (is_promoted[board[l]] ? '+' : ' ');
-            if (color[l] == neutral)
-	      fprintf (D, " -");
-            else if (color[l] == black)
-	      fprintf (D, "%c%c", pc, qxx[board[l]]);
-            else
-	      fprintf (D, "%c%c", pc, pxx[board[l]]);
-	  }
-	fprintf (D, "\n");
-      }
-  fprintf (D, "\n");
-  for (c = 0; c < NO_COLS; c++)
-	fprintf (D, " %d", PawnCnt[black][c]); 
-  fprintf (D, "\n");
-  for (piece = pawn; piece <= king; piece++)
-    if (c = Captured[black][piece]) 
-	  fprintf(D, "%i%c ",c,pxx[piece]);
-  fprintf (D, "\n");
-}           
-#endif
-      
 
 
+
+/* FIXME!  This is truly the function from hell! */
 
 /*
  * Process the user's command. If easy mode is OFF (the computer is thinking
@@ -1792,24 +1647,6 @@ InputCommand(char *command)
         algbr((short) hint >> 8, (short) hint & 0xff, false);
         strcpy(s, mvstr[0]);
 
-#ifdef DEBUG12
-	if (1)
-	  {
-	    FILE *D;
-	    int r, c, l;
-	    extern unsigned short PrVar[];
-	    extern struct leaf  *root;
-	    D = fopen ("/tmp/DEBUGA", "a+");
-	    fprintf (D, "score = %d\n", root->score);
-	    fprintf (D, "inout move is %s\n", s);
-	    for (r = 1; PrVar[r]; r++)
-	      {
-		algbr (PrVar[r] >> 8, PrVar[r] & 0xff, (short) 0);
-		fprintf (D, " %s", mvstr[0]);
-	      }
-	    fclose (D);
-	  }
-#endif
 #if !defined NOPOST
         if (flag.post)
             GiveHint();
@@ -1821,12 +1658,16 @@ InputCommand(char *command)
             Sdepth = 0;
 
 #ifdef QUIETBACKGROUND
-#ifdef NONDSP
-	    PromptForMove ();
-#else
-	    ShowSidetoMove ();
-	    ShowPrompt ();
-#endif
+            if (NOT_CURSES)
+            {
+                PromptForMove();
+            }
+            else
+            {
+                ShowSidetoMove();
+                ShowPrompt();
+            }
+
             have_shown_prompt = true;
 #endif /* QUIETBACKGROUND */
 
@@ -1872,596 +1713,469 @@ InputCommand(char *command)
         if (!have_shown_prompt)
         {
 #endif /* QUIETBACKGROUND */
-#ifdef NONDSP
-	  PromptForMove ();
-#else
-	  ShowSidetoMove ();
-	  ShowPrompt ();
-#endif
+
+            if (NOT_CURSES)
+            {
+                PromptForMove();
+            }
+            else
+            {
+                ShowSidetoMove();
+                ShowPrompt();
+            }
+
 #ifdef QUIETBACKGROUND
-	}
-      have_shown_prompt = false;
-#endif /* QUIETBACKGROUND */
-      if ( command == NULL )
-	{
-#ifdef NONDSP
-          s[0] = sx[0] = '\0';
-          while (!sx[0])
-	    (void) gets (sx);
-#else
-          fflush (stdout);
-#if defined MSDOS || defined THINK_C
-          s[0] = '\0';
-          eof = ( gets (sx) == NULL );
-#else
-          eof = ( getstr (sx) == ERR );
-#endif
-#endif
         }
-      else
-	{
-	  strcpy (sx, command);
-	  done = true;
-	}
-      sscanf (sx, "%s", s);
-      if (eof)
-	ExitChess ();
-      if (s[0] == '\0')
-	continue;
-      if (strcmp (s, CP[131]) == 0)	/*bd*/
-	{
-#if defined XSHOGI
-	  xshogi = 0;
-#endif
-	  ClrScreen ();
-	  UpdateDisplay (0, 0, 1, 0);
-#if defined XSHOGI
-	  xshogi = 1;
-#endif
-	}
-      else if (strcmp (s, "post") == 0)
-	 flag.post = !flag.post;
-      else if (strcmp (s, CP[129]) == 0) /* noop */ ;	/*alg*/
-      else if ((strcmp (s, CP[180]) == 0) || (strcmp (s, CP[216]) == 0))	/* quit exit*/
-	flag.quit = true;
+
+        have_shown_prompt = false;
+#endif /* QUIETBACKGROUND */
+
+        if (command == NULL)
+        {
+            if (NOT_CURSES)
+            {
+                s[0] = sx[0] = '\0';
+
+                while(!sx[0])
+                    (void)fgets(sx, 256, stdin);
+            }
+            else
+            {
+                fflush(stdout);
+                eof = (getstr(sx) == ERR);
+            }
+        }
+        else
+        {
+            strcpy(sx, command);
+            done = true;
+        }
+
+        sscanf(sx, "%s", s);
+
+        if (eof)
+            ExitShogi();
+
+        if (s[0] == '\0')
+            continue;
+
+        if (strcmp(s, CP[131]) == 0)   /* bd -- display board */
+        {
+            /* FIXME: Hack alert! */
+            short old_xshogi = XSHOGI;
+
+            if (old_xshogi)
+                display_type = DISPLAY_RAW;
+
+            ClearScreen();
+            UpdateDisplay(0, 0, 1, 0);
+
+            if (old_xshogi)
+                display_type = DISPLAY_X;
+        }
+        else if (strcmp(s, "post") == 0)
+        {
+            flag.post = !flag.post;
+        }
+        else if (strcmp(s, CP[129]) == 0)
+        {
+            /* noop */ ; /* alg */
+        }
+        else if ((strcmp(s, CP[180]) == 0)
+                 || (strcmp(s, CP[216]) == 0))  /* quit exit */
+        {
+            flag.quit = true;
+        }
 #if !defined NOPOST
-      else if (strcmp (s, CP[178]) == 0)	/*post*/
-	{
-	  flag.post = !flag.post;
-	}
+        else if (strcmp(s, CP[178]) == 0)  /* post */
+        {
+            flag.post = !flag.post;
+        }
 #endif
-      else if ((strcmp (s, CP[191]) == 0) || (strcmp (s, CP[154]) == 0))	/*set edit*/
-	EditBoard ();
-#ifdef NONDSP
-      else if (strcmp (s, CP[190]) == 0)	/*setup*/
-	SetupBoard ();
-#endif
-      else if (strcmp (s, CP[156]) == 0)	/*first*/
-	{
-	  ok = true;
-	}
-      else if (strcmp (s, CP[162]) == 0)	/*go*/
-	{
-	  ok = true;
-	  flag.force = false;
-	  if (computer == black)
-	    {
-	      computer = white;
-	      opponent = black;
-	    }
-	  else
-	    {
-	      computer = black;
-	      opponent = white;
-	    }
-	}
-      else if (strcmp (s, CP[166]) == 0)	/*help*/
-	help ();
-      else if (strcmp (s, CP[221]) == 0)	/*material*/
-	flag.material = !flag.material;
-      else if (strcmp (s, CP[157]) == 0)	/*force*/
-#ifdef XSHOGI
-	{flag.force = true; flag.bothsides = false;}
-#else
-	{flag.force = !flag.force; flag.bothsides = false;}
-#endif
-      else if (strcmp (s, CP[134]) == 0)	/*book*/
-	Book = Book ? 0 : BOOKFAIL;
-      else if (strcmp (s, CP[172]) == 0)	/*new*/
-	{
-	  NewGame ();
-	  UpdateDisplay (0, 0, 1, 0);
-	}
-      else if (strcmp (s, CP[171]) == 0)	/*list*/
-	ListGame ();
-      else if (strcmp (s, CP[169]) == 0 || strcmp (s, CP[217]) == 0)	/*level clock*/
-	SelectLevel (sx);
-      else if (strcmp (s, CP[165]) == 0)	/*hash*/
-	flag.hash = !flag.hash;
-      else if (strcmp (s, CP[227]) == 0)	/*gamein*/
-	flag.gamein = !flag.gamein;
-      else if (strcmp (s, CP[226]) == 0)	/*beep*/
-	flag.beep = !flag.beep;
-      else if (strcmp (s, CP[197]) == 0)	/*time*/
-	{ SetMachineTime (sx); }
-      else if (strcmp (s, CP[228]) == 0)	/*otime*/
-	{ SetOppTime (sx); }
-      else if (strcmp (s, CP[33]) == 0)		/*Awindow*/
-	ChangeAlphaWindow ();
-      else if (strcmp (s, CP[39]) == 0)		/*Bwindow*/
-	ChangeBetaWindow ();
-      else if (strcmp (s, CP[183]) == 0)	/*rcptr*/
-	flag.rcptr = !flag.rcptr;
-      else if (strcmp (s, CP[168]) == 0)	/*hint*/
-	GiveHint ();
-      else if (strcmp (s, CP[135]) == 0)	/*both*/
-	{
-	  flag.bothsides = !flag.bothsides;
-          flag.force = false;
-	  Sdepth = 0;
-	  ElapsedTime (COMPUTE_AND_INIT_MODE);
-	  SelectMove (opponent, FOREGROUND_MODE);
-	  ok = true;
-	}
-      else if (strcmp (s, CP[185]) == 0)	/*reverse*/
-	{
-	  flag.reverse = !flag.reverse;
-	  ClrScreen ();
-	  UpdateDisplay (0, 0, 1, 0);
-	}
-      else if (strcmp (s, CP[195]) == 0)	/*switch*/
-	{
-	  computer = computer ^ 1;
-	  opponent = opponent ^ 1;
-	  xwndw = (computer == black) ? WXWNDW : BXWNDW;
-	  flag.force = false;
-	  Sdepth = 0;
-	  ok = true;
-	}
-      else if (strcmp (s, CP[203]) == 0)	/*black*/
-	{
-	  computer = white;
-	  opponent = black;
-	  xwndw = WXWNDW;
-	  flag.force = false;
-	  Sdepth = 0;
+        else if ((strcmp(s, CP[191]) == 0)
+                 || (strcmp(s, CP[154]) == 0))  /* set edit */
+        {
+            EditBoard();
+        }
+        else if (NOT_CURSES && (strcmp(s, CP[190]) == 0))  /* setup */
+        {
+            SetupBoard();
+        }
+        else if (strcmp(s, CP[156]) == 0)  /* first */
+        {
+            ok = true;
+        }
+        else if (strcmp(s, CP[162]) == 0)  /* go */
+        {
+            ok = true;
+            flag.force = false;
 
-	  /*
-           * ok = true; don't automatically start with black command
-           */
-	}
-      else if (strcmp (s, CP[133]) == 0)	/*white*/
-	{
-	  computer = black;
-	  opponent = white;
-	  xwndw = BXWNDW;
-	  flag.force = false;
-	  Sdepth = 0;
+            if (computer == black)
+            {
+                computer = white;
+                opponent = black;
+            }
+            else
+            {
+                computer = black;
+                opponent = white;
+            }
+        }
+        else if (strcmp(s, CP[166]) == 0)  /* help */
+        {
+            help();
+        }
+        else if (strcmp(s, CP[221]) == 0)  /* material */
+        {
+            flag.material = !flag.material;
+        }
+        else if (strcmp(s, CP[157]) == 0)  /* force */
+        {
+            if (XSHOGI)
+            {
+                flag.force = true;
+                flag.bothsides = false;
+            }
+            else
+            {
+                flag.force = !flag.force;
+                flag.bothsides = false;
+            }
+        }
+        else if (strcmp(s, CP[134]) == 0)  /* book */
+        {
+            Book = Book ? 0 : BOOKFAIL;
+        }
+        else if (strcmp(s, CP[172]) == 0)  /* new */
+        {
+            NewGame();
+            UpdateDisplay(0, 0, 1, 0);
+        }
+        else if (strcmp(s, CP[171]) == 0)  /* list */
+        {
+            ListGame();
+        }
+        else if ((strcmp(s, CP[169]) == 0)
+                 || (strcmp(s, CP[217]) == 0))  /* level clock */
+        {
+            SelectLevel(sx);
+        }
+        else if (strcmp(s, CP[165]) == 0)  /* hash */
+        {
+            flag.hash = !flag.hash;
+        }
+        else if (strcmp(s, CP[227]) == 0)  /* gamein */
+        {
+            flag.gamein = !flag.gamein;
+        }
+        else if (strcmp(s, CP[226]) == 0)  /* beep */
+        {
+            flag.beep = !flag.beep;
+        }
+        else if (strcmp(s, CP[197]) == 0)  /* time */
+        {
+            SetMachineTime(sx);
+        }
+        else if (strcmp(s, CP[228]) == 0)  /* otime */
+        {
+            SetOppTime(sx);
+        }
+        else if (strcmp(s, CP[33]) == 0)   /* Awindow */
+        {
+            ChangeAlphaWindow();
+        }
+        else if (strcmp(s, CP[39]) == 0)   /* Bwindow */
+        {
+            ChangeBetaWindow();
+        }
+        else if (strcmp(s, CP[183]) == 0)  /* rcptr */
+        {
+            flag.rcptr = !flag.rcptr;
+        }
+        else if (strcmp(s, CP[168]) == 0)  /* hint */
+        {
+            GiveHint();
+        }
+        else if (strcmp(s, CP[135]) == 0)  /* both */
+        {
+            flag.bothsides = !flag.bothsides;
+            flag.force = false;
+            Sdepth = 0;
+            ElapsedTime(COMPUTE_AND_INIT_MODE);
+            SelectMove(opponent, FOREGROUND_MODE);
+            ok = true;
+        }
+        else if (strcmp(s, CP[185]) == 0)  /* reverse */
+        {
+            flag.reverse = !flag.reverse;
+            ClearScreen();
+            UpdateDisplay(0, 0, 1, 0);
+        }
+        else if (strcmp(s, CP[195]) == 0)  /* switch */
+        {
+            computer = computer ^ 1;
+            opponent = opponent ^ 1;
+            xwndw = (computer == black) ? WXWNDW : BXWNDW;
+            flag.force = false;
+            Sdepth = 0;
+            ok = true;
+        }
+        else if (strcmp(s, CP[203]) == 0)  /* black */
+        {
+            computer = white;
+            opponent = black;
+            xwndw = WXWNDW;
+            flag.force = false;
+            Sdepth = 0;
 
-	  /*
-           * ok = true; don't automatically start with white command
-           */
-	}
-      else if (strcmp (s, CP[201]) == 0 && GameCnt > 0)	/*undo*/
-	{
-	  Undo ();
-	}
-      else if (strcmp (s, CP[184]) == 0 && GameCnt > 1)	/*remove*/
-	{
-	  Undo ();
-	  Undo ();
-	}
-#if !defined XSHOGI
-      else if (strcmp (s, CP[207]) == 0)	/*xget*/
-	GetXGame ();
-      else if (strcmp (s, "xsave") == 0)        /*xsave*/
-        SaveXGame ();
-      else if (strcmp (s, "bsave") == 0)        /*bsave*/
-        BookSave ();
-#endif
+            /*
+             * ok = true; don't automatically start with black command
+             */
+        }
+        else if (strcmp(s, CP[133]) == 0)  /* white */
+        {
+            computer = black;
+            opponent = white;
+            xwndw = BXWNDW;
+            flag.force = false;
+            Sdepth = 0;
+
+            /*
+             * ok = true; don't automatically start with white command
+             */
+        }
+        else if (strcmp(s, CP[201]) == 0 && GameCnt > 0)   /* undo */
+        {
+            Undo();
+        }
+        else if (strcmp(s, CP[184]) == 0 && GameCnt > 1)   /* remove */
+        {
+            Undo();
+            Undo();
+        }
+        /* CHECKME: are these next three correct? */
+        else if (!XSHOGI && strcmp(s, CP[207]) == 0)  /* xget */
+        {
+            GetXGame();
+        }
+        else if (!XSHOGI && strcmp(s, "xsave") == 0)        /* xsave */
+        {
+            SaveXGame();
+        }
+        else if (!XSHOGI && strcmp(s, "bsave") == 0)        /* bsave */
+        {
+            BookSave();
+        }
 #ifdef EASY_OPENINGS
-      else if (strcmp (s, "?") == 0 || strcmp (s, "!") == 0 || strcmp (s, "~") == 0)
+        else if ((strcmp(s, "?") == 0)
+                 || (strcmp(s, "!") == 0)
+                 || (strcmp(s, "~") == 0))
 #else
-      else if (strcmp (s, "?") == 0 || strcmp (s, "!") == 0)
+        else if ((strcmp(s, "?") == 0)
+                 || (strcmp(s, "!") == 0))
 #endif
-        FlagMove (*s); 
-      else if (strcmp (s, CP[160]) == 0)	/*get*/
-	GetGame ();
-      else if (strcmp (s, CP[189]) == 0)	/*save*/
-	SaveGame ();
-      else if (strcmp (s, CP[151]) == 0)	/*depth*/
-	ChangeSearchDepth ();
-#ifdef DEBUG
-      else if (strcmp (s, CP[147]) == 0)	/*debuglevel*/
-	ChangeDbLev ();
-#endif /* DEBUG */
-      else if (strcmp (s, CP[164]) == 0)	/*hashdepth*/
-	ChangeHashDepth ();
-      else if (strcmp (s, CP[182]) == 0)	/*random*/
-	dither = DITHER;
-      else if (strcmp (s, CP[229]) == 0)	/*hard*/
-	flag.easy = false;
-      else if (strcmp (s, CP[152]) == 0)	/*easy*/
-	flag.easy = !flag.easy;
-      else if (strcmp (s, CP[230]) == 0)	/*tsume*/
-        flag.tsume = !flag.tsume;
-      else if (strcmp (s, CP[143]) == 0)	/*contempt*/
-	SetContempt ();
-      else if (strcmp (s, CP[209]) == 0)	/*xwndw*/
-	ChangeXwindow ();
-      else if (strcmp (s, CP[186]) == 0)	/*rv*/
-	{
-	  flag.rv = !flag.rv;
-	  UpdateDisplay (0, 0, 1, 0);
-	}
-      else if (strcmp (s, CP[145]) == 0)	/*coords*/
-	{
-	  flag.coords = !flag.coords;
-	  UpdateDisplay (0, 0, 1, 0);
-	}
-      else if (strcmp (s, CP[193]) == 0)	/*stars*/
-	{
-	  flag.stars = !flag.stars;
-	  UpdateDisplay (0, 0, 1, 0);
-	}
-#if !defined XSHOGI
-      else if (strcmp (s, CP[5]) == 0)	        /*moves*/
-	{ short temp;
-#ifdef DEBUG_EVAL
-	  debug_eval = ((debug_eval_file = fopen(EVALFILE,"w")) != NULL);
-#endif
+        {
+            FlagMove(*s);
+        }
+        else if (strcmp(s, CP[160]) == 0)    /* get */
+        {
+            GetGame();
+        }
+        else if (strcmp(s, CP[189]) == 0)    /* save */
+        {
+            SaveGame();
+        }
+        else if (strcmp(s, CP[151]) == 0)    /* depth */
+        {
+            ChangeSearchDepth();
+        }
+        else if (strcmp(s, CP[164]) == 0)    /* hashdepth */
+        {
+            ChangeHashDepth();
+        }
+        else if (strcmp(s, CP[182]) == 0)    /* random */
+        {
+            dither = DITHER;
+        }
+        else if (strcmp(s, CP[229]) == 0)    /* hard */
+        {
+            flag.easy = false;
+        }
+        else if (strcmp(s, CP[152]) == 0)    /* easy */
+        {
+            flag.easy = !flag.easy;
+        }
+        else if (strcmp(s, CP[230]) == 0)    /* tsume */
+        {
+            flag.tsume = !flag.tsume;
+        }
+        else if (strcmp(s, CP[143]) == 0)    /* contempt */
+        {
+            SetContempt();
+        }
+        else if (strcmp(s, CP[209]) == 0)    /* xwndw */
+        {
+            ChangeXwindow();
+        }
+        else if (strcmp(s, CP[186]) == 0)    /* rv */
+        {
+            flag.rv = !flag.rv;
+            UpdateDisplay(0, 0, 1, 0);
+        }
+        else if (strcmp(s, CP[145]) == 0)    /* coords */
+        {
+            flag.coords = !flag.coords;
+            UpdateDisplay(0, 0, 1, 0);
+        }
+        else if (strcmp(s, CP[193]) == 0)    /* stars */
+        {
+            flag.stars = !flag.stars;
+            UpdateDisplay(0, 0, 1, 0);
+        }
+        else if (!XSHOGI && strcmp(s, CP[5]) == 0)          /* moves */
+        {
+            short temp;
+
 #if MAXDEPTH > 3
-	  if ( GameCnt > 0 ) {
-	    extern unsigned short PrVar[MAXDEPTH];
-	    SwagHt = (GameList[GameCnt].gmove == PrVar[1]) ? PrVar[2] : 0;
-	  } else      
+            if (GameCnt > 0)
+            {
+                extern unsigned short PrVar[MAXDEPTH];
+
+                SwagHt = (GameList[GameCnt].gmove == PrVar[1])
+                    ? PrVar[2] : 0;
+            }
+            else
 #endif
-	  SwagHt = 0;
-	  ShowMessage (CP[108]);  /*test movelist*/
-          temp = generate_move_flags;
-          generate_move_flags = true;
-	  TestSpeed (MoveList, 1);
-          generate_move_flags = temp;
-	  ShowMessage (CP[107]);  /*test capturelist*/
-	  TestSpeed (CaptureList, 1);
-	  ShowMessage (CP[85]);   /*test score position*/
-          ExaminePosition(opponent);
-	  TestPSpeed (ScorePosition, 1);
-#ifdef DEBUG_EVAL      
-	  if ( debug_eval ) fclose(debug_eval_file);
-	  debug_eval = false;
-#endif
-	}
-      else if (strcmp (s, CP[196]) == 0)	/*test*/
-	{
+                SwagHt = 0;
+
+            ShowMessage(CP[108]);  /* test movelist */
+            temp = generate_move_flags;
+            generate_move_flags = true;
+            TestSpeed(MoveList, 1);
+            generate_move_flags = temp;
+            ShowMessage(CP[107]);  /* test capturelist */
+            TestSpeed(CaptureList, 1);
+            ShowMessage(CP[85]);   /* test score position */
+            ExaminePosition(opponent);
+            TestPSpeed(ScorePosition, 1);
+        }
+        else if (!XSHOGI && strcmp(s, CP[196]) == 0)    /* test */
+        {
 #ifdef SLOW_CPU
-	  ShowMessage (CP[108]);/*test movelist*/
-	  TestSpeed (MoveList, 2000);
-	  ShowMessage (CP[107]);/*test capturelist*/
-	  TestSpeed (CaptureList, 3000);
-	  ShowMessage (CP[85]);/*test score position*/
-          ExaminePosition(opponent);
-	  TestPSpeed (ScorePosition, 1500);
+            ShowMessage(CP[108]); /* test movelist */
+            TestSpeed(MoveList, 2000);
+            ShowMessage(CP[107]); /* test capturelist */
+            TestSpeed(CaptureList, 3000);
+            ShowMessage(CP[85]); /* test score position */
+            ExaminePosition(opponent);
+            TestPSpeed(ScorePosition, 1500);
 #else
-	  ShowMessage (CP[108]);/*test movelist*/
-	  TestSpeed (MoveList, 20000);
-	  ShowMessage (CP[107]);/*test capturelist*/
-	  TestSpeed (CaptureList, 30000);
-	  ShowMessage (CP[85]);/*test score position*/
-          ExaminePosition(opponent);
-	  TestPSpeed (ScorePosition, 15000);
+            ShowMessage(CP[108]); /* test movelist */
+            TestSpeed(MoveList, 20000);
+            ShowMessage(CP[107]); /* test capturelist */
+            TestSpeed(CaptureList, 30000);
+            ShowMessage(CP[85]); /* test score position */
+            ExaminePosition(opponent);
+            TestPSpeed(ScorePosition, 15000);
 #endif
-	}                                             
-#ifdef DEBUG_EVAL
-      else if (strcmp (s, "eval") == 0)		/*eval*/
-	{             
-	  debug_eval = true;
-	  if ( debug_eval_file = fopen(EVALFILE,"w") ) {
-	    InitializeStats();
-	    ExaminePosition(opponent);
-	    fprintf (debug_eval_file, "\nscoring for %s to move...\n\n",
-		ColorStr[player]);
-	    ScorePosition (player);
-	    fclose (debug_eval_file);
-	  }
-	  debug_eval = false;
-	}        
-      else if (strcmp (s, "debug_eval") == 0)		/*debug_eval*/
-	{ 
-	  if ( debug_eval )
-	    {
-		fclose (debug_eval_file);
-		debug_eval = false;
-	    }
-	  else
-	    {   
-		debug_eval_file = fopen(EVALFILE,"w");
-		debug_eval = (debug_eval_file != NULL);         
-	    }
-	}        
-      else if (strcmp (s, "pattern") == 0)		/*pattern*/
-	{             
-	  debug_eval = true;
-	  if ( debug_eval_file = fopen(EVALFILE,"w") ) {
-	    short side;
-	    for (side=black; side<=white; side++) {
-	      short s = ScorePatternDistance (side); 
-	      fprintf (debug_eval_file, "\npattern distance score for %s is %d\n\n",
-		 ColorStr[side], s);
-	    }
-	    fclose (debug_eval_file);
-	  }
-	  debug_eval = false;
-	}        
-#endif /* DEBUG_EVAL */
-      else
-      if (strcmp (s, CP[179]) == 0)	/*p*/
-	ShowPostnValues ();
-      else if (strcmp (s, CP[148]) == 0)	/*debug*/
-	DoDebug ();
-#endif /* XSHOGI */
-      else
-	{
-	  if ( flag.mate )
-	    ok = true;
-	  else if ( ok = VerifyMove (s, VERIFY_AND_MAKE_MODE, &mv) )
-	    {     
-  	      /* check for repetition */
-	      short rpt = repetition(); 
-	      if ( rpt >= 3 )
-	        { DRAW = CP[101];  
-		  ShowMessage(DRAW);
-		  GameList[GameCnt].flags |= draw;
-		  flag.mate = true;
-	        }
-	      else
-		is_move = true;
-	    }
-	  Sdepth = 0;
-	}
+        }
+        else if (!XSHOGI && strcmp(s, CP[179]) == 0) /* p */
+        {
+            ShowPostnValues();
+        }
+        else if (!XSHOGI && strcmp(s, CP[148]) == 0)    /* debug */
+        {
+            DoDebug();
+        }
+        else
+        {
+            if (flag.mate)
+            {
+                ok = true;
+            }
+            else if ((ok = VerifyMove(s, VERIFY_AND_MAKE_MODE, &mv)))
+            {
+                /* check for repetition */
+                short rpt = repetition();
+
+                if (rpt >= 3)
+                {
+                    DRAW = CP[101];
+                    ShowMessage(DRAW);
+                    GameList[GameCnt].flags |= draw;
+
+                        flag.mate = true;
+                }
+                else
+                {
+                    is_move = true;
+                }
+            }
+
+            Sdepth = 0;
+        }
     }
 
-  ElapsedTime (COMPUTE_AND_INIT_MODE);
+    ElapsedTime(COMPUTE_AND_INIT_MODE);
 
-  if (flag.force)
+    if (flag.force)
     {
-      computer = opponent;
-      opponent = computer ^ 1;
+        computer = opponent;
+        opponent = computer ^ 1;
     }
-#if defined XSHOGI
-  /* add remaining time in milliseconds for xshogi */
-  if ( is_move )
-    printz ("%d. %s %ld\n", ++mycnt2, s, TimeControl.clock[player]*10);
+
+    if (XSHOGI)
+    {
+        /* add remaining time in milliseconds for xshogi */
+        if (is_move)
+        {
+            printf("%d. %s %ld\n",
+                   ++mycnt2, s, TimeControl.clock[player] * 10);
+        }
+
 #ifdef notdef /* optional pass best line to frontend with move */
-#if !defined NOPOST
-  if (flag.post && !flag.mate)
-    {
-      int i;
+#  if !defined NOPOST
 
-      printz (" %6d ", MSCORE);
-      for (i = 1; MV[i] > 0; i++)
-	{
-	  algbr ((short) (MV[i] >> 8), (short) (MV[i] & 0xFF), false);
-	  printz ("%5s ", mvstr[0]);
-	}
-    }
-#endif
-  printz ("\n");
-#endif
-#endif /* XSHOGI */
-  signal (SIGINT, TerminateSearch);
-#if !defined MSDOS && !defined THINK_C && !defined BORLAND_CPP
-  signal (SIGQUIT, TerminateSearch);
-#endif /* MSDOS */
-
-}
-
-
-#if defined NOFIONREAD
-#ifdef FIONREAD
-#undef FIONREAD
-#endif
-#endif
-
-
-
-
-#ifdef HAVE_GETTIMEOFDAY
-void
-ElapsedTime (ElapsedTime_mode iop)
-
-
-/*
- * Determine the time that has passed since the search was started. If the
- * elapsed time exceeds the target (ResponseTime+ExtraTime) then set timeout
- * to true which will terminate the search. 
- * iop = COMPUTE_MODE calculate et, bump ETnodes
- * iop = COMPUTE_AND_INIT_MODE calculate et, set timeout if time exceeded,
-  *		set reference time
- */
-
-{
-  struct timeval tv;
-  long current_time; 
-#if !defined MSDOS
-  int nchar;
-  extern int errno;
-  int i;
-#ifdef FIONREAD
-  if (i = ioctl ((int) 0, FIONREAD, &nchar))
-    {
-      perror ("FIONREAD");
-      fprintf (stderr,
-        "You probably have a non-ANSI <ioctl.h>; see README. %d %d %x\n",
-	i, errno, FIONREAD);
-      exit (1);
-    }
-
-  if (nchar)
-    {
-      if (!flag.timeout)
-	flag.back = true;
-      flag.bothsides = false;
-    }
-#endif /*FIONREAD*/
-#else
-  if (kbhit ())
-    {
-      if (!flag.timeout)
-	flag.back = true;
-      flag.bothsides = false;
-    }
-#endif /* MSDOS */
-  gettimeofday(&tv,NULL);
-  current_time = tv.tv_sec*100 + (tv.tv_usec/10000);
-#ifdef INTERRUPT_TEST
-  if ( iop == INIT_INTERRUPT_MODE )
-    {
-      itime0 = current_time;
-    }
-  else if ( iop == COMPUTE_INTERRUPT_MODE )
-    {                       
-      it = current_time - itime0;
-    }
-  else           
-#endif
-    {
-      et = current_time - time0;
-      ETnodes = NodeCnt + znodes;
-      if (et < 0)
-	{        
-#ifdef INTERRUPT_TEST
-	  printf("elapsed time %ld not positive\n", et);
-#endif
-          et = 0;
-	}
-      if (iop == COMPUTE_AND_INIT_MODE)
+        if (flag.post && !flag.mate)
         {
-          if (et > ResponseTime + ExtraTime && Sdepth > MINDEPTH)
-	    flag.timeout = true;
-          time0 = current_time;
+            int i;
+
+            printf(" %6d ", MSCORE);
+
+            for (i = 1; MV[i] > 0; i++)
+            {
+                algbr((short) (MV[i] >> 8), (short) (MV[i] & 0xFF), false);
+                printf("%5s ", mvstr[0]);
+            }
         }
-#if !defined NONDSP
-#ifdef QUIETBACKGROUND
-      if (!background)
-#endif /* QUIETBACKGROUND */
-        UpdateClocks ();
+#  endif
+        printf("\n");
 #endif
-   }
+    }
+
+    signal(SIGINT, TerminateSearch);
 }
 
-#else
+
+
 
 void
-ElapsedTime (ElapsedTime_mode iop)
-
-
-/*
- * Determine the time that has passed since the search was started. If the
- * elapsed time exceeds the target (ResponseTime+ExtraTime) then set timeout
- * to true which will terminate the search. iop = 0 calculate et bump ETnodes
- * iop = 1 calculate et set timeout if time exceeded, calculate et
- */
-
-{ 
-  long current_time;
-#if !defined MSDOS
-  int nchar;
-  extern int errno;
-  int i;
-#ifdef FIONREAD
-  if (i = ioctl ((int) 0, FIONREAD, &nchar))
-    {
-      perror ("FIONREAD");
-      fprintf (stderr,
-        "You probably have a non-ANSI <ioctl.h>; see README. %d %d %x\n",
-	i, errno, FIONREAD);
-      exit (1);
-    }
-
-  if (nchar)
-    {
-      if (!flag.timeout)
-	flag.back = true;
-      flag.bothsides = false;
-    }
-#endif /*FIONREAD*/
-#else
-  if (kbhit ())
-    {
-      if (!flag.timeout)
-	flag.back = true;
-      flag.bothsides = false;
-    }
-#endif /* MSDOS */
-#if defined THINK_C || defined MSDOS
-  et = ((current_time = clocktime()) - time0);
-#else
-  et = ((current_time = time ((long *) 0)) - time0) * 100;
-#endif
-#ifdef INTERRUPT_TEST
-  if ( iop == INIT_INTERRUPT_MODE )
-    {
-      itime0 = current_time;
-    }
-  else if ( iop == COMPUTE_INTERRUPT_MODE )
-    {                       
-      it = current_time - itime0;
-    }
-  else           
-#endif
-    {
-      ETnodes = NodeCnt + znodes;
-      if (et < 0)
-	{
-#ifdef INTERRUPT_TEST
-	  printf("elapsed time %ld not positive\n", et);
-#endif
-          et = 0;
-	}
-      if (iop == COMPUTE_AND_INIT_MODE)
-        {
-          if (et > ResponseTime + ExtraTime && Sdepth > MINDEPTH)
-    	  flag.timeout = true;
-          time0 = current_time;
-        }
-#if !defined NONDSP
-#ifdef QUIETBACKGROUND
-      if (!background)
-#endif /* QUIETBACKGROUND */
-        UpdateClocks ();
-#endif
-    }
-}
-#endif
-void
-SetTimeControl (void)
+SetTimeControl(void)
 {
-  if (TCflag)
+    if (TCflag)
     {
-      TimeControl.moves[black] = TimeControl.moves[white] = TCmoves;
-      TimeControl.clock[black] += 6000L * TCminutes + TCseconds * 100;
-      TimeControl.clock[white] += 6000L * TCminutes + TCseconds * 100;
+        TimeControl.moves[black] = TimeControl.moves[white] = TCmoves;
+        TimeControl.clock[black] += 6000L * TCminutes + TCseconds * 100;
+        TimeControl.clock[white] += 6000L * TCminutes + TCseconds * 100;
     }
-  else
+    else
     {
-      TimeControl.moves[black] = TimeControl.moves[white] = 0;
-      TimeControl.clock[black] = TimeControl.clock[white] = 0;
+        TimeControl.moves[black] = TimeControl.moves[white] = 0;
+        TimeControl.clock[black] = TimeControl.clock[white] = 0;
     }
-  flag.onemove = (TCmoves == 1);
-  et = 0;
-  ElapsedTime (COMPUTE_AND_INIT_MODE);
+
+    flag.onemove = (TCmoves == 1);
+    et = 0;
+    ElapsedTime(COMPUTE_AND_INIT_MODE);
 }
-
-#if defined XSHOGI
-void
-TerminateChess (int sig)
-{
-  ExitChess ();
-}
-
-#endif
-
-
-
 

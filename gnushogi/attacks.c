@@ -1,7 +1,9 @@
 /*
- * ataks.c - C source for GNU SHOGI
+ * FILE: attacks.c
  *
+ * ----------------------------------------------------------------------
  * Copyright (c) 1993, 1994, 1995 Matthias Mutz
+ * Copyright (c) 1999 Michael Vanier and the Free Software Foundation
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -10,9 +12,10 @@
  *
  * This file is part of GNU SHOGI.
  *
- * GNU Shogi is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation.
+ * GNU Shogi is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 1, or (at your option) any
+ * later version.
  *
  * GNU Shogi is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -22,107 +25,11 @@
  * You should have received a copy of the GNU General Public License along
  * with GNU Shogi; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * ----------------------------------------------------------------------
  *
  */
+
 #include "gnushogi.h"
-
-#ifdef DEBUG
-#include <assert.h>
-#endif
-
-
-#if defined DEBUG
-
-void 
-ataks (short side, long *a)
-/*
- * Fill array attack[][] with info about ataks to a square.  Bits 16-31 are set
- * if the piece (king..pawn) ataks the square.  Bits 0-15 contain a count of
- * total ataks to the square.
- */  
-                                                            
-{
-  short u, sq;
-  long c;
-#ifdef SAVE_NEXTPOS
-  short d;
-#else
-  unsigned char *ppos, *pdir;
-#endif
-  short i, piece; 
-  small_short *PL;
-
-  array_zero (a, NO_SQUARES * sizeof (a[0]));
-
-  PL = PieceList[side];
-  for (i = PieceCnt[side]; i >= 0; i--)
-    { short ptyp;
-      sq = PL[i];
-      piece = board[sq];
-      ptyp = ptype[side][piece];
-      c = control[piece];
-#ifdef SAVE_NEXTPOS
-      u = first_direction(ptyp,&d,sq);
-#else
-      ppos = (*nextpos[ptyp])[sq];
-      pdir = (*nextdir[ptyp])[sq];
-      u = ppos[sq];
-#endif
-      do {
-          a[u] = ((a[u]+1) | c);
-#ifdef SAVE_NEXTPOS
-          u = ((color[u] == neutral) ? next_position(ptyp,&d,sq,u)
-				     : next_direction(ptyp,&d,sq));
-#else
-          u = ((color[u] == neutral) ? ppos[u] : pdir[u]);
-#endif
-      } while (u != sq);
-   }
-}
-
-#endif
-
-
-#if defined DEBUG || defined DEBUG_EVAL
-
-void
-debug_ataks (FILE *D, long *atk)
-{              
-	short l,c,i;         
-	fprintf(D, "\n");
-	for (l = NO_ROWS-1; l >= 0; l--) {
-	  for (c = 0; c < NO_COLS; c++) {
-	    short sq = (l * NO_COLS) + c;
-	    long  v = atk[sq];
-	    short n = (short)(v & CNT_MASK);
-	    char s[20];
-	    fprintf(D,"%2d",n);
-	    strcpy(s,"");
-	    if ( v & ctlP  ) strcat(s,"P"); 
-	    if ( v & ctlPp ) strcat(s,"+P");
-	    if ( v & ctlL  ) strcat(s,"L"); 
-	    if ( v & ctlLp ) strcat(s,"+L"); 
-	    if ( v & ctlN  ) strcat(s,"N"); 
-	    if ( v & ctlNp ) strcat(s,"+N"); 
-	    if ( v & ctlS  ) strcat(s,"S"); 
-	    if ( v & ctlSp ) strcat(s,"+S"); 
-	    if ( v & ctlG  ) strcat(s,"G"); 
-	    if ( v & ctlB  ) strcat(s,"B"); 
-	    if ( v & ctlBp ) strcat(s,"+B"); 
-	    if ( v & ctlR  ) strcat(s,"R"); 
-	    if ( v & ctlRp ) strcat(s,"+R"); 
-	    if ( v & ctlK  ) strcat(s,"K");
-	    fprintf(D,s);
-	    for (i = strlen(s); i < 5; i++)
-		fprintf(D," ");
-	    fprintf(D," "); 
-	  }	                          
-	  fprintf(D,"\n");
-	}
-	fprintf(D, "\n");
-}
-
-#endif
 
 
 #define CHECK_DISTANCE
@@ -145,32 +52,6 @@ SqAttacked(short square, short side, short *blockable)
 
     if (MatchSignature(threats_signature[side]))
     {
-#ifdef DEBUG  
-    short i,n, sq;
-    long a[NO_SQUARES];
-    ataks(side,a);
-    for ( i = 0, n = -1; i < NO_SQUARES; i++ ) 
-      if (a[i] != attack[side][i]) {
-    	n = i; printf("attack #check error on square %d\n",i);
-      }
-    if ( n >= 0 ) {
-      debug_ataks (stdout, a);
-      debug_ataks (stdout, attack[side]);
-      debug_position (stdout);
-      printf("%d pieces\n",PieceCnt[side]);
-      for ( i = PieceCnt[side]; i>= 0; i-- ) {
-        short sq, piece;
-        sq = PieceList[side][i];
-        piece = board[sq];
-        printf("square %d is %d with piece %d\n", i, sq, piece);
-      }
-      printf("hashkey = %ld hashbd = %ld\n",hashkey,hashbd);
-      assert(a[n] == attack[side][n]);
-    }
-#endif  
-#ifdef notdef
-    printf("attack array for %s available for SqAttacked!\n",ColorStr[side]);
-#endif
         *blockable = true; /* don't know */
         return Anyattack(side, square);
     }

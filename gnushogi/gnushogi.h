@@ -1,7 +1,11 @@
 /*
- * gnushogi.h - Header file for GNU SHOGI
+ * FILE: gnushogi.h
  *
+ *     Main header file for GNU Shogi.
+ *
+ * ----------------------------------------------------------------------
  * Copyright (c) 1993, 1994, 1995 Matthias Mutz
+ * Copyright (c) 1999 Michael Vanier and the Free Software Foundation
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -10,9 +14,10 @@
  *
  * This file is part of GNU SHOGI.
  *
- * GNU Shogi is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation.
+ * GNU Shogi is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 1, or (at your option) any
+ * later version.
  *
  * GNU Shogi is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -22,281 +27,150 @@
  * You should have received a copy of the GNU General Public License along
  * with GNU Shogi; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * ----------------------------------------------------------------------
+ *
  */
 
+/* FIXME: this file needs to be reorganized in some rational manner. */
 
+#ifndef _GNUSHOGI_H_
+#define _GNUSHOGI_H_
 
+#include "../config.h"        /* Portability #defines. */
+#include "debug.h"
+#include "opts.h"          /* Various option-setting #defines.  */
 
-#if defined THINK_C
-
-/* OPT */
-/* #define XSHOGI */
-/* #define BAREBONES */
-#define SMALL_MEMORY
-#define SLOW_CPU
-/* #define SAVE_SSCORE */
-#if !defined EXTRA_2MB
-#define SAVE_PTYPE_DISTDATA
-/* #define SAVE_DISTDATA */
-#define SAVE_NEXTPOS
-#endif
-#define HARDTIMELIMIT
-#define DEEPSEARCHCUT
-#define NULLMOVE
-#define VERYBUGGY
-#define QUIETBACKGROUND
-/* #define HAVE_GETTIMEOFDAY */
-/* #define clocktime() (100l * clock() / CLOCKS_PER_SEC) */
-#define clocktime() (100l * time(0))
-#if defined NOTABLES
-#define NOTTABLE
-#else
-#if !defined DEBUG_TTABLE
-#define HISTORY
-/* #define EXACTHISTORY */
-#define CACHE
-#endif
-/* #define NOTTABLE */
-#endif
-#define SEMIQUIETBOOKGEN
-/* GENOPT */
-#define CHECKBONUS
-/* #define DROPBONUS */
-/* #define FIELDBONUS */
-/* #define TESUJIBONUS */
-#define EASY_OPENINGS
-/* FILES */
-#define LANGFILE "gnushogi.lng"
-#define BOOK "gnushogi.tbk"
-#define BINBOOK "gnushogi.bbk"
-/* #define HASHFILE "gnushogi.hsh" */
-#define PATTERNFILE "gnushogi.pat"
-/* #define DEBUG */    
-
-#define NOBYTEOPS
-#include <string.h>
-
-#define small_short char
-#define small_ushort unsigned char
-
-#elif defined(MSDOS) && !defined(__GO32__)
-
-/* OPT */
-/* #define XSHOGI */
-/* #define BAREBONES */
-#define SMALL_MEMORY
-#define SLOW_CPU
-/* #define SAVE_SSCORE */
-#define SAVE_PTYPE_DISTDATA
-/* #define SAVE_DISTDATA */
-#define SAVE_NEXTPOS
-#define HARDTIMELIMIT
-#define DEEPSEARCHCUT
-#define NULLMOVE
-#define VERYBUGGY
-/* #define QUIETBACKGROUND */
-/* #define HAVE_GETTIMEOFDAY */
-#define clocktime() (100l * time(0))
-#define HISTORY
-/* #define EXACTHISTORY */
-#define CACHE
-#define SEMIQUIETBOOKGEN
-/* #define NOTTABLE */
-/* GENOPT */
-#define CHECKBONUS
-/* #define DROPBONUS */
-/* #define FIELDBONUS */
-/* #define TESUJIBONUS */
-#define EASY_OPENINGS
-/* FILES */
-#define LANGFILE "gnushogi.lng"
-#define BOOK "gnushogi.tbk"
-#define BINBOOK "gnushogi.bbk"
-/* #define HASHFILE "gnushogi.hsh" */
-#define PATTERNFILE "gnushogi.pat"
-/* #define DEBUG */
-
-#define NOBYTEOPS
-/* #define NOMEMOPS */
-/* #include <mem.h> */
-
-#define small_short char
-#define small_ushort unsigned char
-
-#else
-
-#ifdef __STDC__
-#define small_short signed char
-#else
 /*
- * type small_short must cover -128..127. In case of trouble,
- * try to uncommend "signed". If this doesn't help, use short. 
+ * Display options.
  */
-#ifdef CHAR_IS_SIGNED
-#define small_short char
-#else
-#define small_short short
-#endif
-#endif
 
+typedef enum { DISPLAY_RAW, DISPLAY_CURSES, DISPLAY_X } display_t;
+extern display_t display_type;
+
+#define XSHOGI     (display_type == DISPLAY_X)
+#define NOT_CURSES ((display_type == DISPLAY_X) \
+  || (display_type == DISPLAY_RAW))
+
+
+/* Miscellaneous globals. */
+
+extern short hard_time_limit; /* If you exceed time limit, you lose.   */
+extern short barebones;       /* Don't print of stats for x interface. */
+extern short nolist;          /* Don't list game after exit.           */
+
+
+/*
+ * Options for various compilers/OSs.
+ */
+
+/*
+ * type small_short must cover -128 .. 127.  In case of trouble,
+ * try commenting out "signed".  If this doesn't help, use short.
+ */
+
+#define small_short  signed char
 #define small_ushort unsigned char
 
-#endif
 
-
-typedef small_short BYTE;      
-typedef small_ushort UBYTE;
-typedef short SHORT;
+typedef small_short    BYTE;
+typedef small_ushort   UBYTE;
+typedef short          SHORT;
 typedef unsigned short USHORT;
-typedef int INT;
-typedef unsigned int UINT;
-typedef long LONG;
-typedef unsigned long ULONG;
+typedef int            INT;
+typedef unsigned int   UINT;
+typedef long           LONG;
+typedef unsigned long  ULONG;
 
 
-#if defined(MSDOS) && !defined(__GO32__)
-#define HEAP_ALLOC(n) _fmalloc(n)        
-#define HEAP_FREE(p) _ffree(p)
-#else        
-#define far
-#define HEAP_ALLOC(n) malloc(n)        
-#define HEAP_FREE(p) free(p)
-#endif  
-
-
-
-
-#if defined NOBYTEOPS && defined NOMEMOPS
-#define array_copy(src,dst,len) \
-  { long i; char  *psrc=(char  *)src, *pdst=(char  *)dst;\
-    for (i=len; i; pdst[--i] = psrc[i]);\
+#if !defined(HAVE_MEMCPY) && !defined(HAVE_BCOPY)
+#  define array_copy(src, dst, len) \
+   { \
+       long i; \
+       char  *psrc = (char  *)src, *pdst = (char  *)dst; \
+       for (i = len; i; pdst[--i] = psrc[i]); \
+   }
+#  define array_zero(dst, len) \
+  { \
+      long i; \
+      char  *pdst = (char  *)dst; \
+      for (i = len; i; pdst[--i] = 0); \
   }
-#define array_zero(dst,len) \
-  { long i; char  *pdst=(char  *)dst;\
-    for (i=len; i; pdst[--i] = 0);\
-  }
-#elif defined NOBYTEOPS
-#ifdef MSDOS
-#define array_copy(src,dst,len) _fmemcpy(dst,src,len)
-#define array_zero(dst,len) _fmemset(dst,0,len)
-#else
-#define array_copy(src,dst,len) memcpy(dst,src,len)
-#define array_zero(dst,len) memset(dst,0,len)
-#endif
-#else
-#define array_copy(src,dst,len) bcopy(src,dst,len)
-#define array_zero(dst,len) bzero(dst,len)
+#elif !defined(HAVE_MEMCPY)   /* BSD and derivatives */
+#  define array_copy(src, dst, len) bcopy(src, dst, len)
+#  define array_zero(dst, len)      bzero(dst, len)
+#else /* System V and derivatives */
+#  define array_copy(src, dst, len) memcpy(dst, src, len)
+#  define array_zero(dst, len)      memset(dst, 0, len)
 #endif
 
-
-#if !defined(__STDC__) && !defined(MSDOS)
-#define const
-#endif
 
 #ifndef __GNUC__
-#define inline
+#  define inline
 #endif
 
-#include <stdio.h>
 
+/*
+ * Standard header files.
+ */
+
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <string.h>
+
+#include <sys/param.h>
+#include <sys/types.h>
+#include <sys/times.h>
+#include <sys/ioctl.h>
+
+
+#if TIME_WITH_SYS_TIME
+#  include <sys/time.h>
+#  include <time.h>
+#else
+#  if HAVE_SYS_TIME_H
+#    include <sys/time.h>
+#  else
+#    include <time.h>
+#  endif
+#endif
+
+
+#define RWA_ACC "r+"
+#define WA_ACC "w+"
 #ifdef BINBOOK
 extern char *binbookfile;
 #endif
+
 extern char *bookfile;
 extern short ahead;
 extern char  *xwin;
 extern char  *Lang;
-
+extern void movealgbr(short m, char *s);
 
 
 #define SEEK_SET 0
 #define SEEK_END 2
-#if defined DEBUG || defined DEBUG_EVAL
-     extern void ShowDBLine (char *, short, short,
-	    		short, short, short,
-	    		unsigned short *);
-     extern FILE *debugfd;
-     extern short debuglevel;
-       
-     extern void debug_position (FILE *D);
-     extern void debug_ataks (FILE *D, long *atk);
-#endif /* DEBUG */
 
-#include <ctype.h>
-#if !defined NO_STRING_INCLUDE
-#include <string.h>     
-#endif
-#include <stdlib.h>
-
-#ifdef THINK_C
-#define RWA_ACC "r+b"
-#define WA_ACC "w+b"
-#elif defined(MSDOS) && !defined(__GO32__)
-#include <time.h>
-#include <malloc.h>
-#define malloc(size) farmalloc(size)
-#define RWA_ACC "r+b"
-#define WA_ACC "w+b"
-#ifdef timeout
-#undef timeout
-#endif
-#define printz printf
-#define scanz scanf
-#else
-#define RWA_ACC "r+"
-#define WA_ACC "w+"
-#include <sys/param.h>
-#include <sys/types.h>
-#include <sys/times.h>
-#endif /* MSDOS */
-#if defined NONDSP || defined THINK_C || defined MSDOS
-#define printz printf
-#define scanz scanf
-#else
-#include <curses.h>
-#define scanz fflush(stdout),scanw
-#define printz printw
-#endif
-
-#ifdef notdef
-#if defined(__STDC__) || defined(MSDOS)
-/* <stdio.h> */
-     extern int fclose (FILE *);
-#ifndef __ultrix /* work around bug in c89 compiler --t.mann */
-     extern int fscanf (FILE *, const char *, ...);
-     extern int fprintf (FILE *, const char *, ...);
-#endif /*__ultrix*/
-     extern int fflush (FILE *);
-
-/* <stdlib.h> */
-     extern int abs (int);
-     extern int atoi (const char *);
-
-/* <time.h> */
-     extern long time (long *);
-
-/* <string.h> */
-     extern void *memset (void *, int, size_t);
-#endif
-#endif
-
-#define NO_PIECES 15
-#define MAX_CAPTURED 19
+#define NO_PIECES       15
+#define MAX_CAPTURED    19
 #define NO_PTYPE_PIECES 15
 #define NO_SQUARES      81
 #define NO_SQUARES_1    80
 #define NO_COLS          9
 #define NO_ROWS          9
 
-#if defined DEBUG || defined HASHFILE || defined CACHE
-#define PTBLBDSIZE (NO_SQUARES+NO_PIECES)
+#if defined HASHFILE || defined CACHE
+#  define PTBLBDSIZE (NO_SQUARES + NO_PIECES)
 #endif
 
+#include "dspwrappers.h"   /* Display functions. */
 #include "eval.h"
 
 #define SCORE_LIMIT 12000
 
-/* masks into upper 16 bits of ataks array */
+/* masks into upper 16 bits of attacks array */
 /* observe order of relative piece values */
 #define CNT_MASK 0x000000FF
 #define ctlP  0x00200000
@@ -315,7 +189,7 @@ extern char  *Lang;
 #define ctlK  0x00000100
 
 /* attack functions */
-#define Pattack(c, u) (attack[c][u] > ctlP)
+#define Pattack(c, u)   (attack[c][u] > ctlP)
 #define Anyattack(c, u) (attack[c][u] != 0)
 
 /* hashtable flags */
@@ -352,6 +226,7 @@ extern char  *Lang;
 #define neutral 2
 
 /* piece code defines */
+/* CHECKME: Replace with an enum? */
 #define no_piece 0
 #define pawn     1
 #define lance    2
@@ -412,7 +287,6 @@ extern char  *Lang;
 #define rxx (CP[4])
 #define cxx (CP[3])
 
-/***************************************************************************/
 /***************** Table limits ********************************************/
 
 /*
@@ -433,21 +307,13 @@ extern char  *Lang;
 #    endif
 #  endif
 #else
-#ifdef DEBUG
-#define vttblsz (8001)
-#else /* !DEBUG */
 #  define vttblsz (100001)
-#endif
 #endif
 
 #if defined SMALL_MEMORY
 #  define MINTTABLE (0)
 #else
-#ifdef DEBUG
-#define MINTTABLE (2000)	/* min ttable size -1 */
-#else
 #  define MINTTABLE (8000)    /* min ttable size -1 */
-#endif
 #endif
 
 #define ttblsz vttblsz
@@ -467,7 +333,7 @@ extern char  *Lang;
 #define MAXMOVES 300            /* max number of half moves in a game */
 #define CPSIZE   235            /* size of lang file max */
 
-#if defined THINK_C || defined(MSDOS) && !defined(__GO32__) || defined SMALL_MEMORY
+#if defined SMALL_MEMORY
 #  if defined SAVE_SSCORE
 #    define ETABLE (1 << 10)      /* static eval cache */
 #  else
@@ -478,11 +344,7 @@ extern char  *Lang;
 #    endif
 #  endif
 #else
-#ifdef DEBUG
-#define ETABLE (1001)
-#else
 #  define ETABLE (10001)          /* static eval cache */
-#endif
 #endif
 
 /***************** tuning paramaters *******************/
@@ -644,15 +506,15 @@ struct hashentry
 };
 
 #if defined HASHFILE || defined CACHE
-     struct etable
-     { 
-	unsigned long ehashbd;
-	short escore[2];
+struct etable
+{
+    unsigned long ehashbd;
+    short escore[2];
 #if !defined SAVE_SSCORE
-	short sscore[NO_SQUARES];
+    short sscore[NO_SQUARES];
 #endif
-	short score;
-	small_short hung[2];
+    short score;
+    small_short hung[2];
 #ifdef CACHETEST
     unsigned char bd[PTBLBDSIZE];
 #endif /* CACHETEST */
@@ -665,6 +527,8 @@ extern etable_field  *etab[2];
 #endif
 
 /*
+ * CHECKME! Is this valid?
+ *
  * persistent transposition table. By default, the size is (1 << vfilesz).
  * If you change the size, be sure to run gnushogi -c [vfilesz]
  * before anything else.
@@ -709,15 +573,6 @@ struct GameRec
     short Game50;            /* flag for repetition */
     long  nodes;              /* nodes searched for this move */
     unsigned long hashkey, hashbd;   /* board key before this move */
-#ifdef DEBUG40
-       int d1;
-       int d2;
-       int d3;
-       int d4;
-       int d5;
-       int d6;
-       int d7;
-#endif
 };
 
 
@@ -759,202 +614,202 @@ struct flags
 extern FILE *debugfile;
 
 #ifndef EVALFILE
-#ifdef THINK_C
-#define EVALFILE "EVAL"
-#else
 #define EVALFILE "/tmp/EVAL"
-#endif
 #endif
 
 extern FILE *debug_eval_file;
-extern short debug_eval;
 extern short debug_moves;
 
 
 #ifdef HISTORY
-     extern short use_history;
-     extern unsigned short  *history;
+extern short use_history;
+extern unsigned short  *history;
 #endif
-     extern long znodes;
 
-     extern char ColorStr[2][10];
-#ifdef DEBUG_EVAL
-     extern char *PieceStr[NO_PIECES];
-#endif
-     extern char mvstr[4][6]; 
-     extern unsigned short MV[MAXDEPTH];
-     extern int MSCORE;
-     extern int mycnt1, mycnt2;
-     extern short ahead;
-     extern short xshogi;
-     extern struct leaf rootnode;
-     extern struct leaf  *Tree;
-     extern struct leaf  *root;
-     extern char savefile[], listfile[];
-     extern short TrPnt[];
-     extern small_short board[], color[]; 
-     extern const small_short sweep[NO_PIECES]; 
-     extern small_short PieceList[2][NO_SQUARES], PawnCnt[2][NO_COLS];
-     extern small_short Captured[2][NO_PIECES];
+extern long znodes;
 
-#ifdef NOMEMSET
-#define ClearCaptured() \
-  { short piece, color;\
-    for (color = black; color <= white; color++)\
-      for (piece = 0; piece < NO_PIECES; piece++)\
-	Captured[color][piece] = 0;\
+extern char ColorStr[2][10];
+
+extern char mvstr[4][6];
+extern unsigned short MV[MAXDEPTH];
+extern int MSCORE;
+extern int mycnt1, mycnt2;
+extern short ahead;
+extern struct leaf rootnode;
+extern struct leaf  *Tree;
+extern struct leaf  *root;
+extern char savefile[], listfile[];
+extern short TrPnt[];
+extern small_short board[], color[];
+extern const small_short sweep[NO_PIECES];
+extern small_short PieceList[2][NO_SQUARES], PawnCnt[2][NO_COLS];
+extern small_short Captured[2][NO_PIECES];
+
+#ifndef HAVE_MEMSET
+#  define ClearCaptured() \
+  { \
+      short piece, color; \
+      for (color = black; color <= white; color++) \
+          for (piece = 0; piece < NO_PIECES; piece++) \
+              Captured[color][piece] = 0; \
   }
 #else
-#define ClearCaptured() \
-  memset ((char *)Captured, 0,(unsigned long)sizeof(Captured))
-#endif /* NOMEMSET */
+#  define ClearCaptured() \
+  memset((char *)Captured, 0, (unsigned long)sizeof(Captured))
+#endif /* HAVE_MEMSET */
 
-     extern small_short Mvboard[];
+extern small_short Mvboard[];
 
 #if !defined SAVE_SVALUE
-     extern short svalue[NO_SQUARES];
+extern short svalue[NO_SQUARES];
 #endif
-     extern short pscore[2]; /* eval.c */
-     extern int EADD; /* eval.c */
-     extern int EGET; /* eval.c */
-     extern struct flags flag;
-     extern short opponent, computer, INCscore;
-     extern short WAwindow, BAwindow, WBwindow, BBwindow;
-     extern short dither, player;
-     extern short xwndw, contempt;
-     extern long ResponseTime, ExtraTime, TCleft, MaxResponseTime, et, et0, time0, ft;
-     extern int TCcount;
+
+extern short pscore[2]; /* eval.c */
+extern int EADD; /* eval.c */
+extern int EGET; /* eval.c */
+extern struct flags flag;
+extern short opponent, computer, INCscore;
+extern short WAwindow, BAwindow, WBwindow, BBwindow;
+extern short dither, player;
+extern short xwndw, contempt;
+extern long  ResponseTime, ExtraTime, TCleft,
+    MaxResponseTime, et, et0, time0, ft;
+extern int   TCcount;
+
 #ifdef INTERRUPT_TEST
-     extern long itime0, it;
+extern long itime0, it;
 #endif
-     extern long reminus, replus;
-     extern long GenCnt, NodeCnt, ETnodes, EvalNodes, HashAdd, HashCnt, HashCol, THashCol,
-      FHashCnt, FHashAdd;
-     extern short HashDepth, HashMoveLimit;
-     extern struct GameRec  *GameList;
-     extern short GameCnt, Game50;
-     extern short Sdepth, MaxSearchDepth;
-     extern int Book;
-     extern struct TimeControlRec TimeControl;
-     extern int TCadd;
-     extern short TCflag, TCmoves, TCminutes, TCseconds, OperatorTime;
-     extern int timecomp[MINGAMEIN], timeopp[MINGAMEIN];
-     extern int compptr,oppptr;
-     extern short XCmore, XCmoves[], XCminutes[], XCseconds[], XC;
-     extern const short otherside[];
-     extern const small_short Stboard[];
-     extern const small_short Stcolor[];
-     extern unsigned short hint;
-     extern short TOflag;
-     extern short stage, stage2;
 
-#define in_opening_stage (!flag.tsume && (stage < 33))
+extern long  reminus, replus;
+extern long  GenCnt, NodeCnt, ETnodes, EvalNodes, HashAdd, HashCnt,
+    HashCol, THashCol, FHashCnt, FHashAdd;
+extern short HashDepth, HashMoveLimit;
+extern struct GameRec  *GameList;
+extern short GameCnt, Game50;
+extern short Sdepth, MaxSearchDepth;
+extern int   Book;
+extern struct TimeControlRec TimeControl;
+extern int   TCadd;
+extern short TCflag, TCmoves, TCminutes, TCseconds, OperatorTime;
+extern int   timecomp[MINGAMEIN], timeopp[MINGAMEIN];
+extern int   compptr, oppptr;
+extern short XCmore, XCmoves[], XCminutes[], XCseconds[], XC;
+extern const short otherside[];
+extern const small_short Stboard[];
+extern const small_short Stcolor[];
+extern unsigned short hint;
+extern short TOflag;
+extern short stage, stage2;
+
+#define in_opening_stage    (!flag.tsume && (stage < 33))
 #define in_middlegame_stage (!flag.tsume && (stage >= 33) && (stage <= 66))
-#define in_endgame_stage (flag.tsume || (stage > 66))
+#define in_endgame_stage    (flag.tsume || (stage > 66))
 
-     extern short ahead, hash;
-     extern short balance[2];
-     extern small_short ChkFlag[], CptrFlag[], TesujiFlag[];
-     extern short Pscore[], Tscore[];
-     extern /*unsigned*/ short rehash;  /* -1 is used as a flag --tpm */
-     extern char version[], patchlevel[];
-     extern unsigned int ttbllimit;
-     extern unsigned int TTadd;
-     extern unsigned int ttblsize;
-     extern short mtl[], hung[];
-     extern small_short Pindex[];
-     extern small_short PieceCnt[];
-     extern short FROMsquare, TOsquare;
-     extern small_short HasPiece[2][NO_PIECES];
-     extern const short kingP[];
-     extern unsigned short killr0[], killr1[];
-     extern unsigned short killr2[], killr3[];
-     extern unsigned short PrVar[MAXDEPTH];
-     extern unsigned short PV, SwagHt, Swag0, Swag1, Swag2, Swag3, Swag4, sidebit;
-     extern short mtl[2], pmtl[2], hung[2];
-     extern const small_short relative_value[];
-     extern const long control[];
-     extern small_short diagonal(short delta);
-     extern const small_short promoted[NO_PIECES],unpromoted[NO_PIECES];
-     extern const small_short is_promoted[NO_PIECES];
+extern short ahead, hash;
+extern short balance[2];
+extern small_short ChkFlag[], CptrFlag[], TesujiFlag[];
+extern short Pscore[], Tscore[];
+extern /*unsigned*/ short rehash;  /* -1 is used as a flag --tpm */
+extern char version[], patchlevel[];
+extern unsigned int ttbllimit;
+extern unsigned int TTadd;
+extern unsigned int ttblsize;
+extern short mtl[], hung[];
+extern small_short Pindex[];
+extern small_short PieceCnt[];
+extern short FROMsquare, TOsquare;
+extern small_short HasPiece[2][NO_PIECES];
+extern const short kingP[];
+extern unsigned short killr0[], killr1[];
+extern unsigned short killr2[], killr3[];
+extern unsigned short PrVar[MAXDEPTH];
+extern unsigned short PV, SwagHt, Swag0, Swag1, Swag2, Swag3, Swag4, sidebit;
+extern short mtl[2], pmtl[2], hung[2];
+extern const small_short relative_value[];
+extern const long control[];
+extern small_short diagonal(short delta);
+extern const small_short promoted[NO_PIECES], unpromoted[NO_PIECES];
+extern const small_short is_promoted[NO_PIECES];
 
 typedef unsigned char next_array[NO_SQUARES][NO_SQUARES];
 typedef small_short distdata_array[NO_SQUARES][NO_SQUARES];
 
-     extern const small_short inunmap[NO_SQUARES];
-     extern const small_short nunmap[(NO_COLS+2)*(NO_ROWS+4)];
+extern const small_short inunmap[NO_SQUARES];
+extern const small_short nunmap[(NO_COLS + 2)*(NO_ROWS + 4)];
+
 #if defined SAVE_NEXTPOS
-     extern const small_short direc[NO_PTYPE_PIECES][8];
-     extern short first_direction(short ptyp, short *d, short sq);
-     extern short next_direction(short ptyp, short *d, short sq);
-     extern short next_position(short ptyp, short *d, short sq, short u);
+extern const small_short direc[NO_PTYPE_PIECES][8];
+extern short first_direction(short ptyp, short *d, short sq);
+extern short next_direction(short ptyp, short *d, short sq);
+extern short next_position(short ptyp, short *d, short sq, short u);
 #else
-     extern short use_nextpos;
-     extern next_array  *nextpos[NO_PTYPE_PIECES];
-     extern next_array  *nextdir[NO_PTYPE_PIECES];
+extern short use_nextpos;
+extern next_array  *nextpos[NO_PTYPE_PIECES];
+extern next_array  *nextdir[NO_PTYPE_PIECES];
 #endif
 
-     extern value_array  *value;
-     extern fscore_array  *fscore;
+extern value_array   *value;
+extern fscore_array  *fscore;
 
 #ifndef SAVE_DISTDATA
-     extern short use_distdata;
-     extern distdata_array  *distdata;
+extern short use_distdata;
+extern distdata_array  *distdata;
 #endif
 
 #ifndef SAVE_PTYPE_DISTDATA
-     extern short use_ptype_distdata;
-     extern distdata_array  *ptype_distdata[NO_PTYPE_PIECES];
+extern short use_ptype_distdata;
+extern distdata_array  *ptype_distdata[NO_PTYPE_PIECES];
 #endif
 
-     extern const small_short ptype[2][NO_PIECES];
+extern const small_short ptype[2][NO_PIECES];
 
-     extern long filesz,hashmask,hashbase;
-     extern FILE *hashfile;
-     extern unsigned int starttime;
+extern long filesz, hashmask, hashbase;
+extern FILE *hashfile;
+extern unsigned int starttime;
 
-     /* eval.c */
+/* eval.c */
 typedef small_short Mpiece_array[2][NO_SQUARES];
-     extern Mpiece_array *Mpiece[NO_PIECES];
-     extern short ADVNCM[NO_PIECES];
+extern Mpiece_array *Mpiece[NO_PIECES];
+extern short ADVNCM[NO_PIECES];
 
-#define computed_distance(a,b) \
-	((abs(column (a) - column (b)) > abs (row (a) - row (b)))\
-	? abs(column (a) - column (b)) : abs (row (a) - row (b)))
+#define computed_distance(a, b) \
+    ((abs(column(a) - column(b)) > abs(row(a) - row(b))) \
+    ? abs(column(a) - column(b)) : abs(row(a) - row(b)))
 
-     extern short distance (short a, short b);
-     extern short ptype_distance (short ptyp, short f, short t);
-     extern short piece_distance(short side,short piece,short f,short t);
+extern short distance(short a, short b);
+extern short ptype_distance(short ptyp, short f, short t);
+extern short piece_distance(short side, short piece, short f, short t);
 
 #if defined UNKNOWN
-#undef UNKNOWN
+#  undef UNKNOWN
 #endif
 
-#define UNKNOWN 'U'
-#define STATIC_ROOK 'S'
+#define UNKNOWN      'U'
+#define STATIC_ROOK  'S'
 #define RANGING_ROOK 'R'
 
-     extern char GameType[2];
-     void ShowGameType(void);
-   
-     extern short unsigned bookmaxply;
-     extern int unsigned bookcount;
-     extern int unsigned booksize;
-     extern unsigned long hashkey, hashbd;
+extern char GameType[2];
+void ShowGameType(void);
+
+extern unsigned short bookmaxply;
+extern unsigned int bookcount;
+extern unsigned int booksize;
+extern unsigned long hashkey, hashbd;
 
 typedef struct hashval hashcode_array[2][NO_PIECES][NO_SQUARES];
 typedef struct hashval drop_hashcode_array[2][NO_PIECES][NO_SQUARES];
 
-     extern hashcode_array  *hashcode;
-     extern drop_hashcode_array  *drop_hashcode;
-     extern char  *CP[];
+extern hashcode_array  *hashcode;
+extern drop_hashcode_array  *drop_hashcode;
+extern char  *CP[];
+
 #ifdef QUIETBACKGROUND
-     extern short background;
+extern short background;
 #endif /* QUIETBACKGROUND */
 
 #if ttblsz
-     extern short use_ttable;
-     extern struct hashentry  *ttable[2];
+extern short use_ttable;
+extern struct hashentry  *ttable[2];
 #endif
 
 /*
@@ -963,232 +818,264 @@ typedef struct hashval drop_hashcode_array[2][NO_PIECES][NO_SQUARES];
  * made, XOR'ing the hashcode of moved piece on the from and to squares with
  * the hashbd and hashkey values keeps things current.
  */
+
 #define UpdateHashbd(side, piece, f, t) \
-{\
-  if ((f) >= 0)\
-    {\
-      hashbd ^= (*hashcode)[side][piece][f].bd;\
-      hashkey ^= (*hashcode)[side][piece][f].key;\
-    }\
-  if ((t) >= 0)\
-    {\
-      hashbd ^= (*hashcode)[side][piece][t].bd;\
-      hashkey ^= (*hashcode)[side][piece][t].key;\
-    }\
+{ \
+  if ((f) >= 0) \
+    { \
+      hashbd  ^= (*hashcode)[side][piece][f].bd;  \
+      hashkey ^= (*hashcode)[side][piece][f].key; \
+    } \
+ \
+  if ((t) >= 0) \
+    { \
+      hashbd  ^= (*hashcode)[side][piece][t].bd;  \
+      hashkey ^= (*hashcode)[side][piece][t].key; \
+    } \
 }
 
 #define UpdateDropHashbd(side, piece, count) \
-{\
-  hashbd ^= (*drop_hashcode)[side][piece][count].bd;\
-  hashkey ^= (*drop_hashcode)[side][piece][count].key;\
+{ \
+  hashbd  ^= (*drop_hashcode)[side][piece][count].bd;  \
+  hashkey ^= (*drop_hashcode)[side][piece][count].key; \
 }
 
 
+extern short rpthash[2][256];
+extern char *DRAW;
 
+/*
+ * FIXME: these should be more generic instead of using the
+ * magic number 9.
+ */
 
-     extern short rpthash[2][256];
-     extern char *DRAW;
-
-
-#define row(a) ((a) / 9)
-#define column(a) ((a) % 9)
-
-#define locn(a,b) (((a)*9)+b)
+#define row(a)     ((a) / 9)
+#define column(a)  ((a) % 9)
+#define locn(a, b) (((a) * 9) + b)
 
 /* init external functions */
-     extern void InitConst (char *lang); /* init.c */
-     extern int Initialize_data (void); /* init.c */
-     extern void Free_data (void); /* init.c */
-     extern int Lock_data (void); /* init.c */
-     extern void Unlock_data (void); /* init.c */
-     extern void Initialize_dist (void); /* init.c */
-     extern void Initialize_eval (void); /* eval.c */
-     extern void NewGame (void);
-     extern int parse (FILE * fd, unsigned short *mv, short side, char *opening);
-     extern void GetOpenings (void);
-     extern int OpeningBook (unsigned short *hint, short side);
-     
-typedef enum { REMOVE_PIECE = 1, ADD_PIECE } UpdatePieceList_mode;
+extern void InitConst(char *lang); /* init.c */
+extern int  Initialize_data(void); /* init.c */
+extern void Free_data(void);       /* init.c */
+extern int  Lock_data(void);       /* init.c */
+extern void Unlock_data(void);     /* init.c */
+extern void Initialize_dist(void); /* init.c */
+extern void Initialize_eval(void); /* eval.c */
+extern void NewGame(void);
+extern int  parse(FILE * fd, unsigned short *mv,
+                  short side, char *opening);
+extern void GetOpenings(void);
+extern int  OpeningBook(unsigned short *hint, short side);
 
-     extern void UpdatePieceList (short side, short sq, UpdatePieceList_mode iop);
+typedef enum
+{
+    REMOVE_PIECE = 1, ADD_PIECE
+} UpdatePieceList_mode;
 
-typedef enum { FOREGROUND_MODE = 1, BACKGROUND_MODE } SelectMove_mode;
-
-     extern void SelectMove (short side, SelectMove_mode iop);
-     extern int
-      search (short side,
-	       short ply,
-	       short depth,
-	       short alpha,
-	       short beta,
-	       unsigned short *bstline,
-	       short *rpt);
-#ifdef CACHE
-	void
-	  PutInEETable (short side,int score);
-	int
-	  CheckEETable (short side);
-	int
-	  ProbeEETable (short side, short *score);
-#endif
-#if ttblsz
-     extern int
-      ProbeTTable (short side,
-		    short depth,
-		    short ply,
-		    short *alpha,
-		    short *beta,
-		    short *score);
-     extern int
-      PutInTTable (short side,
-		    short score,
-		    short depth,
-		    short ply,
-		    short alpha,
-		    short beta,
-		    unsigned short mv);
-     extern void ZeroTTable (void);
-     extern void ZeroRPT (void);
-     extern void Initialize_ttable (void);
-     extern unsigned int urand (void);
-#ifdef HASHFILE
-     extern void gsrand (unsigned int);
-     extern int
-      ProbeFTable (short side,
-		    short depth,
-		    short ply,
-		    short *alpha,
-		    short *beta,
-		    short *score);
-     extern void
-      PutInFTable (short side,
-		    short score,
-		    short depth,
-		    short ply,
-		    short alpha,
-		    short beta,
-		    unsigned short f,
-		    unsigned short t);
-
-#endif /* HASHFILE */
-#endif /* ttblsz */
-#if !defined SAVE_NEXTPOS
-     extern void Initialize_moves (void);
-#endif
-
-     extern short generate_move_flags;
-
-     extern void MoveList (short side, short ply, 
-			   short in_check, short blockable);
-     extern void CaptureList (short side, short ply, 
-			      short in_check, short blockable);
-
-     /* from ataks.c */
-     extern int SqAttacked (short square, short side, short *blockable);
-     
 extern void
-      MakeMove (short side,
-		 struct leaf  *node,
-		 short *tempb,
-		 short *tempc,
-		 short *tempsf,
-		 short *tempst,
-		 short *INCscore);
-     extern void
-      UnmakeMove (short side,
-		   struct leaf  *node,
-		   short *tempb,
-		   short *tempc,
-		   short *tempsf,
-		   short *tempst);
-     extern void InitializeStats (void);
-     extern int
-      evaluate (short side,
-		 short ply,
-		 short alpha,
-		 short beta,
-		 short INCscore,
-		 short *InChk,
-		 short *blockable);
-     extern short ScorePosition (short side);
-     extern void ExaminePosition (short side);
-     extern short ScorePatternDistance(short side);
-     extern void DetermineStage (short side);
-     extern void UpdateWeights (short side);
-     extern int  InitMain (void);
-     extern void ExitMain (void);
-     extern void Initialize (void);
-     extern void InputCommand (char *command);
-     extern void ExitChess (void);
-     extern void ClrScreen (void);
-     extern void SetTimeControl (void);
-     extern void SelectLevel (char *sx);
-     extern void
-      UpdateDisplay (short f,
-		      short t,
-		      short flag,
-		      short iscastle);
+UpdatePieceList(short side, short sq, UpdatePieceList_mode iop);
 
-typedef enum { COMPUTE_AND_INIT_MODE = 1, COMPUTE_MODE
-#ifdef INTERRUPT_TEST
-		, INIT_INTERRUPT_MODE, COMPUTE_INTERRUPT_MODE
+typedef enum
+{
+    FOREGROUND_MODE = 1, BACKGROUND_MODE
+} SelectMove_mode;
+
+extern void
+SelectMove(short side, SelectMove_mode iop);
+
+extern int
+search(short side,
+       short ply,
+       short depth,
+       short alpha,
+       short beta,
+       unsigned short *bstline,
+       short *rpt);
+
+#ifdef CACHE
+void PutInEETable(short side, int score);
+int  CheckEETable(short side);
+int  ProbeEETable(short side, short *score);
 #endif
-    } ElapsedTime_mode; 
 
-     extern void ElapsedTime (ElapsedTime_mode iop);
-     extern void SetResponseTime (short side);
-     extern void CheckForTimeout (int score, int globalscore, int Jscore, int zwndw);
+#if ttblsz
+extern int
+ProbeTTable(short side,
+            short depth,
+            short ply,
+            short *alpha,
+            short *beta,
+            short *score);
 
-     extern void ShowSidetoMove (void);
-     extern void ShowResponseTime (void);
-     extern void ShowPatternCount (short side, short n);
-     extern void SearchStartStuff (short side);
-     extern void ShowDepth (char ch);
-     extern void TerminateSearch (int);
-     extern void
-      ShowResults (short score,
-		    unsigned short *bstline,
-		    char ch);
-     extern void PromptForMove (void);
-     extern void SetupBoard (void);
-     extern void algbr (short f, short t, short flag);
-     extern void OutputMove (void);
-     extern void ShowCurrentMove (short pnt, short f, short t);
-     extern void ListGame (void);
-     extern void ShowMessage (char *s);
-     extern void ClrScreen (void);
-     extern void gotoXY (short x, short y);
-     extern void ClrEoln (void);
-     extern void DrawPiece (short sq);
-     extern void UpdateClocks (void);
-     extern void DoDebug (void);
-     extern void DoTable (short table[NO_SQUARES]);
-     extern void ShowPostnValues (void);
-     extern void ChangeXwindow (void);
-     extern void SetContempt (void);
-     extern void ChangeHashDepth (void);
-     extern void ChangeBetaWindow (void);
-     extern void ChangeAlphaWindow (void);
-     extern void GiveHint (void);
-     extern void ShowPrompt (void);
-     extern void EditBoard (void);
-     extern void help (void);
-     extern void ChangeSearchDepth (void);
-     extern void skip (void);
-     extern void skipb (void);
-     extern void EnPassant (short xside, short f, short t, short iop);
-     extern void ShowNodeCnt (long NodeCnt);
-     extern void ShowLine (unsigned short *bstline);
-     extern int pick (short p1, short p2);
-     extern short repetition (void);
-     extern void TimeCalc (void);
-     extern short DropPossible (short piece, short side, short sq); /* genmoves.c */
-     extern short IsCheckmate (short side, short in_check, short blockable); /* genmoves.c */
+extern int
+PutInTTable(short side,
+            short score,
+            short depth,
+            short ply,
+            short alpha,
+            short beta,
+            unsigned short mv);
+
+extern void ZeroTTable(void);
+extern void ZeroRPT(void);
+extern void Initialize_ttable(void);
+extern unsigned int urand(void);
+
+#  ifdef HASHFILE
+extern void gsrand(unsigned int);
+
+extern int
+ProbeFTable(short side,
+            short depth,
+            short ply,
+            short *alpha,
+            short *beta,
+            short *score);
+
+extern void
+PutInFTable(short side,
+            short score,
+            short depth,
+            short ply,
+            short alpha,
+            short beta,
+            unsigned short f,
+            unsigned short t);
+
+#  endif /* HASHFILE */
+#endif /* ttblsz */
+
+#if !defined SAVE_NEXTPOS
+extern void Initialize_moves(void);
+#endif
+
+extern short generate_move_flags;
+
+extern void MoveList(short side, short ply,
+                     short in_check, short blockable);
+extern void CaptureList(short side, short ply,
+                        short in_check, short blockable);
+
+/* from attacks.c */
+extern int
+SqAttacked(short square, short side, short *blockable);
+
+extern void
+MakeMove(short side,
+         struct leaf  *node,
+         short *tempb,
+         short *tempc,
+         short *tempsf,
+         short *tempst,
+         short *INCscore);
+
+extern void
+UnmakeMove(short side,
+           struct leaf  *node,
+           short *tempb,
+           short *tempc,
+           short *tempsf,
+           short *tempst);
+
+extern void
+InitializeStats(void);
+
+extern int
+evaluate(short side,
+         short ply,
+         short alpha,
+         short beta,
+         short INCscore,
+         short *InChk,
+         short *blockable);
+
+extern short ScorePosition(short side);
+extern void  ExaminePosition(short side);
+extern short ScorePatternDistance(short side);
+extern void  DetermineStage(short side);
+extern void  UpdateWeights(short side);
+extern int   InitMain(void);
+extern void  ExitMain(void);
+extern void  Initialize(void);
+extern void  InputCommand(char *command);
+extern void  ExitShogi(void);
+extern void  ClearScreen(void);
+extern void  SetTimeControl(void);
+extern void  SelectLevel(char *sx);
+
+extern void
+UpdateDisplay(short f,
+              short t,
+              short flag,
+              short iscastle);
+
+typedef enum
+{
+    COMPUTE_AND_INIT_MODE = 1, COMPUTE_MODE
+#ifdef INTERRUPT_TEST
+    , INIT_INTERRUPT_MODE, COMPUTE_INTERRUPT_MODE
+#endif
+} ElapsedTime_mode;
+
+extern void  ElapsedTime(ElapsedTime_mode iop);
+extern void  SetResponseTime(short side);
+extern void  CheckForTimeout(int score, int globalscore,
+                             int Jscore, int zwndw);
+extern void  ShowSidetoMove(void);
+extern void  ShowResponseTime(void);
+extern void  ShowPatternCount(short side, short n);
+extern void  SearchStartStuff(short side);
+extern void  ShowDepth(char ch);
+extern void  TerminateSearch(int);
+extern void  ShowResults(short score, unsigned short *bstline, char ch);
+extern void  PromptForMove(void);
+extern void  SetupBoard(void);
+extern void  algbr(short f, short t, short flag);
+extern void  OutputMove(void);
+extern void  ShowCurrentMove(short pnt, short f, short t);
+extern void  ListGame(void);
+extern void  ShowMessage(char *s);
+extern void  ClearScreen(void);
+extern void  gotoXY(short x, short y);
+extern void  ClearEoln(void);
+extern void  DrawPiece(short sq);
+extern void  UpdateClocks(void);
+extern void  DoDebug(void);
+extern void  DoTable(short table[NO_SQUARES]);
+extern void  ShowPostnValues(void);
+extern void  ChangeXwindow(void);
+extern void  SetContempt(void);
+extern void  ChangeHashDepth(void);
+extern void  ChangeBetaWindow(void);
+extern void  GiveHint(void);
+extern void  ShowPrompt(void);
+extern void  EditBoard(void);
+extern void  help(void);
+extern void  ChangeSearchDepth(void);
+extern void  skip(void);
+extern void  skipb(void);
+extern void  EnPassant(short xside, short f, short t, short iop);
+extern void  ShowNodeCnt(long NodeCnt);
+extern void  ShowLine(unsigned short *bstline);
+extern int   pick(short p1, short p2);
+extern short repetition(void);
+extern void  TimeCalc(void);
+
+extern short
+DropPossible(short piece, short side, short sq); /* genmoves.c */
+
+extern short
+IsCheckmate(short side, short in_check,
+            short blockable); /* genmoves.c */
 
 
-typedef enum { VERIFY_AND_MAKE_MODE, VERIFY_AND_TRY_MODE, UNMAKE_MODE } VerifyMove_mode;
+typedef enum
+{
+    VERIFY_AND_MAKE_MODE, VERIFY_AND_TRY_MODE, UNMAKE_MODE
+} VerifyMove_mode;
 
-     extern int VerifyMove (char *s, VerifyMove_mode iop, unsigned short *mv);
-     extern void AgeTT();
-     extern unsigned short TTage;
+extern int VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv);
+extern void AgeTT();
+extern unsigned short TTage;
 
+#endif /* _GNUSHOGI_H_ */

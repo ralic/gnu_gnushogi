@@ -1,7 +1,7 @@
 /*
- * FILE: eval.h
+ * FILE: debug.h
  *
- *     Interface to the board evaluator.
+ *       Various macros to help in debugging.
  *
  * ----------------------------------------------------------------------
  * Copyright (c) 1993, 1994, 1995 Matthias Mutz
@@ -31,41 +31,40 @@
  *
  */
 
-
-#ifndef _EVAL_H_
-#define _EVAL_H_
-
-#define NO_STAGES 100
-#define NO_FEATURES 31
+/* Some of this code requires gcc. */
 
 
-struct signature
-{
-    unsigned long hashbd;
-    unsigned long hashkey;
-};
+#ifndef _DEBUG_H_
+#define _DEBUG_H_
 
-#define MatchSignature(s) ((s.hashbd == hashbd) && (s.hashkey == hashkey))
-#define CopySignature(s)  { s.hashbd = hashbd; s.hashkey = hashkey; }
+/*
+ * Define simple macros PRINT_ENTER and PRINT_EXIT to print info when
+ * a function is entered or left.  They only work if DEBUG is #defined.
+ * This requires gcc.  You have to invoke them with a semicolon after them,
+ * like this:
+ *
+ * PRINT_ENTER;
+ * PRINT_EXIT;
+ *
+ * This is so as not to screw up automatic indentation in emacs.
+ */
 
-typedef short        value_array[NO_STAGES][NO_PIECES];
-typedef small_short fscore_array[NO_STAGES][NO_FEATURES][2];
+#if (defined __GNUC__)
 
-extern value_array  *value;
-extern fscore_array *fscore;
+#  define PRINT_ENTER printf("Entering function:  %s().\n", __FUNCTION__)
+#  define PRINT_EXIT  printf("Exiting function:   %s().\n", __FUNCTION__)
 
-extern void threats (short side);
+#else
 
-extern long attack[2][NO_SQUARES];
-extern small_short sseed[NO_SQUARES];
+#  define PRINT_ENTER
+#  define PRINT_EXIT
 
-extern struct signature threats_signature[2];
+#endif  /* __GNUC__ */
 
-extern small_short starget[2][NO_SQUARES];
-extern small_short sloose[NO_SQUARES];
-extern small_short shole[NO_SQUARES];
-extern small_short shung[NO_SQUARES];
+/* Function inlining; not all C compilers support this. */
+#if (!defined __GNUC__)
+#  define inline
+#endif
 
-extern struct signature squares_signature;
+#endif  /* _DEBUG_H_ */
 
-#endif /* _EVAL_H_ */

@@ -111,14 +111,15 @@ COMMONFILES = \
                 book.o         \
                 commondsp.o    \
                 cursesdsp.o    \
+                dspwrappers.o  \
                 eval.o         \
                 genmove.o      \
                 globals.o      \
                 init.o         \
-                main.o         \
                 pattern.o      \
                 rawdsp.o       \
                 search.o       \
+                sysdeps.o      \
                 tcontrl.o      \
                 util.o
 

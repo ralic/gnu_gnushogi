@@ -1,7 +1,9 @@
 /*
- * book.h - C source for GNU SHOGI
+ * FILE: book.h
  *
+ * ----------------------------------------------------------------------
  * Copyright (c) 1993, 1994, 1995 Matthias Mutz
+ * Copyright (c) 1999 Michael Vanier and the Free Software Foundation
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -23,10 +25,12 @@
  * You should have received a copy of the GNU General Public License along
  * with GNU Shogi; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * ----------------------------------------------------------------------
+ *
  */
- 
 
-
+#ifndef _BOOK_H_
+#define _BOOK_H_
 
 struct gdxadmin
 {
@@ -56,4 +60,5 @@ struct gdxdata
 #define sizeof_gdxadmin sizeof(struct gdxadmin)
 #define sizeof_gdxdata  sizeof(struct gdxdata)
 
+#endif /* _BOOK_H_ */
 

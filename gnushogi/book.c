@@ -1,7 +1,9 @@
 /*
- * book.c - C source for GNU SHOGI
+ * FILE: book.c
  *
+ * ----------------------------------------------------------------------
  * Copyright (c) 1993, 1994, 1995 Matthias Mutz
+ * Copyright (c) 1999 Michael Vanier and the Free Software Foundation
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -23,19 +25,21 @@
  * You should have received a copy of the GNU General Public License along
  * with GNU Shogi; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * ----------------------------------------------------------------------
+ *
  */
 
 #include "gnushogi.h"
-#ifdef MSDOS
-#include <io.h>
-#endif
-#if !defined MSDOS && !defined THINK_C
+
 #define O_BINARY 0
+
+#if HAVE_UNISTD_H
+/* Declarations of read(), write(), close(), and lseek(). */
+#include <unistd.h>
 #endif
+
+#if HAVE_FCNTL_H
 #include <fcntl.h>
-#ifdef THINK_C
-#include <unix.h>
-/* #define BOOKTEST */
 #endif
 
 #include "book.h"
@@ -98,11 +102,10 @@ Balgbr(short f, short t, short flag)
 
     if ((f == t) && ((f != 0) || (t != 0)))
     {
-#if !defined XSHOGI
-      char buffer[80];
-      sprintf(buffer,"error in algbr: FROM=TO=%d, flag=0x%4x\n",t,flag);
-      ShowMessage(buffer);
-#endif
+        /*
+         * error in algbr: FROM=TO=t
+         */
+
         bmvstr[0][0] = bmvstr[1][0] = bmvstr[2][0] = '\0';
     }
     else
@@ -239,15 +242,17 @@ bkdisplay(char *s, int cnt, int moveno)
 
 #endif /* QUIETBOOKGEN */
 
-int
-BVerifyMove (char *s, unsigned short *mv, int moveno)
 
 
 /*
+ * BVerifyMove(s, mv, moveno)
  *
  * Compare the string 's' to the list of legal moves available for the
  * opponent. If a match is found, make the move on the board.
  */
+
+int
+BVerifyMove(char *s, unsigned short *mv, int moveno)
 {
     static short pnt, tempb, tempc, tempsf, tempst, cnt;
     static struct leaf xnode;
@@ -287,11 +292,8 @@ BVerifyMove (char *s, unsigned short *mv, int moveno)
             UnmakeMove(opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
             /* Illegal move in check */
 #if !defined QUIETBOOKGEN
-#ifdef XSHOGI
-		printf ("Illegal move (in check)");
-#else
-		printf (CP[77]);
-#endif
+            /* 077: "Illegal move (in check) %s" */
+            printf(CP[77]);
             printf("\n");
             bkdisplay(s, cnt, moveno);
 #endif
@@ -312,11 +314,8 @@ BVerifyMove (char *s, unsigned short *mv, int moveno)
 
     /* Illegal move */
 #if !defined QUIETBOOKGEN
-#ifdef XSHOGI
-    printf ("Illegal move (no match) %s\n", s);
-#else
-    printf (CP[75], s);
-#endif
+    /* 075: "Illegal move (no match)%s\n" */
+    printf(CP[75], s);
     bkdisplay(s, cnt, moveno);
 #endif
     return false;
@@ -558,17 +557,14 @@ static struct gdxdata DATA;
 
 /* lts(l) returns most significant 16 bits of l */
 
-#ifdef LONG64
+#if SIZEOF_LONG == 8  /* 64-bit long i.e. 8 bytes */
 #  define lts(x) (USHORT)(((x >> 48) & 0xfffe) | side)
 #else
-#if defined THINK_C || defined USE_LTSIMP
+#  if defined USE_LTSIMP
 static USHORT ltsimp(long x)
 {
     USHORT n;
     n = (((x >> 16) & 0xfffe));
-#if 0
-  printf("x=0x%lx lts(x)=0x%x\n",x,n);
-#endif
     return n;
 }
 #    define lts(x) (USHORT)(ltsimp(x) | side)
@@ -652,8 +648,6 @@ void
 GetOpenings(void)
 {
     short i;
-    char opening[80];
-    char msg[80];
     int mustwrite = false, first;
     unsigned short xside, side;
     short c;
@@ -661,6 +655,7 @@ GetOpenings(void)
     unsigned int x;
     unsigned int games = 0;
     LONG collisions = 0;
+    char msg[80];
 
     FILE *fd;
 
@@ -698,11 +693,7 @@ GetOpenings(void)
         }
         else
         {
-#if defined THINK_C || defined MSDOS
-                gfd = open (binbookfile, O_RDWR | O_CREAT | O_BINARY);
-#else
             gfd = open(binbookfile, O_RDWR | O_CREAT | O_BINARY, 0644);
-#endif
 
             ADMIN.bookcount = B.bookcount = 0;
             ADMIN.booksize = B.booksize = booksize;
@@ -714,7 +705,7 @@ GetOpenings(void)
             DATA.hint = 0;
             DATA.count = 0;
             write(gfd, (char *)&ADMIN, sizeof_gdxadmin);
-            printf("creating bookfile %s %ld %d\n",
+            printf("creating bookfile %s %ld %ld\n",
                     binbookfile, B.maxoffset, B.booksize);
 
             for (x = 0; x < B.booksize; x++)
@@ -809,18 +800,14 @@ GetOpenings(void)
                             {
                                 B.bookcount++;
 
-#if !defined XSHOGI
-#if defined THINK_C || defined MSDOS
-					      if (B.bookcount % 100 == 0)
-#else
                                 if ((B.bookcount % 1000) == 0)
-#endif
                                 {
+                                    /* CHECKME: may want to get rid of this,
+                                     * especially for xshogi. */
                                     printf("%ld rec %d openings "
                                            "processed\n",
                                            B.bookcount, games);
                                 }
-#endif
 
                                 /* initialize a record */
                                 DATA.hashbd = bhashbd;
@@ -891,12 +878,9 @@ GetOpenings(void)
 
         }
 
-#if !defined XSHOGI
         /* 213: "Book used %d(%d)." */
         sprintf(msg, CP[213], B.bookcount, B.booksize);
         ShowMessage(msg);
-	  /* printf("%ld collisions\n", collisions); */
-#endif
     }
 
     /* Set everything back to start the game. */
@@ -907,9 +891,7 @@ GetOpenings(void)
     if (!B.bookcount)
     {
         /* 212: "Can't find book." */
-#if !defined XSHOGI
         ShowMessage(CP[212]);
-#endif
         Book = 0;
     }
 }

@@ -1,7 +1,9 @@
 /*
- * globals.c - C source for GNU SHOGI
+ * FILE: globals.c
  *
+ * ----------------------------------------------------------------------
  * Copyright (c) 1993, 1994, 1995 Matthias Mutz
+ * Copyright (c) 1999 Michael Vanier and the Free Software Foundation
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -23,8 +25,10 @@
  * You should have received a copy of the GNU General Public License along
  * with GNU Shogi; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * ----------------------------------------------------------------------
+ *
  */
- 
+
 #include "gnushogi.h"
 
 
@@ -100,7 +104,7 @@ short XCseconds[3] = { 0, 0, 0 };
 short XC = 0, XCmore = 0;
 const short otherside[3] = { white, black, neutral };
 unsigned short hint;
-short TOflag;		/* force search re-init if we backup search */
+short TOflag;       /* force search re-init if we backup search */
 
 unsigned short killr0[MAXDEPTH], killr1[MAXDEPTH];
 unsigned short killr2[MAXDEPTH], killr3[MAXDEPTH];
@@ -134,14 +138,14 @@ int compptr, oppptr;
 
 struct leaf  *Tree = NULL;
 
-hashcode_array  *hashcode = NULL;
+hashcode_array       *hashcode      = NULL;
 drop_hashcode_array  *drop_hashcode = NULL;
 
 struct leaf  *root = NULL;
 
 struct GameRec  *GameList = NULL;
 
-value_array  *value = NULL;
+value_array   *value  = NULL;
 fscore_array  *fscore = NULL;
 
 #ifndef SAVE_DISTDATA
@@ -167,11 +171,11 @@ unsigned short  *history = NULL;
 
 #ifdef CACHE
 short use_etable = true;
-etable_field  *etab[2] = {NULL,NULL};
+etable_field  *etab[2] = { NULL, NULL };
 #endif
 
 #if ttblsz
 short use_ttable = true;
 unsigned int ttblsize = ttblsz;
-struct hashentry  *ttable[2] = {NULL,NULL};
+struct hashentry  *ttable[2] = { NULL, NULL };
 #endif

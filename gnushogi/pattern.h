@@ -1,7 +1,9 @@
 /*
- * pattern.h - C source for GNU SHOGI
+ * FILE: pattern.h
  *
+ * ----------------------------------------------------------------------
  * Copyright (c) 1993, 1994, 1995 Matthias Mutz
+ * Copyright (c) 1999 Michael Vanier and the Free Software Foundation
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -20,18 +22,20 @@
  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with GNU Shogi; see the file COPYING.  If not, write to
- * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * You should have received a copy of the GNU General Public License along
+ * with GNU Shogi; see the file COPYING.  If not, write to the Free
+ * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * ----------------------------------------------------------------------
+ *
  */
- 
-/* #define TEST_PATTERN  */
-/* #define DEBUG_PATTERN */
 
 
-#define MAX_NAME 16    /* maximum length of opening name */
-#define MAX_SEQUENCE 4 /* maximum number of sequences for an opening type */
+#ifndef _PATTERN_H_
+#define _PATTERN_H_
 
+#define MAX_NAME     16  /* maximum length of opening name */
+#define MAX_SEQUENCE  4  /* maximum number of sequences
+                          * for an opening type */
 
 #define CANNOT_REACH (-1)
 #define NOT_TO_REACH (-2)
@@ -39,82 +43,73 @@
 #define IS_SUCCESSOR (-4)
 
 #define END_OF_SEQUENCES (-1)
-#define END_OF_PATTERNS (-2)
-#define END_OF_LINKS (-3)
-#define END_OF_FIELDS (-4)
+#define END_OF_PATTERNS  (-2)
+#define END_OF_LINKS     (-3)
+#define END_OF_FIELDS    (-4)
 
-  struct PatternField {
+struct PatternField
+{
     short side;
     short piece;
     short square;
-  }; 
+};
 
 
-  struct Pattern_rec {
+struct Pattern_rec
+{
     small_short visited;
     small_short distance[2];
     short reachedGameCnt[2];
     short first_link;
     short first_field;
     short next_pattern;
-  };
-               
+};
 
-  struct OpeningSequence_rec {
+
+struct OpeningSequence_rec
+{
     short opening_type;
     short first_pattern[MAX_SEQUENCE];
-  };
+};
 
 
-extern struct OpeningSequence_rec OpeningSequence[];
 extern struct Pattern_rec Pattern[];
+extern struct OpeningSequence_rec OpeningSequence[];
+
+extern short
+piece_to_pattern_distance(short side, short piece,
+                          short pside, short pattern);
+
+extern short
+pattern_distance(short pside, short pattern);
+
+extern short
+board_to_pattern_distance(short pside, short osequence,
+                          short pmplty, short GameCnt);
+
+extern short
+locate_opening_sequence(short pside, char *s, short GameCnt);
+
+extern void
+DisplayPattern(FILE *fd, short first_field);
+
+extern void
+update_advance_bonus(short pside, short os);
+
+extern void
+GetOpeningPatterns(short *max_opening_sequence);
+
+extern void
+ShowOpeningPatterns(short max_opening_sequence);
 
 
+extern short
+ValueOfOpeningName(char *name);
 
-extern 
-  short
-  piece_to_pattern_distance 
-    (short side, short piece, short pside, short pattern);
+extern void
+NameOfOpeningValue(short i, char *name);
 
-extern
-  short
-  pattern_distance (short pside, short pattern);
-
-extern
-  short
-  board_to_pattern_distance 
-    (short pside, short osequence, short pmplty, short GameCnt);
- 
-extern
-  short locate_opening_sequence(short pside, char *s, short GameCnt);
-
-extern
-  void
-  DisplayPattern (FILE *fd, short first_field);
-
-extern
-  void update_advance_bonus (short pside, short os);
-
-extern
-  void
-  GetOpeningPatterns (short *max_opening_sequence);
-
-extern
-  void
-  ShowOpeningPatterns (short max_opening_sequence);
-  
-  
-extern short ValueOfOpeningName (char *name);
-
-extern void NameOfOpeningValue (short i, char *name);
+extern small_short pattern_data[];
 
 
-#ifdef EXTPATTERNFILE
-
-extern void ReadOpeningSequences (short *pindex);
-
-extern void WriteOpeningSequences (short pindex);
-  
-#endif
-
-
+#endif /* _PATTERN_H_ */

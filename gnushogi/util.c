@@ -1,7 +1,9 @@
 /*
- * util.c - C source for GNU SHOGI
+ * FILE: util.c
  *
+ * ----------------------------------------------------------------------
  * Copyright (c) 1993, 1994, 1995 Matthias Mutz
+ * Copyright (c) 1999 Michael Vanier and the Free Software Foundation
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -23,19 +25,19 @@
  * You should have received a copy of the GNU General Public License along
  * with GNU Shogi; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * ----------------------------------------------------------------------
+ *
  */
 
 #include "gnushogi.h"
-#ifdef DEBUG
-#include <assert.h>
-#endif
+
 unsigned int TTadd = 0;
-short recycle; 
+short recycle;
 short ISZERO = 1;
 
 
 int
-parse (FILE * fd, unsigned short *mv, short side, char *opening)
+parse(FILE * fd, unsigned short *mv, short side, char *opening)
 {
     int c, i, r1, r2, c1, c2;
     char s[128];
@@ -119,78 +121,15 @@ CB(short sq)
     }
     else
     {
-#ifdef DEBUG
-    assert(i!=NO_SQUARES || (Captured[black][0]==0 && Captured[white][0]==0));
-#endif
         i -= NO_SQUARES;
         return ((Captured[black][i] << 4) | Captured[white][i]);
     }
 }
 
-#if defined DEBUG               
-inline
-char
-BDpiece(unsigned char p)
-{
-  unsigned short piece = p & 0x7f;
-  if ( piece == no_piece )
-	return '-';
-  else if ( p & 0x80 )
-	return qxx[piece];
-  else
-	return pxx[piece];
-}
-
-inline
-char
-BDpromoted(unsigned char p)
-{
-  unsigned short piece = p & 0x7f;
-  if ( is_promoted[piece] )
-	return '+';
-  else
-	return ' ';
-}
-
-void
-ShowBD(unsigned char bd[])
-{
-  short i;
-  for ( i = 0; i < PTBLBDSIZE; i++) 
-    {                   
-	if ( i < NO_SQUARES )
-	  { 
-            printf("%c%c(%c%c) ",
-               BDpromoted(bd[i]),BDpiece(bd[i]),
-               BDpromoted(CB(i)),BDpiece(CB(i)));
-  	    if ( i % NO_COLS == NO_COLS - 1 )
-	      printf("\n");
-	  }
-	else
-	  printf("%2x(%2x) ",bd[i],CB(i));
-    };
-  printf("\n");
-}        
-
-#endif
 
 
 
 #if ttblsz
-
-
-
-#ifdef DEBUG_TTABLE
-
-void ShowPTBL (struct hashentry *ptbl)
-{
-  movealgbr(ptbl->mv,mvstr[0]);
-  printf("hk=%lx hb=%lx ptbl=%lx bd=%lx mv=%s d=%d f=%d s=%d\n",
-  		hashkey, hashbd, ptbl, 
-  		ptbl->hashbd, mvstr[0], ptbl->depth, ptbl->flags, ptbl->score);
-}
-#endif
-
 
 /*
  * Look for the current board position in the transposition table.
@@ -206,10 +145,6 @@ ProbeTTable (short side,
 {
     struct hashentry  *ptbl;
     /*unsigned*/ short i = 0;  /* to match new type of rehash --tpm */
-
-#ifdef DEBUG_TTABLE
-      /* printf("FOR hk=%lx hb=%lx d=%d\n",hashkey,hashbd,depth); */
-#endif 
 
     ptbl = &ttable[side][hashkey % ttblsize];
 
@@ -236,14 +171,15 @@ ProbeTTable (short side,
         {
             if (ptbl->bd[i] != CB(i))
             {
-#ifndef BAREBONES
                 HashCol++;
 
-                ShowMessage(CP[199]);    /* ttable collision detected */
-                ShowBD(ptbl->bd);
-                printf("hashkey = 0x%x, hashbd = 0x%x\n",
-                       hashkey, hashbd);
-#endif
+                if (!barebones)
+                {
+                    ShowMessage(CP[199]);    /* ttable collision detected */
+                    ShowBD(ptbl->bd);
+                    printf("hashkey = 0x%x, hashbd = 0x%x\n",
+                           hashkey, hashbd);
+                }
 
                 break;
             }
@@ -253,9 +189,7 @@ ProbeTTable (short side,
 
         PV = SwagHt = ptbl->mv;
 
-#if !defined BAREBONES
         HashCnt++;
-#endif
 
         if (ptbl->flags & truescore)
         {
@@ -274,9 +208,6 @@ ProbeTTable (short side,
             if (ptbl->score > *alpha)
                 *alpha = ptbl->score - 1;
         }
-#ifdef DEBUG_TTABLE
-      /* printf("GET "); ShowPTBL(ptbl); */
-#endif
 
         return true;
     }
@@ -285,19 +216,19 @@ ProbeTTable (short side,
 }
 
 
-int
-PutInTTable (short side,
-	     short score,
-	     short depth,
-	     short ply,
-	     short alpha,
-	     short beta,
-	     unsigned short mv)
 
 /*
  * Store the current board position in the transposition table.
  */
 
+int
+PutInTTable(short side,
+            short score,
+            short depth,
+            short ply,
+            short alpha,
+            short beta,
+            unsigned short mv)
 {
     struct hashentry  *ptbl;
     /*unsigned*/ short i = 0;  /* to match new type of rehash --tpm */
@@ -311,9 +242,7 @@ PutInTTable (short side,
 
         if (++i > rehash)
         {
-#ifndef BAREBONES
             THashCol++;
-#endif
             ptbl += recycle;
 
             break;
@@ -322,10 +251,8 @@ PutInTTable (short side,
         ptbl++;
     }
 
-#ifndef BAREBONES
     TTadd++;
     HashAdd++;
-#endif
 
     /* adjust score so moves to mate is from this ply */
 
@@ -339,13 +266,6 @@ PutInTTable (short side,
     ptbl->score = score;
     ptbl->mv = mv;
 
-#ifdef DEBUG4
-  if (debuglevel & 32)
-    {
-      algbr (mv >> 8, mv & 0xff, 0);
-      printf ("-add-> d=%d s=%d p=%d a=%d b=%d %s\n", depth, score, ply, alpha, beta, mvstr);
-    }
-#endif
     if (score > beta)
     {
         ptbl->flags = lowerbound;
@@ -361,43 +281,17 @@ PutInTTable (short side,
         ptbl->bd[i] = CB(i);
 #endif /* HASHTEST */
 
-#ifdef DEBUG_TTABLE
-      /* printf("PUT "); ShowPTBL(ptbl); */
-#endif
-
     return true;
 }
 
 
-#if ttblsz
-static struct hashentry  *ttageb, *ttagew;
-#endif
 
 void
 ZeroTTable(void)
 {
-#ifdef notdef
-   struct hashentry  *w, *b;
-   for ( b=ttable[black], w=ttable[white]; b < &ttable[black][ttblsize]; w++, b++)
-     { 
-        w->depth = 0; 
-        b->depth = 0;
-     }
-   ttageb = ttable[black]; 
-   ttagew = ttable[white];
-   unsigned int a;
-   for (a = 0; a < ttblsize + (unsigned int)rehash; a++)
-     {
-       (ttable[black])[a].depth = 0;
-       (ttable[white])[a].depth = 0;
-     }
-#endif
     array_zero(ttable[black], (ttblsize + rehash));
     array_zero(ttable[white], (ttblsize + rehash));
 
-#ifdef DEBUG_TTABLE
-   printf("TTable zeroed\n");
-#endif
 #ifdef CACHE
     array_zero(etab[0], sizeof(struct etable)*(size_t)ETABLE);
     array_zero(etab[1], sizeof(struct etable)*(size_t)ETABLE);
@@ -467,9 +361,7 @@ ProbeFTable(short side,
             && (new.flags == (unsigned short)(t.flags
                                               & (kingcastle | queencastle))))
         {
-#if !defined BAREBONES
             FHashCnt++;
-#endif
 
             PV = (t.f << 8) | t.t;
             *score = (t.sh << 8) | t.sl;
@@ -502,20 +394,21 @@ ProbeFTable(short side,
     return (false);
 }
 
-void
-PutInFTable (short side,
-	     short score,
-	     short depth,
-	     short ply,
-	     short alpha,
-	     short beta,
-	     unsigned short f,
-	     unsigned short t)
+
 
 /*
  * Store the current board position in the persistent transposition table.
  */
 
+void
+PutInFTable(short side,
+            short score,
+            short depth,
+            short ply,
+            short alpha,
+            short beta,
+            unsigned short f,
+            unsigned short t)
 {
     unsigned short i;
     unsigned long hashix;
@@ -570,17 +463,9 @@ PutInFTable (short side,
             fseek(hashfile,
                   sizeof(struct fileentry) * ((hashix + 2 * i) % (filesz)),
                   SEEK_SET);
-#ifdef DEBUG4
-          if (debuglevel & 32)
-    	    {
-	      printf ("-fadd\n");
-	    }
-#endif
 
             fwrite(&new, sizeof(struct fileentry), 1, hashfile);
-#if !defined BAREBONES
             FHashAdd++;
-#endif
 
             break;
         }
@@ -626,9 +511,9 @@ PutInEETable(short side, int score)
 #if !defined SAVE_SSCORE
     array_copy(svalue, &(ptbl->sscore), sizeof(svalue));
 #endif
-#if !defined BAREBONES
+
     EADD++;
-#endif
+
     return;
 }
 
@@ -675,9 +560,7 @@ ProbeEETable(short side, short *score)
         hung[black] = ptbl->hung[black];
         hung[white] = ptbl->hung[white];
 
-#if !defined BAREBONES
         EGET++;
-#endif
 
         return true;
     }

@@ -1,7 +1,9 @@
 /*
- * tcontrl.c - C source for GNU SHOGI
+ * FILE: tcontrl.c
  *
+ * ----------------------------------------------------------------------
  * Copyright (c) 1993, 1994, 1995 Matthias Mutz
+ * Copyright (c) 1999 Michael Vanier and the Free Software Foundation
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -23,21 +25,15 @@
  * You should have received a copy of the GNU General Public License along
  * with GNU Shogi; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * ----------------------------------------------------------------------
+ *
  */
- 
-#include "gnushogi.h" 
 
-#ifdef DEBUG
-#include <assert.h>
-#else
-#include <assert.h>
-#endif
+
+#include "gnushogi.h"
+#include <math.h>
 
 #define ALTERNATIVE_TC
-
-#if !defined OLDTIME && defined HAVE_GETTIMEOFDAY
-double pow();
-#endif
 
 
 /*
@@ -114,8 +110,8 @@ TimeCalc()
     }
     else if ((me > him) && (tcompsum < topsum))
     {
-      tcompsum += timecomp[i];
-      topsum += timeopp[i];
+        /* If I am doing really well use more time per move. */
+        increment = -1;
     }
 
     /* If not fischer clock be careful about time. */
@@ -164,9 +160,6 @@ void SetResponseTime(short side)
             }
             else
             {
-#ifdef DEBUG
-		  char buffer[80];
-#endif
                 short rtf = in_opening_stage ? 8 : 2;
                 short tcq = in_opening_stage ? 2 : 4;
 
@@ -175,11 +168,6 @@ void SetResponseTime(short side)
                     / (((TimeControl.moves[side]) * rtf) + 1);
                 TCleft = (long)ResponseTime / tcq;
                 ResponseTime += TCadd / 2;
-#ifdef DEBUG
-		  sprintf(buffer,"rtf=%d tcq=%d rt=%ld tl=%ld",
-		  		rtf,tcq,ResponseTime,TCleft);
-		  ShowMessage(buffer);
-#endif
             }
 
             if (TimeControl.moves[side] < 5)
@@ -204,8 +192,7 @@ void SetResponseTime(short side)
             DetermineTCcount = false;
         }
 
-#ifndef HARDTIMELIMIT
-        else if (ResponseTime < 2 * MINRESPONSETIME)
+        if (!hard_time_limit && (ResponseTime < 2 * MINRESPONSETIME))
         {
             TCcount = MAXTCCOUNTX - 10;
 
@@ -214,7 +201,6 @@ void SetResponseTime(short side)
 
             DetermineTCcount = false;
         }
-#endif
     }
     else
     {
@@ -358,8 +344,6 @@ CheckForTimeout(int score, int globalscore, int Jscore, int zwndw)
         flag.timeout = true;
 #endif
 
-#if !defined BAREBONES
     if (flag.timeout)
         ShowMessage("timeout");
-#endif
 }
