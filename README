@@ -1,5 +1,16 @@
-This is XShogi version 1.3
---------------------------
+This is XShogi version 1.4.2
+----------------------------
+
+This program is obsolescent and unmaintainted.  It used to be the
+official GUI for GNU Shogi; GNU Shogi 1.5 will support XBoard 4.7 as a
+better alternative.
+
+XShogi was for some time, untill the 1.4.1 release, distributed in the
+GNU Shogi package.  It is now available as a standalone source package
+again for convenience, with no plan for further update.
+
+Yann Dirson <ydirson@free.fr>
+
 
 This program provides an XWindows interface to the Japanese Chess (Shogi)
 playing program GNU Shogi.  You have to create "gnushogi" from GNU Shogi

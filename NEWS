@@ -1,5 +1,10 @@
 Changes of XShogi will are recorded starting with XShogi 1.0 patchlevel 10.
 
+version 1.4.2
+    o Split out of the GNU Shogi source.
+
+    o Official depreciation notice.
+
 version 1.3 
 
 01.06.1999
