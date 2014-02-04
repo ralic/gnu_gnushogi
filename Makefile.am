@@ -20,7 +20,7 @@
 # the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 #
 
-bin_PROGRAMS = @XSHOGI@
+bin_PROGRAMS = xshogi
 EXTRA_PROGRAMS = xshogi
 xdocdir = ${datarootdir}/doc/xshogi
 
@@ -43,11 +43,11 @@ xshogi_LDADD = @X_LIBS@ -lXaw -lXmu -lXt -lXext -lX11
 BUILT_SOURCES = parser.h
 AM_YFLAGS = -d
 
-XDOCS = \
+dist_xdoc_DATA = \
 	README.xboard \
 	BUGS
-dist_xdoc_DATA = @XDOCS@
-EXTRA_DATA = $(XDOCS)
+
+dist_man_MANS = xshogi.6
 
 dist_noinst_DATA = \
 	REMOTEHOSTS

@@ -1,0 +1,190 @@
+2013-12-17  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.am, Makefile.in: [gnushogi subtree] Switch build to
+	automake, building gnuminishogi officially.
+
+2013-12-14  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.in, parser.y, scanner.l: [gnushogi subtree] Xshogi: build
+	scanner separately from parser.
+
+2013-11-05  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.in: [gnushogi subtree] Remove unused obsolete version
+	numbers from Makefiles.
+
+2013-11-03  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.in, xshogi.c: [gnushogi subtree] Use centralized version
+	from configure.ac, drop use of separate patchlevel.
+
+2013-10-14  Yann Dirson <ydirson@free.fr>
+
+	* xshogi.c: [gnushogi subtree] Finally get rid of that highly
+	non-standard use of SIGINT.  People will at last be able to Ctrl-C gnushogi :)
+
+2013-10-13  Yann Dirson <ydirson@free.fr>
+
+	* xshogi.c: [gnushogi subtree] Restore SIGINT for stopping gnushogi
+	when thinking.  SIGINT is unfortunately part of the protocol inherited from
+	gnuchess4, and is used by xboard as such.  So this was not a proper
+	fix for the original issue.  This reverts commit 00e10bc4a760150665436b17c50abf264f28d435, "Don't
+	intercept INT and QUIT signals, and use USR1 instead of QUIT for".
+
+2013-09-30  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.in: [gnushogi subtree] Honor LDFLAGS at link-time.
+
+2008-02-11  Yann Dirson <ydirson@altern.org>
+
+	* Makefile.in: [gnushogi subtree] Add support for building gnushogi
+	and xshogi out of source tree.
+
+2008-02-11  Yann Dirson <ydirson@altern.org>
+
+	* xshogi.c: [gnushogi subtree] Don't intercept INT and QUIT signals,
+	and use USR1 instead of QUIT for communication.  This braindead use of SIGINT causes problem when a frontend is
+	interrupted with Ctrl-C: if gnushogi is waiting for input, it would
+	enter a tight loop trying to read stdin, eating 100% CPU.
+
+2004-07-08  Mike Vanier <mvanier@bbb.caltech.edu>
+
+	* BUGS, Makefile.in, TRANS.TBL, bitmaps.h,
+	eastern_bitmaps/TRANS.TBL, eastern_bitmaps/bigblank.xbm,
+	eastern_bitmaps/bigblankR.xbm, eastern_bitmaps/biglight.xbm,
+	eastern_bitmaps/bigsolid.xbm, eastern_bitmaps/bigsolidR.xbm,
+	eastern_bitmaps/bigsolidR_l.xbm, eastern_bitmaps/bigsolidR_m.xbm,
+	eastern_bitmaps/bigsolid_l.xbm, eastern_bitmaps/bigsolid_m.xbm,
+	eastern_bitmaps/bishop.xbm, eastern_bitmaps/bishopP.top.xbm,
+	eastern_bitmaps/bishopP.xbm, eastern_bitmaps/bishopPR.top.xbm,
+	eastern_bitmaps/bishopPR.xbm, eastern_bitmaps/bishopPR_l.top.xbm,
+	eastern_bitmaps/bishopPR_l.xbm, eastern_bitmaps/bishopPR_m.top.xbm,
+	eastern_bitmaps/bishopPR_m.xbm, eastern_bitmaps/bishopP_l.top.xbm,
+	eastern_bitmaps/bishopP_l.xbm, eastern_bitmaps/bishopP_m.top.xbm,
+	eastern_bitmaps/bishopP_m.xbm, eastern_bitmaps/bishopR.xbm,
+	eastern_bitmaps/bishopR_l.xbm, eastern_bitmaps/bishopR_m.xbm,
+	eastern_bitmaps/bishop_l.xbm, eastern_bitmaps/bishop_m.xbm,
+	eastern_bitmaps/gold.xbm, eastern_bitmaps/goldR.xbm,
+	eastern_bitmaps/goldR_l.xbm, eastern_bitmaps/goldR_m.xbm,
+	eastern_bitmaps/gold_l.xbm, eastern_bitmaps/gold_m.xbm,
+	eastern_bitmaps/icon.xbm, eastern_bitmaps/king.xbm,
+	eastern_bitmaps/kingR.xbm, eastern_bitmaps/kingR_l.xbm,
+	eastern_bitmaps/kingR_m.xbm, eastern_bitmaps/king_l.xbm,
+	eastern_bitmaps/king_m.xbm, eastern_bitmaps/knight.xbm,
+	eastern_bitmaps/knightP.xbm, eastern_bitmaps/knightPR.xbm,
+	eastern_bitmaps/knightPR_l.xbm, eastern_bitmaps/knightPR_m.xbm,
+	eastern_bitmaps/knightP_l.xbm, eastern_bitmaps/knightP_m.xbm,
+	eastern_bitmaps/knightR.xbm, eastern_bitmaps/knightR_l.xbm,
+	eastern_bitmaps/knightR_m.xbm, eastern_bitmaps/knight_l.xbm,
+	eastern_bitmaps/knight_m.xbm, eastern_bitmaps/lance.xbm,
+	eastern_bitmaps/lanceP.xbm, eastern_bitmaps/lancePR.xbm,
+	eastern_bitmaps/lancePR_l.xbm, eastern_bitmaps/lancePR_m.xbm,
+	eastern_bitmaps/lanceP_l.xbm, eastern_bitmaps/lanceP_m.xbm,
+	eastern_bitmaps/lanceR.xbm, eastern_bitmaps/lanceR_l.xbm,
+	eastern_bitmaps/lanceR_m.xbm, eastern_bitmaps/lance_l.xbm,
+	eastern_bitmaps/lance_m.xbm, eastern_bitmaps/none.xbm,
+	eastern_bitmaps/none_l.xbm, eastern_bitmaps/none_m.xbm,
+	eastern_bitmaps/pawn.xbm, eastern_bitmaps/pawnP.xbm,
+	eastern_bitmaps/pawnPR.xbm, eastern_bitmaps/pawnPR_l.xbm,
+	eastern_bitmaps/pawnPR_m.xbm, eastern_bitmaps/pawnP_l.xbm,
+	eastern_bitmaps/pawnP_m.xbm, eastern_bitmaps/pawnR.xbm,
+	eastern_bitmaps/pawnR_l.xbm, eastern_bitmaps/pawnR_m.xbm,
+	eastern_bitmaps/pawn_l.xbm, eastern_bitmaps/pawn_m.xbm,
+	eastern_bitmaps/rook.xbm, eastern_bitmaps/rookP.top.xbm,
+	eastern_bitmaps/rookP.xbm, eastern_bitmaps/rookPR.top.xbm,
+	eastern_bitmaps/rookPR.xbm, eastern_bitmaps/rookPR_l.top.xbm,
+	eastern_bitmaps/rookPR_l.xbm, eastern_bitmaps/rookPR_m.top.xbm,
+	eastern_bitmaps/rookPR_m.xbm, eastern_bitmaps/rookP_l.top.xbm,
+	eastern_bitmaps/rookP_l.xbm, eastern_bitmaps/rookP_m.top.xbm,
+	eastern_bitmaps/rookP_m.xbm, eastern_bitmaps/rookR.xbm,
+	eastern_bitmaps/rookR_l.xbm, eastern_bitmaps/rookR_m.xbm,
+	eastern_bitmaps/rook_l.xbm, eastern_bitmaps/rook_m.xbm,
+	eastern_bitmaps/silver.xbm, eastern_bitmaps/silverP.xbm,
+	eastern_bitmaps/silverPR.xbm, eastern_bitmaps/silverPR_l.xbm,
+	eastern_bitmaps/silverPR_m.xbm, eastern_bitmaps/silverP_l.xbm,
+	eastern_bitmaps/silverP_m.xbm, eastern_bitmaps/silverR.xbm,
+	eastern_bitmaps/silverR_l.xbm, eastern_bitmaps/silverR_m.xbm,
+	eastern_bitmaps/silver_l.xbm, eastern_bitmaps/silver_m.xbm,
+	eastern_bitmaps/smallblank.xbm, eastern_bitmaps/smallblankR.xbm,
+	eastern_bitmaps/smalllight.xbm, eastern_bitmaps/smallsolid.xbm,
+	eastern_bitmaps/smallsolidR.xbm, eastern_bitmaps/smallsolidR_l.xbm,
+	eastern_bitmaps/smallsolidR_m.xbm,
+	eastern_bitmaps/smallsolid_l.xbm, eastern_bitmaps/smallsolid_m.xbm,
+	new_eastern_bitmaps/bigsolidR_l.xbm,
+	new_eastern_bitmaps/bigsolid_l.xbm,
+	new_eastern_bitmaps/bishopPR_l.xbm,
+	new_eastern_bitmaps/bishopP_l.xbm,
+	new_eastern_bitmaps/bishopR_l.xbm,
+	new_eastern_bitmaps/bishop_l.xbm, new_eastern_bitmaps/goldR_l.xbm,
+	new_eastern_bitmaps/gold_l.xbm, new_eastern_bitmaps/kingR_l.xbm,
+	new_eastern_bitmaps/king_l.xbm, new_eastern_bitmaps/knightPR_l.xbm,
+	new_eastern_bitmaps/knightP_l.xbm,
+	new_eastern_bitmaps/knightR_l.xbm,
+	new_eastern_bitmaps/knight_l.xbm,
+	new_eastern_bitmaps/lancePR_l.xbm,
+	new_eastern_bitmaps/lanceP_l.xbm, new_eastern_bitmaps/lanceR_l.xbm,
+	new_eastern_bitmaps/lance_l.xbm, {eastern_bitmaps =>
+	new_eastern_bitmaps}/none_l.xbm, new_eastern_bitmaps/pawnPR_l.xbm,
+	new_eastern_bitmaps/pawnP_l.xbm, new_eastern_bitmaps/pawnR_l.xbm,
+	new_eastern_bitmaps/pawn_l.xbm, new_eastern_bitmaps/rookPR_l.xbm,
+	new_eastern_bitmaps/rookP_l.xbm, new_eastern_bitmaps/rookR_l.xbm,
+	new_eastern_bitmaps/rook_l.xbm, new_eastern_bitmaps/silverPR_l.xbm,
+	new_eastern_bitmaps/silverP_l.xbm,
+	new_eastern_bitmaps/silverR_l.xbm,
+	new_eastern_bitmaps/silver_l.xbm,
+	new_eastern_bitmaps/smallsolidR_l.xbm,
+	new_eastern_bitmaps/smallsolid_l.xbm,
+	new_western_bitmaps/bishopPRW.xbm,
+	new_western_bitmaps/bishopPW.xbm, new_western_bitmaps/bishopRW.xbm,
+	new_western_bitmaps/bishopW.xbm, new_western_bitmaps/goldRW.xbm,
+	new_western_bitmaps/goldW.xbm, new_western_bitmaps/kingRW.xbm,
+	new_western_bitmaps/kingW.xbm, new_western_bitmaps/knightPRW.xbm,
+	new_western_bitmaps/knightPW.xbm, new_western_bitmaps/knightRW.xbm,
+	new_western_bitmaps/knightW.xbm, new_western_bitmaps/lancePRW.xbm,
+	new_western_bitmaps/lancePW.xbm, new_western_bitmaps/lanceRW.xbm,
+	new_western_bitmaps/lanceW.xbm, eastern_bitmaps/none_l.xbm =>
+	new_western_bitmaps/noneW.xbm, new_western_bitmaps/pawnPRW.xbm,
+	new_western_bitmaps/pawnPW.xbm, new_western_bitmaps/pawnRW.xbm,
+	new_western_bitmaps/pawnW.xbm, new_western_bitmaps/rookPRW.xbm,
+	new_western_bitmaps/rookPW.xbm, new_western_bitmaps/rookRW.xbm,
+	new_western_bitmaps/rookW.xbm, new_western_bitmaps/silverPRW.xbm,
+	new_western_bitmaps/silverPW.xbm, new_western_bitmaps/silverRW.xbm,
+	new_western_bitmaps/silverW.xbm, parser.y, scanner.l, sysdeps.h,
+	western_bitmaps/TRANS.TBL, western_bitmaps/bishopPRW.xbm,
+	western_bitmaps/bishopPW.xbm, western_bitmaps/bishopRW.xbm,
+	western_bitmaps/bishopW.xbm, western_bitmaps/goldRW.xbm,
+	western_bitmaps/goldW.xbm, western_bitmaps/kingRW.xbm,
+	western_bitmaps/kingW.xbm, western_bitmaps/knightPRW.xbm,
+	western_bitmaps/knightPW.xbm, western_bitmaps/knightRW.xbm,
+	western_bitmaps/knightW.xbm, western_bitmaps/lancePRW.xbm,
+	western_bitmaps/lancePW.xbm, western_bitmaps/lanceRW.xbm,
+	western_bitmaps/lanceW.xbm, western_bitmaps/noneW.xbm,
+	western_bitmaps/pawnPRW.xbm, western_bitmaps/pawnPW.xbm,
+	western_bitmaps/pawnRW.xbm, western_bitmaps/pawnW.xbm,
+	western_bitmaps/rookPRW.xbm, western_bitmaps/rookPW.xbm,
+	western_bitmaps/rookRW.xbm, western_bitmaps/rookW.xbm,
+	western_bitmaps/silverPRW.xbm, western_bitmaps/silverPW.xbm,
+	western_bitmaps/silverRW.xbm, western_bitmaps/silverW.xbm,
+	xshogi.c, xshogi.h, xshogifn.h: [gnushogi subtree] GNU Shogi 1.3.2
+
+2002-04-26  Mike Vanier <mvanier@bbb.caltech.edu>
+
+	* BUGS, CONTRIB, COPYING, INSTALL, Imakefile, Makefile.custom,
+	Makefile.in, CHANGES => NEWS, README, README-1.2p03,
+	README.challenge, README.iss_client, README.xboard, REMOTEHOSTS,
+	TRANS.TBL, bitmaps.h, eastern_bitmaps/TRANS.TBL, parsebrd.c,
+	parser.bison, parser.c, parser.y, scanner.c, scanner.flex,
+	scanner.l, sysdeps.h, version.h, western_bitmaps/TRANS.TBL,
+	western_moves.ps, xshogi.c, xshogi.h, xshogi.man, xshogifn.h: 
+	[gnushogi subtree] GNU Shogi 1.3
+
+1995-05-24  Matthias Mutz <mutz@fmi.uni-passau.de>
+
+	* CHANGES, INSTALL, Makefile.custom, README-1.2p01 =>
+	README-1.2p03, README.iss_client, parsebrd.c, version.h, xshogi.c,
+	xshogi.h, xshogi.man: XShogi 1.2p03
+
+1993-11-15  Matthias Mutz <mutz@fmi.uni-passau.de>
+
+	* XShogi 1.2p02
+

@@ -1,0 +1,7 @@
+Maintainer's procedures
+=======================
+
+Updating ChangeLog
+------------------
+
+git log --pretty --numstat --summary 03a37bd16..savannah/master | git2cl > ChangeLog
