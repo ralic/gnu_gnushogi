@@ -627,7 +627,7 @@ struct GameRec
 struct TimeControlRec
 {
     short moves[2];
-    long  clock[2];
+    long  clock[2];             /* centisecond */
 };
 
 
