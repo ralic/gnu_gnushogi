@@ -590,29 +590,51 @@ static ULONG NextOffset(struct gdxadmin *B, ULONG offset)
 
 static void WriteAdmin(void)
 {
-    lseek(gfd, 0, SEEK_SET);
-    write(gfd, (char *)&ADMIN, sizeof_gdxadmin);
+    ssize_t ret;
+    if (lseek(gfd, 0, SEEK_SET) == (off_t)-1) {
+        perror("rewinding binbook for writing");
+        return;
+    }
+    ret = write(gfd, (char *)&ADMIN, sizeof_gdxadmin);
+    if (ret < 0)
+        perror("writing binbook header");
+    else if (ret < sizeof_gdxadmin)
+        fprintf(stderr, "writing binbook header: short write");
 }
 
 static void WriteData(ULONG offset, int *mustwrite)
 {
+    ssize_t ret;
     if (!*mustwrite)
         return;
 
-    lseek(gfd, offset, SEEK_SET);
-    write(gfd, (char *)&DATA, sizeof_gdxdata);
+    if (lseek(gfd, offset, SEEK_SET) == (off_t)-1) {
+        perror("seeking binbook for writing data");
+        return;
+    }
+    ret = write(gfd, (char *)&DATA, sizeof_gdxdata);
+    if (ret < 0)
+        perror("writing binbook data");
+    else if (ret < sizeof_gdxadmin)
+        fprintf(stderr, "writing binbook data: short write");
     *mustwrite = false;
 }
 
 static int ReadAdmin(void)
 {
-    lseek(gfd, 0, SEEK_SET);
+    if (lseek(gfd, 0, SEEK_SET) == (off_t)-1) {
+        perror("rewinding binbook for reading");
+        return 0;
+    }
     return (sizeof_gdxadmin == read(gfd, (char *)&ADMIN, sizeof_gdxadmin));
 }
 
 static int ReadData(ULONG offset, struct gdxdata *DATA)
 {
-    lseek(gfd, offset, SEEK_SET);
+    if (lseek(gfd, offset, SEEK_SET) == (off_t)-1) {
+        perror("seeking binbookfor reading data");
+        return 0;
+    }
     return (sizeof_gdxdata == read(gfd, (char *)DATA, sizeof_gdxdata));
 }
 

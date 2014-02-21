@@ -239,7 +239,14 @@ main (int argc, char **argv)
 
                 for (j = 0; j < i + 1; j++)
                 {
-                    fread(&n, sizeof(struct fileentry), 1, hashfile);
+                    if (fread(&n, sizeof(struct fileentry), 1, hashfile) < sizeof(struct fileentry))
+                    {
+                        if (feof(hashfile))
+                            printf("ERROR: end of file reached\n");
+                        else if (ferror(hashfile))
+                            printf("ERROR\n");
+                        exit(1);
+                    }
 
                     if (n.depth > MAXDEPTH)
                     {
