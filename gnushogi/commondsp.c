@@ -436,7 +436,10 @@ void RequestInputString(char* buffer, unsigned bufsize)
                 __FUNCTION__, bufsize);
         exit(1);
     }
-    dsp->doRequestInputString(fmt, buffer);
+    if (dsp->doRequestInputString(fmt, buffer) != 1) {
+        fprintf(stderr, "read error\n");
+        exit(1);
+    }
 }
 
 

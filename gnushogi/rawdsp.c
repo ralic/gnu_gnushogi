@@ -144,10 +144,10 @@ Raw_Printf(const char *format, ...)
 }
 
 
-static void
+static int
 Raw_doRequestInputString(const char* fmt, char* buffer)
 {
-    scanf(fmt, buffer);
+    return scanf(fmt, buffer);
 }
 
 

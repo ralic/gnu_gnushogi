@@ -1145,7 +1145,7 @@ struct display
     void (*ShowMessage)(char *s, ...);
     void (*AlwaysShowMessage)(const char *format, ...);
     void (*Printf)(const char *format, ...);
-    void (*doRequestInputString)(const char* fmt, char* buffer);
+    int  (*doRequestInputString)(const char* fmt, char* buffer);
     int  (*GetString)(char* sx);
     void (*SetupBoard)(void);
     void (*ShowPatternCount)(short side, short n);

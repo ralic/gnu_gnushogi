@@ -198,10 +198,10 @@ Curses_Printf(const char *format, ...)
 }
 
 
-static void
+static int
 Curses_doRequestInputString(const char* fmt, char* buffer)
 {
-    FLUSH_SCANW(fmt, buffer);
+    return FLUSH_SCANW(fmt, buffer);
 }
 
 
