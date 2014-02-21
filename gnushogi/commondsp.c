@@ -443,6 +443,14 @@ void RequestInputString(char* buffer, unsigned bufsize)
 }
 
 
+void fgets_or_die(char* s, int size, FILE *stream)
+{
+    if (fgets(s, size, stream))
+        return; /* OK */
+    dsp->AlwaysShowMessage("read error, aborting");
+    exit(1);
+}
+
 static void
 GetGame(void)
 {
@@ -465,7 +473,7 @@ GetGame(void)
     if ((fd = fopen(fname, "r")) != NULL)
     {
         NewGame();
-        fgets(fname, 256, fd);
+        fgets_or_die(fname, 256, fd);
         computer = opponent = black;
         InPtr = fname;
         skip();
@@ -483,8 +491,8 @@ GetGame(void)
         Game50 = atoi(InPtr);
         skip();
         flag.force = (*InPtr == 'f');
-        fgets(fname, 256, fd); /* empty */
-        fgets(fname, 256, fd);
+        fgets_or_die(fname, 256, fd); /* empty */
+        fgets_or_die(fname, 256, fd);
         InPtr = &fname[11];
         skipb();
         TCflag = atoi(InPtr);
@@ -492,25 +500,25 @@ GetGame(void)
         InPtr += 14;
         skipb();
         OperatorTime = atoi(InPtr);
-        fgets(fname, 256, fd);
+        fgets_or_die(fname, 256, fd);
         InPtr = &fname[11];
         skipb();
         TimeControl.clock[black] = atol(InPtr);
         skip();
         skip();
         TimeControl.moves[black] = atoi(InPtr);
-        fgets(fname, 256, fd);
+        fgets_or_die(fname, 256, fd);
         InPtr = &fname[11];
         skipb();
         TimeControl.clock[white] = atol(InPtr);
         skip();
         skip();
         TimeControl.moves[white] = atoi(InPtr);
-        fgets(fname, 256, fd); /* empty */
+        fgets_or_die(fname, 256, fd); /* empty */
 
         for (i = NO_ROWS - 1; i > -1; i--)
         {
-            fgets(fname, 256, fd);
+            fgets_or_die(fname, 256, fd);
             p = &fname[2];
             InPtr = &fname[23];
 
@@ -560,15 +568,15 @@ GetGame(void)
             }
         }
 
-        fgets(fname, 256, fd);  /* empty */
-        fgets(fname, 256, fd);  /* 9 8 7 ... */
-        fgets(fname, 256, fd);  /* empty */
-        fgets(fname, 256, fd);  /* p l n ... */
+        fgets_or_die(fname, 256, fd);  /* empty */
+        fgets_or_die(fname, 256, fd);  /* 9 8 7 ... */
+        fgets_or_die(fname, 256, fd);  /* empty */
+        fgets_or_die(fname, 256, fd);  /* p l n ... */
         ClearCaptured();
 
         for (side = 0; side <= 1; side++)
         {
-            fgets(fname, 256, fd);
+            fgets_or_die(fname, 256, fd);
             InPtr = fname;
             skip();
             skipb();
@@ -594,8 +602,8 @@ GetGame(void)
         GameCnt = 0;
         flag.regularstart = true;
         Book = BOOKFAIL;
-        fgets(fname, 256, fd); /* empty */
-        fgets(fname, 256, fd);   /*  move score ... */
+        fgets_or_die(fname, 256, fd); /* empty */
+        fgets_or_die(fname, 256, fd);   /*  move score ... */
 
         while (fgets(fname, 256, fd))
         {
@@ -840,7 +848,7 @@ GetXGame(void)
         Book = false;
 
         /* xshogi position file ... */
-        fgets(fname, 256, fd);
+        fgets_or_die(fname, 256, fd);
 
 #ifdef notdef
         fname[6] = '\0';
@@ -850,13 +858,13 @@ GetXGame(void)
 #endif
 
         /* -- empty line -- */
-        fgets(fname, 256, fd);
+        fgets_or_die(fname, 256, fd);
         /* -- empty line -- */
-        fgets(fname, 256, fd);
+        fgets_or_die(fname, 256, fd);
 
         for (i = NO_ROWS - 1; i > -1; i--)
         {
-            fgets(fname, 256, fd);
+            fgets_or_die(fname, 256, fd);
             p = fname;
 
             for (j = 0; j < NO_COLS; j++)
@@ -907,7 +915,7 @@ GetXGame(void)
 
         for (side = 0; side <= 1; side++)
         {
-            fgets(fname, 256, fd);
+            fgets_or_die(fname, 256, fd);
             InPtr = fname;
             Captured[side][pawn]   = atoi(InPtr);
             skip();

@@ -1167,4 +1167,6 @@ extern struct display *dsp;
 extern struct display raw_display;
 extern struct display curses_display;
 
+void fgets_or_die(char* s, int size, FILE *stream);
+
 #endif /* _GNUSHOGI_H_ */

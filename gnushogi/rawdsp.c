@@ -342,6 +342,13 @@ Raw_help(void)
            TCadd/100, MaxSearchDepth);
 }
 
+#define scanf_or_die(n, args)                   \
+    do {                                        \
+        if (scanf args != n) {                  \
+            fprintf(stderr, "read error\n");    \
+            exit(1);                            \
+        }                                       \
+    } while(0)
 
 /*
  * Set up a board position. Pieces are entered by typing the piece followed
@@ -366,7 +373,7 @@ Raw_EditBoard(void)
 
     while(1)
     {
-        scanf("%s", s);
+        scanf_or_die(1, ("%s", s));
         found = 0;
 
         if (s[0] == '.')
@@ -461,11 +468,11 @@ Raw_SetupBoard(void)
 
     NewGame();
 
-    fgets(s, 80, stdin);            /* skip "setup" command */
+    fgets_or_die(s, 80, stdin);            /* skip "setup" command */
 
     for (r = NO_ROWS - 1; r >= 0; r--)
     {
-        fgets(s, 80, stdin);
+        fgets_or_die(s, 80, stdin);
 
         for (c = 0; c <= (NO_COLS - 1); c++)
         {
@@ -664,9 +671,9 @@ static void
 Raw_ChangeAlphaWindow(void)
 {
     printf("WAwindow: ");
-    scanf("%hd", &WAwindow);
+    scanf_or_die(1, ("%hd", &WAwindow));
     printf("BAwindow: ");
-    scanf("%hd", &BAwindow);
+    scanf_or_die(1, ("%hd", &BAwindow));
 }
 
 
@@ -674,9 +681,9 @@ static void
 Raw_ChangeBetaWindow(void)
 {
     printf("WBwindow: ");
-    scanf("%hd", &WBwindow);
+    scanf_or_die(1, ("%hd", &WBwindow));
     printf("BBwindow: ");
-    scanf("%hd", &BBwindow);
+    scanf_or_die(1, ("%hd", &BBwindow));
 }
 
 
@@ -708,7 +715,7 @@ Raw_SelectLevel(char *sx)
         if (!T[0])
         {
             fputs("Enter #moves #minutes: ", stdout);
-            fgets(T, NO_SQUARES + 1, stdin);
+            fgets_or_die(T, NO_SQUARES + 1, stdin);
         }
     
         /* skip blackspace */
@@ -740,7 +747,7 @@ Raw_SelectLevel(char *sx)
     
     #ifdef OPERATORTIME
             fputs("Operator time (hundredths) = ", stdout);
-            scanf("%hd", &OperatorTime);
+            scanf_or_die(1, ("%hd", &OperatorTime));
     #endif
     
             if (TCmoves == 0)
@@ -785,7 +792,7 @@ Raw_ChangeSearchDepth(char *sx)
     /* if line empty, ask for input */
     if (!buf[0]) {
         printf("depth = ");
-        fgets(buf, 80+1, stdin);
+        fgets_or_die(buf, 80+1, stdin);
     }
     sscanf(buf, "%hd", &MaxSearchDepth);
     TCflag = !(MaxSearchDepth > 0);
@@ -796,9 +803,9 @@ static void
 Raw_ChangeHashDepth(void)
 {
     printf("hashdepth = ");
-    scanf("%hd", &HashDepth);
+    scanf_or_die(1, ("%hd", &HashDepth));
     printf("MoveLimit = ");
-    scanf("%hd", &HashMoveLimit);
+    scanf_or_die(1, ("%hd", &HashMoveLimit));
 }
 
 
@@ -806,7 +813,7 @@ static void
 Raw_SetContempt(void)
 {
     printf("contempt = ");
-    scanf("%hd", &contempt);
+    scanf_or_die(1, ("%hd", &contempt));
 }
 
 
@@ -814,7 +821,7 @@ static void
 Raw_ChangeXwindow(void)
 {
     printf("xwndw = ");
-    scanf("%hd", &xwndw);
+    scanf_or_die(1, ("%hd", &xwndw));
 }
 
 
@@ -850,7 +857,7 @@ Raw_DoDebug(void)
 
     ExaminePosition(opponent);
     Raw_ShowMessage("Enter piece: ");
-    scanf("%s", s);
+    scanf_or_die(1, ("%s", s));
     c = neutral;
 
     if ((s[0] == 'b') || (s[0] == 'B'))
