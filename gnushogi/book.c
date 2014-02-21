@@ -649,8 +649,12 @@ GetOpenings(void)
 
     FILE *fd;
 
-    if ((fd = fopen(bookfile, "r")) == NULL)
-        fd = fopen("gnushogi.tbk", "r");
+    if ( (fd = fopen(bookfile, "r")) )
+        dsp->ShowMessage("using text bookfile '%s'", bookfile);
+    else if ( (fd = fopen("gnushogi.tbk", "r")) )
+        dsp->ShowMessage("using text bookfile '%s'", "gnushogi.tbk");
+    else
+        dsp->ShowMessage("using no text bookfile");
 
     if (fd != NULL)
     {
