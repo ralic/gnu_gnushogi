@@ -1575,6 +1575,10 @@ InputCommand(char *command)
     {
         player = opponent;
 
+        if (flag.analyze) {
+            SelectMove(opponent, BACKGROUND_MODE);
+        }
+
 #ifdef QUIETBACKGROUND
         if (!have_shown_prompt)
         {
@@ -1636,7 +1640,7 @@ InputCommand(char *command)
             /* noop */ ;
         }
         else if ((strcmp(s, "quit") == 0) ||
-                 (strcmp(s, "exit") == 0))
+                 (strcmp(s, "exit") == 0) && !xboard)
         {
             flag.quit = true;
         }
@@ -1664,6 +1668,19 @@ InputCommand(char *command)
 #endif
                 );
             printf("debug=1 setboard=0 sigint=0 done=1\n");
+        }
+        else if (strcmp(s, ".") == 0)
+        {   // ignore for now
+        }
+        else if (strcmp(s, "exit") == 0)
+        {
+            flag.analyze = false;
+            flag.force = true;
+        }
+        else if (strcmp(s, "analyze") == 0)
+        {
+            flag.analyze = true;
+            flag.force = true;
         }
         else if ((strcmp(s, "set") == 0) ||
                  (strcmp(s, "edit") == 0))
