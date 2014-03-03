@@ -642,6 +642,7 @@ struct flags
     short bothsides;         /* computer plays both sides */
     short hash;              /* enable/disable transposition table */
     short force;             /* enter moves */
+    short analyze;           /* search during move entry */
     short easy;              /* disable thinking on opponents time */
     short beep;              /* enable/disable beep */
     short timeout;           /* time to make a move */
