@@ -1511,7 +1511,7 @@ InputCommand(char *command)
         ZeroTTable();
 #endif
 
-    if ((hint > 0) && !flag.easy && !flag.force)
+    if ((hint > 0) && !flag.easy && !flag.force && !command)
     {
         /*
          * A hint move for the player is available.  Compute a move for the
@@ -1575,7 +1575,7 @@ InputCommand(char *command)
     {
         player = opponent;
 
-        if (flag.analyze) {
+        if (flag.analyze && !command) {
             SelectMove(opponent, BACKGROUND_MODE);
         }
 
