@@ -1493,8 +1493,8 @@ SetMachineTime(char *time)
  * the hint move, then set Sdepth to zero.
  */
 
-void
-InputCommand(char *command)
+int
+InputCommand(char *command, int root)
 {
 #ifdef QUIETBACKGROUND
     short have_shown_prompt = false;
@@ -1502,6 +1502,7 @@ InputCommand(char *command)
     short ok, done, is_move = false;
     unsigned short mv;
     char s[80], sx[80];
+    static char backlog[80];
 
     ok = flag.quit = done = false;
     player = opponent;
@@ -1511,7 +1512,7 @@ InputCommand(char *command)
         ZeroTTable();
 #endif
 
-    if ((hint > 0) && !flag.easy && !flag.force && !command)
+    if ((hint > 0) && !flag.easy && !flag.force && !command && !backlog[0] && root)
     {
         /*
          * A hint move for the player is available.  Compute a move for the
@@ -1575,7 +1576,7 @@ InputCommand(char *command)
     {
         player = opponent;
 
-        if (flag.analyze && !command) {
+        if (flag.analyze && !command && !backlog[0] && root) {
             SelectMove(opponent, BACKGROUND_MODE);
         }
 
@@ -1592,18 +1593,27 @@ InputCommand(char *command)
         have_shown_prompt = false;
 #endif /* QUIETBACKGROUND */
 
+        if (!command && backlog[0]) command = backlog; /* pick up backlogged command */
+
         if (command == NULL) {
             int eof = dsp->GetString(sx);
             if (eof)
                 dsp->ExitShogi();
         } else {
             strcpy(sx, command);
+            backlog[0]= '\0'; /* make sure no backlog is left */
             done = true;
         }
 
         /* extract first word */
         if (sscanf(sx, "%s", s) < 1)
             continue;
+
+        if (!root && strcmp(s, "."))
+        {   /* during search most commands can only be done after abort */
+            strcpy(backlog, sx); /* backlog the command    */
+            return true;         /* and order search abort */
+        }
 
         if (strcmp(s, "bd") == 0)   /* bd -- display board */
         {
@@ -1670,7 +1680,13 @@ InputCommand(char *command)
             printf("debug=1 setboard=0 sigint=0 done=1\n");
         }
         else if (strcmp(s, ".") == 0)
-        {   // ignore for now
+        {   // periodic update request of analysis info: send stat01 info
+            ElapsedTime(2);
+            algbr((short)(currentMove >> 8), (short)(currentMove & 0xFF), 0);
+            printf("stat01: %4ld %8ld %2d %2d %2d %s\n",
+                    et, NodeCnt, Sdepth, movesLeft, TrPnt[2]-TrPnt[1], mvstr[0]);
+            fflush(stdout);
+            if (!root) return false; /* signal no abort needed */
         }
         else if (strcmp(s, "exit") == 0)
         {
@@ -2032,4 +2048,6 @@ InputCommand(char *command)
                    ++mycnt2, s, TimeControl.clock[player] * 10);
         }
     }
+
+    return true;
 }
