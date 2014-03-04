@@ -1482,6 +1482,122 @@ SetMachineTime(char *time)
     }
 }
 
+/*
+ * Set up a board position. Pieces are entered by typing the piece followed
+ * by the location. For example, Nf3 will place a knight on square f3.
+ */
+static void
+ReadFEN(char *fen)
+{
+    short a = white, r, c, sq, i, error = 0;
+    char s[80];
+
+    flag.regularstart = true;
+    Book = BOOKFAIL;
+
+    for (sq = 0; sq < NO_SQUARES; sq++)
+    {
+        board[sq] = no_piece;
+        color[sq] = neutral;
+    }
+
+    ClearCaptured();
+
+    /* read board */
+    r = NO_ROWS-1; c = 0;
+    while(*fen)
+    {
+        if (isdigit(*fen))
+        {
+            c += *fen++ - '0'; /* assumes single digit! */
+        }
+        else if (*fen == '/')
+        {   /* next rank */
+            if (c != NO_COLS) error++;
+            c = 0; fen++;
+            if (--r < 0) break;
+        }
+        else
+        {
+            int promo = 0, found = 0;
+            if (*fen == '+')
+            {
+                promo++; fen++;
+            }
+
+            if (!isalpha(*fen)) break;
+
+            for (i = no_piece; i <= king; i++)
+            {
+                if ((*fen == pxx[i]) || (*fen == qxx[i]))
+                {
+                    sq = locn(r, c);
+                    color[sq] = (islower(*fen) ? white : black);
+                    if (promo)
+                        board[sq] = promoted[i];
+                    else
+                        board[sq] = i;
+
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found) error++;
+            c++; fen++;
+        }
+    }
+    if(r || c != NO_COLS) error++;
+
+    while (*fen == ' ') fen++;
+
+    /* read holdings */
+    if(!strncmp(fen, "[-]", 3)) fen += 3; /* empty holdings */
+    else if(*fen == '[')
+    {
+        fen++;
+        while(isalpha(*fen))
+        {
+            int found = 0;
+            for (i = pawn; i <= king; i++)
+            {
+                if ((*fen == pxx[i]) || (*fen == qxx[i]))
+                {
+                    Captured[islower(*fen) ? white : black][i]++;
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) error++;
+            fen++;
+        }
+        if(*fen == ']') fen++; else error++;
+    }
+
+    while (*fen == ' ') fen++;
+
+    if (*fen == 'w')
+        a = black;
+    else if (*fen == 'b')
+        a = white;
+    else
+        error++;
+
+    if (error) printf("tellusererror bad FEN\n");
+
+    for (sq = 0; sq < NO_SQUARES; sq++)
+        Mvboard[sq] = ((board[sq] != Stboard[sq]) ? 10 : 0);
+
+    computer = otherside[a];
+    opponent = a;
+    flag.force = true;
+    GameCnt = 0;
+    Game50 = 1;
+    ZeroRPT();
+    Sdepth = 0;
+    InitializeStats();
+}
+
 
 /* FIXME!  This is truly the function from hell! */
 
@@ -1501,8 +1617,8 @@ InputCommand(char *command, int root)
 #endif
     short ok, done, is_move = false;
     unsigned short mv;
-    char s[80], sx[80];
-    static char backlog[80];
+    char s[200], sx[200];
+    static char backlog[200];
 
     ok = flag.quit = done = false;
     player = opponent;
@@ -1677,7 +1793,7 @@ InputCommand(char *command, int root)
                    "shogi"
 #endif
                 );
-            printf("debug=1 setboard=0 sigint=0 memory=1 done=1\n");
+            printf("debug=1 setboard=0 sigint=0 memory=1 setboard=1 done=1\n");
         }
         else if (strcmp(s, ".") == 0)
         {   // periodic update request of analysis info: send stat01 info
@@ -1767,6 +1883,10 @@ InputCommand(char *command, int root)
         {
             NewGame();
             dsp->UpdateDisplay(0, 0, 1, 0);
+        }
+        else if (strcmp(s, "setboard") == 0)
+        {
+            ReadFEN(sx + 9);
         }
         else if (strcmp(s, "list") == 0)
         {
