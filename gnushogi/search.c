@@ -44,6 +44,7 @@ short PVari;        /* Is this the PV */
 #endif
 
 short zwndw;
+short movesLeft, currentMove;
 
 
 
@@ -872,6 +873,8 @@ search(short side,
 #endif /* QUIETBACKGROUND */
                     dsp->ShowCurrentMove(pnt, node->f, node->t);
             }
+            movesLeft = TrPnt[2] - pnt; /* to report with XBoard periodic updates */
+            currentMove = node->f << 8 | node->t;
         }
 
         if (!(node->flags & exact))

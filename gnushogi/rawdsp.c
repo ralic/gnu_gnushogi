@@ -980,7 +980,7 @@ Raw_PollForInput(void)
         Raw_ExitShogi();
     }
 #endif
-    if (cnt) { /* if anything to read, or error occured */
+    if (cnt && InputCommand(NULL, false)) { /* if anything to read, or error occured */
         if (!flag.timeout)
             flag.back = true; /* previous: flag.timeout = true; */
         flag.bothsides = false;

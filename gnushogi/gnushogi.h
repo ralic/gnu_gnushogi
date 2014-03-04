@@ -1042,7 +1042,7 @@ extern void  UpdateWeights(short side);
 extern int   InitMain(void);
 extern void  ExitMain(void);
 extern void  Initialize(void);
-extern void  InputCommand(char *command);
+extern int   InputCommand(char *command, int root);
 extern void  ExitShogi(void);
 extern void  ClearScreen(void);
 extern void  SetTimeControl(void);
@@ -1117,6 +1117,7 @@ typedef enum
 
 extern int VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv);
 extern unsigned short TTage;
+extern short movesLeft, currentMove;
 
 /* display driver framework */
 
