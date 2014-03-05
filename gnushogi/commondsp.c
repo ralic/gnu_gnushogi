@@ -1798,7 +1798,7 @@ InputCommand(char *command, int root)
                    "shogi"
 #endif
                 );
-            printf("debug=1 setboard=0 sigint=0 memory=1 setboard=1 done=1\n");
+            printf("debug=1 setboard=1 sigint=0 memory=1 done=1\n");
         }
         else if (strcmp(s, ".") == 0)
         {   // periodic update request of analysis info: send stat01 info
