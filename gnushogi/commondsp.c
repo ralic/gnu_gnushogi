@@ -1719,7 +1719,7 @@ InputCommand(char *command, int root)
         } else {
             strcpy(sx, command);
             backlog[0]= '\0'; /* make sure no backlog is left */
-            done = true;
+            command = NULL;
         }
 
         /* extract first word */
