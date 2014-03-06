@@ -1798,7 +1798,7 @@ InputCommand(char *command, int root)
                    "shogi"
 #endif
                 );
-            printf("debug=1 setboard=1 sigint=0 memory=1 done=1\n");
+            printf("debug=1 setboard=1 sigint=0 memory=1 usermove=1 done=1\n");
         }
         else if (strcmp(s, ".") == 0)
         {   // periodic update request of analysis info: send stat01 info
@@ -2148,6 +2148,9 @@ InputCommand(char *command, int root)
         }
         else
         {
+            if (strcmp(s, "usermove") == 0)
+                sscanf(sx + 9, "%s", s);
+
             if (flag.mate)
             {
                 ok = true;
