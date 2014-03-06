@@ -852,9 +852,7 @@ typedef struct hashval drop_hashcode_array[2][NO_PIECES][NO_SQUARES];
 extern hashcode_array  *hashcode;
 extern drop_hashcode_array  *drop_hashcode;
 
-#ifdef QUIETBACKGROUND
 extern short background;
-#endif /* QUIETBACKGROUND */
 
 #if ttblsz
 extern short use_ttable;

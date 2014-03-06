@@ -1618,8 +1618,8 @@ InputCommand(char *command, int root)
 #endif
     short ok, done, is_move = false;
     unsigned short mv;
-    char s[200], sx[200];
-    static char backlog[200];
+    char s[200], sx[200], s2[200];
+    static char backlog[200], ponderString[20];
 
     ok = flag.quit = done = false;
     player = opponent;
@@ -1629,7 +1629,7 @@ InputCommand(char *command, int root)
         ZeroTTable();
 #endif
 
-    if ((hint > 0) && !flag.easy && !flag.force && !command && !backlog[0] && root)
+    while ((hint > 0) && !flag.easy && !flag.force && !command && !backlog[0] && root)
     {
         /*
          * A hint move for the player is available.  Compute a move for the
@@ -1640,13 +1640,13 @@ InputCommand(char *command, int root)
         ft = time0; /* Save reference time for the player. */
         fflush(stdout);
         algbr((short) hint >> 8, (short) hint & 0xff, false);
-        strcpy(s, mvstr[0]);
+        strcpy(ponderString, mvstr[0]);
 
         if (flag.post)
             dsp->GiveHint();
 
         /* do the hint move */
-        if (VerifyMove(s, VERIFY_AND_TRY_MODE, &mv))
+        if (VerifyMove(ponderString, VERIFY_AND_TRY_MODE, &mv))
         {
             Sdepth = 0;
 
@@ -1681,12 +1681,27 @@ InputCommand(char *command, int root)
             }
 #endif
 
-            /* undo the hint and carry on */
-            VerifyMove(s, UNMAKE_MODE, &mv);
+            if (strcmp(ponderString, "hit"))
+            {   /* undo the hint and carry on */
+                VerifyMove(ponderString, UNMAKE_MODE, &mv);
+            }
+            else
+            {   /* otherwise SelectMove will have played the computer's reply */ 
+                /* update ponder-move stats, which was skipped in TRY_MODE    */
+                GameList[GameCnt-1].depth = GameList[GameCnt].score = 0;
+                GameList[GameCnt-1].nodes = 0;
+                ElapsedTime(COMPUTE_AND_INIT_MODE);
+                GameList[GameCnt-1].time = (short) (et + 50)/100; /* FIXME: this is wrong */
+
+                if(TCflag && TimeControl.moves[computer] == 0)
+                    SetTimeControl(); /* add time for next session */
+            }
             Sdepth = 0;
         }
 
         time0 = ft; /* Restore reference time for the player. */
+        ponderString[0] = '\0';
+        /* on a ponder miss or other command, loop terminates because of backlog */
     }
 
     while(!(ok || flag.quit || done))
@@ -1723,8 +1738,25 @@ InputCommand(char *command, int root)
         }
 
         /* extract first word */
-        if (sscanf(sx, "%s", s) < 1)
+        if (sscanf(sx, "%s %s", s, s2) < 1)
             continue;
+
+        if (!root && (strcmp(s, "usermove") == 0)
+                  && (strcmp(s2, ponderString) == 0))
+        {   /* ponder hit; switch to normal search  */
+            background = false;
+            hint = 0;
+            if (TCflag)
+            {   /* account opponent time and moves */
+                TimeControl.clock[opponent] -= et;
+                timeopp[oppptr] = et;
+                --TimeControl.moves[opponent];
+                if(TimeControl.moves[computer] == 0) SetTimeControl();
+            }
+            SetResponseTime(computer);
+            strcpy(ponderString, "hit");
+            return false;        /* no search abort */
+        }
 
         if (!root && strcmp(s, ".") && strcmp(s, "time") && strcmp(s, "otim"))
         {   /* during search most commands can only be done after abort */
