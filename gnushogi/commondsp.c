@@ -1726,7 +1726,7 @@ InputCommand(char *command, int root)
         if (sscanf(sx, "%s", s) < 1)
             continue;
 
-        if (!root && strcmp(s, "."))
+        if (!root && strcmp(s, ".") && strcmp(s, "time") && strcmp(s, "otim"))
         {   /* during search most commands can only be done after abort */
             strcpy(backlog, sx); /* backlog the command    */
             return true;         /* and order search abort */
