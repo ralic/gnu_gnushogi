@@ -403,7 +403,7 @@ SelectMove(short side, SelectMove_mode iop)
     /********************** end of main loop ***************************/
 
     /* background mode */
-    if (iop == BACKGROUND_MODE)
+    if (background) /* originally: if (iop == BACKGROUND_MODE) */
         return;
 
     if (rpt >= 3)
