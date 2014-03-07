@@ -1045,6 +1045,7 @@ extern int   InputCommand(int root);
 extern void  ExitShogi(void);
 extern void  ClearScreen(void);
 extern void  SetTimeControl(void);
+extern void  RenewTimeControl(int side, int TCadd);
 extern void  SelectLevel(char *sx);
 
 extern void
