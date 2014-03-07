@@ -1600,8 +1600,6 @@ ReadFEN(char *fen)
 }
 
 
-/* FIXME!  This is truly the function from hell! */
-
 /*
  * Process the user's command. If easy mode is OFF (the computer is thinking
  * on opponents time) and the program is out of book, then make the 'hint'
@@ -1682,8 +1680,7 @@ PonderOnHintMove(void)
                 ElapsedTime(COMPUTE_AND_INIT_MODE);
                 GameList[GameCnt-1].time = (short) (et + 50)/100; /* FIXME: this is wrong */
 
-                if(TCflag && TimeControl.moves[computer] == 0)
-                    SetTimeControl(); /* add time for next session */
+                RenewTimeControl(computer); /* add time for next session */
             }
             Sdepth = 0;
         }
@@ -2241,8 +2238,8 @@ InputCommand(int root)
             {   /* account opponent time and moves */
                 TimeControl.clock[opponent] -= et;
                 timeopp[oppptr] = et;
-                --TimeControl.moves[opponent];
-                if(TimeControl.moves[computer] == 0) SetTimeControl();
+                if (--TimeControl.moves[opponent] == 0)
+                    TimeControl.moves[opponent] = TCmoves; /* assumes uni-TC! */
             }
             SetResponseTime(computer);
             strcpy(ponderString, "hit");
