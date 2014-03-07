@@ -163,10 +163,13 @@ void SetResponseTime(short side)
             {
                 short rtf = in_opening_stage ? 8 : 2;
                 short tcq = in_opening_stage ? 2 : 4;
+                int moves = TimeControl.moves[side];
 
                 TimeControl.clock[side] += TCadd;
+                if(TCflag == 2 && TCadd == 0) /* sudden death */
+                    moves = (moves < 30 ? 30 : moves);
                 ResponseTime = (TimeControl.clock[side])
-                    / (((TimeControl.moves[side]) * rtf) + 1);
+                    / (moves * rtf + 1);
                 TCleft = (long)ResponseTime / tcq;
                 ResponseTime += TCadd / 2;
             }
@@ -252,10 +255,13 @@ void SetResponseTime(short side)
         else
         {
             /* calculate avg time per move remaining */
+            int moves = TimeControl.moves[side];
             TimeControl.clock[side] += TCadd;
 
+            if(TCflag == 2 && TCadd == 0) /* sudden death */
+                moves = (moves < 30 ? 30 : moves);
             ResponseTime = (TimeControl.clock[side])
-                / (((TimeControl.moves[side]) * 2) + 1);
+                / (moves * 2 + 1);
             TCleft = (int) ResponseTime / 3;
             ResponseTime += TCadd / 2;
 
