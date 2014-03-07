@@ -450,8 +450,11 @@ SelectMove(short side, SelectMove_mode iop)
 
     /* If Time Control get the elapsed time */
     if (TCflag)
+    {
         ElapsedTime(COMPUTE_AND_INIT_MODE);
-
+        if(xboard) /* In XBoard increment is added after move */
+            TimeControl.clock[side] += TCadd;
+    }
     /* update time control info */
     dsp->OutputMove();
 
