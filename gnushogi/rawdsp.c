@@ -761,8 +761,13 @@ Raw_SelectLevel(char *sx)
         if (sscanf(sx, "%d %d %d", &mps, &min, &inc) != 3)
             sscanf(sx, "%d %d:%d %d", &mps, &min, &sec, &inc);
         TCminutes = min; TCseconds = sec;
-        TCadd = inc*100; TCmoves = mps ? mps : 50;
+        TCadd = inc*100; TCmoves = mps;
         MaxResponseTime = 0; TCflag = true;
+        if (!mps) /* Fischer TC or sudden death */
+        {
+            TCmoves = 50;
+            TCflag = 2; /* kludge to requests special calculation of ResponseTime */
+        }
     }
 
     TimeControl.clock[black] = TimeControl.clock[white] = 0;
