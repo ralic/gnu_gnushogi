@@ -1680,7 +1680,7 @@ PonderOnHintMove(void)
                 ElapsedTime(COMPUTE_AND_INIT_MODE);
                 GameList[GameCnt-1].time = (short) (et + 50)/100; /* FIXME: this is wrong */
 
-                RenewTimeControl(computer); /* add time for next session */
+                RenewTimeControl(computer, 0); /* add time for next session */
             }
             Sdepth = 0;
         }
