@@ -1610,27 +1610,16 @@ ReadFEN(char *fen)
  * the hint move, then set Sdepth to zero.
  */
 
-int
-InputCommand(char *command, int root)
+static char ponderString[20];
+
+void
+PonderOnHintMove(void)
 {
 #ifdef QUIETBACKGROUND
     short have_shown_prompt = false;
 #endif
-    short ok, done, is_move = false;
     unsigned short mv;
-    char s[200], sx[200], s2[200];
-    static char backlog[200], ponderString[20];
 
-    ok = flag.quit = done = false;
-    player = opponent;
-
-#if ttblsz
-    if (TTadd > ttbllimit)
-        ZeroTTable();
-#endif
-
-    while ((hint > 0) && !flag.easy && !flag.force && !command && !backlog[0] && root)
-    {
         /*
          * A hint move for the player is available.  Compute a move for the
          * opponent in background mode assuming that the hint move will be
@@ -1701,68 +1690,17 @@ InputCommand(char *command, int root)
 
         time0 = ft; /* Restore reference time for the player. */
         ponderString[0] = '\0';
-        /* on a ponder miss or other command, loop terminates because of backlog */
-    }
+}
 
-    while(!(ok || flag.quit || done))
-    {
-        player = opponent;
-
-        if (flag.analyze && !command && !backlog[0] && root) {
-            SelectMove(opponent, BACKGROUND_MODE);
-        }
-
-#ifdef QUIETBACKGROUND
-        if (!have_shown_prompt)
-        {
-#endif /* QUIETBACKGROUND */
-
-            dsp->ShowPrompt();
-
-#ifdef QUIETBACKGROUND
-        }
-
-        have_shown_prompt = false;
-#endif /* QUIETBACKGROUND */
-
-        if (!command && backlog[0]) command = backlog; /* pick up backlogged command */
-
-        if (command == NULL) {
-            int eof = dsp->GetString(sx);
-            if (eof)
-                dsp->ExitShogi();
-        } else {
-            strcpy(sx, command);
-            backlog[0]= '\0'; /* make sure no backlog is left */
-            command = NULL;
-        }
-
-        /* extract first word */
-        if (sscanf(sx, "%s %s", s, s2) < 1)
-            continue;
-
-        if (!root && (strcmp(s, "usermove") == 0)
-                  && (strcmp(s2, ponderString) == 0))
-        {   /* ponder hit; switch to normal search  */
-            background = false;
-            hint = 0;
-            if (TCflag)
-            {   /* account opponent time and moves */
-                TimeControl.clock[opponent] -= et;
-                timeopp[oppptr] = et;
-                --TimeControl.moves[opponent];
-                if(TimeControl.moves[computer] == 0) SetTimeControl();
-            }
-            SetResponseTime(computer);
-            strcpy(ponderString, "hit");
-            return false;        /* no search abort */
-        }
-
-        if (!root && strcmp(s, ".") && strcmp(s, "time") && strcmp(s, "otim"))
-        {   /* during search most commands can only be done after abort */
-            strcpy(backlog, sx); /* backlog the command    */
-            return true;         /* and order search abort */
-        }
+/*
+ * Recognize the command s from input line sx, and perform the action it specifies.
+ * Returns whether the command could cause it to be out turn to move.
+ */
+int
+ParseAndExecuteCommand(char *s, char *sx)
+{
+    short ok;
+    unsigned short mv;
 
         if (strcmp(s, "bd") == 0)   /* bd -- display board */
         {
@@ -2200,32 +2138,133 @@ InputCommand(char *command, int root)
 
                         flag.mate = true;
                 }
-                else
+                else if (XSHOGI)
                 {
-                    is_move = true;
-                }
+                    /* add remaining time in milliseconds for xshogi */
+                    printf("%d. %s %ld\n",
+                           ++mycnt2, s, TimeControl.clock[player] * 10);
+                 }
             }
 
             Sdepth = 0;
         }
+
+    return ok;
+}
+
+/*
+ * Read commands from input, and execute them, until it becomes our turn to move.
+ * When called during a background search (root = false) it just backlogs the
+ * input command without executing it, and returns immediately. Unless the command 
+ * was the move on which the search was pondering. In that case we turn the ongoing
+ * search into a foreground search. To judge this, it is also necessary to process
+ * the 'time' and 'otim' commands that preceed the move. The '.' command is also
+ * always processed, to prevent it from aborting an analysis search.
+ * The time spent waiting for input can be filled with background searches for
+ * pondering or analysis. (In !root mode input is guaranteed to be pending already!)
+ */
+int
+InputCommand(int root)
+{
+#ifdef QUIETBACKGROUND
+    short have_shown_prompt = false;
+#endif
+    short ok;
+    char s[200], sx[200], s2[200];
+    static char backlog[200];
+
+    ok = flag.quit = false;
+    player = opponent;
+
+#if ttblsz
+    /* CHECKME: should this also be done in the following while loop? */
+    if (TTadd > ttbllimit)
+        ZeroTTable();
+#endif
+
+    while ((hint > 0) && !flag.easy && !flag.force && !backlog[0] && root)
+    {
+        /*
+         * A hint move for the player is available.  Compute a move for the
+         * opponent in background mode assuming that the hint move will be
+         * selected by the player.
+         * Terminate this search on input, which will then be saved in backlog[].
+         * Unless the input was the hint move ('ponder hit'). Then that move will
+         * be played (after the search times out) in addition to the hint. There
+         * will then be no backlog, and we start pondering on the new hint move.
+         */
+
+        PonderOnHintMove();
+    }
+
+    while(!(ok || flag.quit))
+    {   /* process input commands until our it becomes our turn to move */
+        player = opponent;
+
+        /* in analysis mode we do a background search while waiting for input */
+        if (flag.analyze && !backlog[0] && root) {
+            SelectMove(opponent, BACKGROUND_MODE);
+        }
+
+#ifdef QUIETBACKGROUND
+        if (!have_shown_prompt)
+        {
+#endif /* QUIETBACKGROUND */
+
+            dsp->ShowPrompt();
+
+#ifdef QUIETBACKGROUND
+        }
+
+        have_shown_prompt = false;
+#endif /* QUIETBACKGROUND */
+
+        if (!backlog[0]) {    /* read new input line */
+            int eof = dsp->GetString(sx);
+            if (eof)
+                dsp->ExitShogi();
+        } else {              /* or use backlogged input line */
+            strcpy(sx, backlog);
+            backlog[0]= '\0'; /* make sure no backlog is left */
+        }
+
+        /* extract first word */
+        if (sscanf(sx, "%s %s", s, s2) < 1)
+            continue;
+
+        if (!root && (strcmp(s, "usermove") == 0)
+                  && (strcmp(s2, ponderString) == 0))
+        {   /* ponder hit; switch to normal search  */
+            background = false;
+            hint = 0;
+            if (TCflag)
+            {   /* account opponent time and moves */
+                TimeControl.clock[opponent] -= et;
+                timeopp[oppptr] = et;
+                --TimeControl.moves[opponent];
+                if(TimeControl.moves[computer] == 0) SetTimeControl();
+            }
+            SetResponseTime(computer);
+            strcpy(ponderString, "hit");
+            return false;        /* no search abort */
+        }
+
+        if (!root && strcmp(s, ".") && strcmp(s, "time") && strcmp(s, "otim"))
+        {   /* during search most commands can only be done after abort */
+            strcpy(backlog, sx); /* backlog the command    */
+            return true;         /* and order search abort */
+        }
+
+        ok = ParseAndExecuteCommand(s, sx); /* returns whether turn changed */
     }
 
     ElapsedTime(COMPUTE_AND_INIT_MODE);
 
+    /* kludge alert: change the side we play to prevent starting a search   */
     if (flag.force)
     {
         computer = opponent;
         opponent = computer ^ 1;
-    }
-
-    if (XSHOGI)
-    {
-        /* add remaining time in milliseconds for xshogi */
-        if (is_move)
-        {
-            printf("%d. %s %ld\n",
-                   ++mycnt2, s, TimeControl.clock[player] * 10);
-        }
     }
 
     return true;
