@@ -1640,7 +1640,7 @@ InputCommand(char *command)
             /* noop */ ;
         }
         else if ((strcmp(s, "quit") == 0) ||
-                 (strcmp(s, "exit") == 0) && !xboard)
+                 (!xboard && (strcmp(s, "exit") == 0)))
         {
             flag.quit = true;
         }
@@ -1672,7 +1672,7 @@ InputCommand(char *command)
         else if (strcmp(s, ".") == 0)
         {   // ignore for now
         }
-        else if (strcmp(s, "exit") == 0)
+        else if (strcmp(s, "exit") == 0) /* implicitely, "&& xboard" */
         {
             flag.analyze = false;
             flag.force = true;
