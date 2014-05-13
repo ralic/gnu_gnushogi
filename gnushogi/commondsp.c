@@ -1734,7 +1734,7 @@ ParseAndExecuteCommand(char *s, char *sx)
             /* noop */ ;
         }
         else if ((strcmp(s, "quit") == 0) ||
-                 (strcmp(s, "exit") == 0) && !xboard)
+                 (!xboard && (strcmp(s, "exit") == 0)))
         {
             flag.quit = true;
         }
@@ -1776,7 +1776,7 @@ ParseAndExecuteCommand(char *s, char *sx)
             fflush(stdout);
             if (!root) return false; /* signal no abort needed */
         }
-        else if (strcmp(s, "exit") == 0)
+        else if (strcmp(s, "exit") == 0) /* implicitely, "&& xboard" */
         {
             flag.analyze = false;
             flag.force = true;
