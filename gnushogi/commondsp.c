@@ -1483,6 +1483,8 @@ SetMachineTime(char *time)
     }
 }
 
+#define SETERROR(args) do { error++; printf args; } while(0)
+
 /*
  * Set up a board position from Forsyth-Edwards Notation string
  */
@@ -1512,11 +1514,12 @@ ReadFEN(char *fen)
         if (isdigit(*fen))
         {
             c += *fen++ - '0'; /* assumes single digit! */
-            if (isdigit(*fen)) error++; /* naive safeguard for above limitation */
+            /* naive safeguard for above limitation */
+            if (isdigit(*fen)) SETERROR(("multidigit %c%c\n", *(fen-1), *fen));
         }
         else if (*fen == '/')
         {   /* next rank */
-            if (c != NO_COLS) error++;
+            if (c != NO_COLS) SETERROR(("short row %d (%d)\n", r, c));
             c = 0; fen++;
             if (--r < 0) break;
         }
@@ -1525,7 +1528,7 @@ ReadFEN(char *fen)
             int promo = false, found = 0;
             if (*fen == '+')
             {
-                if (!isalpha(*fen)) error++;
+                if (!isalpha(*fen)) SETERROR(("+ before non-alpha %c\n", *fen));
                 promo = true; fen++;
             }
 
@@ -1547,11 +1550,11 @@ ReadFEN(char *fen)
                 }
             }
 
-            if (!found) error++;
+            if (!found) SETERROR(("unknown piece %c at (%d,%d)\n", *fen, c, r));
             c++; fen++;
         }
     }
-    if(r != 0 || c != NO_COLS) error++;
+    if(r != 0 || c != NO_COLS) SETERROR(("short board (%d,%d)", c, r));
 
     while (*fen == ' ') fen++;
 
@@ -1572,10 +1575,10 @@ ReadFEN(char *fen)
                     break;
                 }
             }
-            if (!found) error++;
+            if (!found) SETERROR(("unknown piece %c in holdings\n", *fen));
             fen++;
         }
-        if(*fen == ']') fen++; else error++;
+        if(*fen == ']') fen++; else SETERROR(("expecting ] not %c after %c\n", *fen, *(fen-1)));
     }
 
     while (*fen == ' ') fen++;
@@ -1585,7 +1588,7 @@ ReadFEN(char *fen)
     else if (*fen == 'b')
         whose_turn = white;
     else
-        error++;
+        SETERROR(("invalid color %c", *fen));
 
     if (error) printf("tellusererror bad FEN\n");
 
@@ -1602,6 +1605,7 @@ ReadFEN(char *fen)
     InitializeStats();
 }
 
+#undef SETERROR
 
 /*
  * Process the user's command. If easy mode is OFF (the computer is thinking
