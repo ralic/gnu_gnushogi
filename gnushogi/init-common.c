@@ -154,13 +154,9 @@ AllocateTT(int size)
         ttable[0] = malloc(n);  /* FIXME: cast to the correct type. */
         ttable[1] = ttable[0] ? malloc(n) : NULL;
 
-        if (!ttable[0] || !ttable[1])
+        if (!ttable[1])
         {
-            if (!ttable[0])
-                free(ttable[0]);
-
-            if (!ttable[1])
-                free(ttable[1]);
+            free(ttable[0]);
 
             ttblsize = ttblsize >> 1;
             n = sizeof(struct hashentry) * (ttblsize + rehash);
@@ -178,8 +174,6 @@ AllocateTT(int size)
 
     if (use_ttable)
     {
-        /* CHECKME: is the precedence here correct? */
-        /* ttbllimit = ttblsize << 1 - ttblsize >> 2; */
         ttbllimit = (ttblsize << 1) - (ttblsize >> 2);
     }
     else
