@@ -1484,14 +1484,15 @@ SetMachineTime(char *time)
 }
 
 /*
- * Set up a board position. Pieces are entered by typing the piece followed
- * by the location. For example, Nf3 will place a knight on square f3.
+ * Set up a board position from Forsyth-Edwards Notation string
  */
 static void
 ReadFEN(char *fen)
 {
-    short a = white, r, c, sq, i, error = 0;
-    char s[80];
+    short whose_turn = white, r, c, sq, i, error = 0;
+
+    /* caller leaves at least one leading space */
+    while (*fen == ' ') fen++;
 
     flag.regularstart = true;
     Book = BOOKFAIL;
@@ -1511,6 +1512,7 @@ ReadFEN(char *fen)
         if (isdigit(*fen))
         {
             c += *fen++ - '0'; /* assumes single digit! */
+            if (isdigit(*fen)) error++; /* naive safeguard for above limitation */
         }
         else if (*fen == '/')
         {   /* next rank */
@@ -1520,15 +1522,16 @@ ReadFEN(char *fen)
         }
         else
         {
-            int promo = 0, found = 0;
+            int promo = false, found = 0;
             if (*fen == '+')
             {
-                promo++; fen++;
+                if (!isalpha(*fen)) error++;
+                promo = true; fen++;
             }
 
             if (!isalpha(*fen)) break;
 
-            for (i = no_piece; i <= king; i++)
+            for (i = pawn; i <= king; i++)
             {
                 if ((*fen == pxx[i]) || (*fen == qxx[i]))
                 {
@@ -1548,7 +1551,7 @@ ReadFEN(char *fen)
             c++; fen++;
         }
     }
-    if(r || c != NO_COLS) error++;
+    if(r != 0 || c != NO_COLS) error++;
 
     while (*fen == ' ') fen++;
 
@@ -1578,9 +1581,9 @@ ReadFEN(char *fen)
     while (*fen == ' ') fen++;
 
     if (*fen == 'w')
-        a = black;
+        whose_turn = black;
     else if (*fen == 'b')
-        a = white;
+        whose_turn = white;
     else
         error++;
 
@@ -1589,8 +1592,8 @@ ReadFEN(char *fen)
     for (sq = 0; sq < NO_SQUARES; sq++)
         Mvboard[sq] = ((board[sq] != Stboard[sq]) ? 10 : 0);
 
-    computer = otherside[a];
-    opponent = a;
+    computer = otherside[whose_turn];
+    opponent = whose_turn;
     flag.force = true;
     GameCnt = 0;
     Game50 = 1;
@@ -1858,7 +1861,7 @@ ParseAndExecuteCommand(char *s, char *sx)
         }
         else if (strcmp(s, "setboard") == 0)
         {
-            ReadFEN(sx + 9);
+            ReadFEN(sx + strlen("setboard"));
         }
         else if (strcmp(s, "list") == 0)
         {
