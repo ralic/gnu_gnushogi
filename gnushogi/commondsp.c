@@ -2152,7 +2152,8 @@ ParseAndExecuteCommand(char *s, char *sx)
 /*
  * Read commands from input, and execute them, until it becomes our turn to move.
  * When called during a background search (root = false) it just backlogs the
- * input command without executing it, and returns immediately. Unless the command 
+ * input command without executing it, and returns immediately (possibly informing the
+ * caller when it should not abort the search using "return false". Unless the command 
  * was the move on which the search was pondering. In that case we turn the ongoing
  * search into a foreground search. To judge this, it is also necessary to process
  * the 'time' and 'otim' commands that preceed the move. The '.' command is also
