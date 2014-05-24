@@ -437,9 +437,9 @@ SetTimeControl(void)
 }
 
 void
-RenewTimeControl(int side, int TCadd)
+RenewTimeControl(int side, bool has_timeincrement)
 {
-    if (flag.gamein || TCadd)
+    if (flag.gamein || has_timeincrement)
     {
         TimeCalc();
     }

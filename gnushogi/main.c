@@ -383,7 +383,7 @@ main (int argc, char **argv)
             InputCommand(NULL);
 
         if(opponent == white)
-            RenewTimeControl(opponent, TCadd);
+            RenewTimeControl(opponent, (TCadd != 0));
 
         compptr = (compptr + 1) % MINGAMEIN;
 
