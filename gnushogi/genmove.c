@@ -37,7 +37,7 @@
 static short *TrP;
 
 static struct leaf  *node;
-static short sqking, sqxking;
+static short sqking, sqxking; /* FIXME: global but "partially shadowed" - is it worth having a global to start with ? */
 static bool InCheck = false, GenerateAllMoves = false;
 static bool check_determined = false;
 

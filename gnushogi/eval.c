@@ -1463,7 +1463,7 @@ KnightValue(short sq)
 {
     short s = 0, ad;
     short ds;
-    bool checked_trapped = false;
+    bool checked_trapped = false; /* FIXME: shadows global with a useless value ?! */
     short c = column(sq);
 
     PromotionZoneDistanceValue(sq, 1);
