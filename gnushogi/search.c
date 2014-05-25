@@ -243,9 +243,8 @@ SelectMove(short side, SelectMove_mode iop)
     root = &Tree[0];
 
     sqking = PieceList[side][0];
-    in_check = (board[sqking] == king)
-        ? SqAttacked(sqking, side^1, &blockable)
-        : false;
+    assert(board[sqking] == king);
+    in_check = SqAttacked(sqking, side^1, &blockable);
 
     MoveList(side, 1, in_check, blockable);
 

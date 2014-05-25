@@ -1122,8 +1122,8 @@ LinkPreventCheckDrops(short side, short xside, short ply)
     short piece, u, xu, square, ptyp;
     short n, drop_square[9];
 
-    if (board[square = PieceList[side][0]] != king)
-        return;
+    square = PieceList[side][0];
+    assert (board[square] == king);
 
     for (piece = pawn+1; piece <= rook; piece++)
     {
@@ -1216,8 +1216,8 @@ LinkCheckDrops(short side, short xside, short ply)
     short u, ptyp;
     short square, piece;
 
-    if (board[square = PieceList[xside][0]] != king)
-        return;
+    square = PieceList[xside][0];
+    assert (board[square] == king);
 
     for (piece = pawn; piece < king; piece++)
     {
@@ -1302,7 +1302,9 @@ MoveList(short side, short ply,
     xside = side ^ 1;
 
     sqking  = PieceList[side][0];
+    assert(board[sqking] == king);
     sqxking = PieceList[xside][0];
+    assert(board[sqxking] == king);
 
     if (in_check >= 0)
     {
@@ -1310,9 +1312,7 @@ MoveList(short side, short ply,
     }
     else
     {
-        InCheck = (board[sqking] == king)
-            ? SqAttacked(sqking, xside, &blockable)
-            : false;
+        InCheck = SqAttacked(sqking, xside, &blockable);
     }
 
     GenerateAllMoves = (in_check == -2) || generate_move_flags;
@@ -1441,7 +1441,9 @@ CaptureList(short side, short ply,
     flag_tsume = flag.tsume;
 
     sqking = PieceList[side][0];
+    assert(board[sqking] == king);
     sqxking = PieceList[xside][0];
+    assert(board[sqxking] == king);
 
     if (in_check >= 0)
     {
@@ -1449,9 +1451,7 @@ CaptureList(short side, short ply,
     }
     else
     {
-        InCheck = (board[sqking] == king)
-            ? SqAttacked(sqking, xside, &blockable)
-            : false;
+        InCheck = SqAttacked(sqking, xside, &blockable);
     }
 
     GenerateAllMoves = (in_check == -2);
@@ -1571,10 +1571,8 @@ IsCheckmate(short side, short in_check, short blockable)
 
     if (in_check >= 0)
         InCheck = in_check;
-    else if (board[sqking] == king)
-        InCheck = SqAttacked(sqking, xside, &blockable);
     else
-        InCheck = false;
+        InCheck = SqAttacked(sqking, xside, &blockable);
 
     if (!InCheck)
         return false;

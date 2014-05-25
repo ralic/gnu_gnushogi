@@ -737,19 +737,22 @@ evaluate(short side,
         seed[0] = seed[1] = 0;
         threats(side);
 
-        if (Anyattack(side, sq = PieceList[xside][0]) && (board[sq] == king))
+        sq = PieceList[xside][0];
+        assert (board[sq] == king);
+
+        if (Anyattack(side, sq))
         {
-            *InChk = (board[sq = PieceList[side][0]] == king)
-                ? SqAttacked(sq, xside, blockable)
-                : false;
+            sq = PieceList[side][0];
+            assert (board[sq] == king);
+            *InChk = SqAttacked(sq, xside, blockable);
 
             return ((SCORE_LIMIT + 1001) - ply);
         }
 
         threats(xside);
-        *InChk = (board[sq = PieceList[side][0]] == king)
-            ? Anyattack(xside, sq)
-            : false;
+        sq = PieceList[side][0];
+        assert (board[sq] == king);
+        *InChk = Anyattack(xside, sq);
         *blockable = true;
         EvalNodes++;
 
@@ -765,12 +768,13 @@ evaluate(short side,
         /* use the estimate but look at check */
         short sq;
 
-        *InChk = (board[sq = PieceList[side][0]] == king)
-            ? SqAttacked(sq, xside, blockable)
-            : false;
+        sq = PieceList[side][0];
+        assert (board[sq] == king);
+        *InChk = SqAttacked(sq, xside, blockable);
 
-        if ((board[sq = PieceList[xside][0]] == king)
-            && SqAttacked(sq, side, blockable))
+        sq = PieceList[xside][0];
+        assert (board[sq] == king);
+        if (SqAttacked(sq, side, blockable))
         {
             return ((SCORE_LIMIT + 1001) - ply);
         }
