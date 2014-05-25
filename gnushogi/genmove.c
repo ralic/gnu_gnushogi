@@ -343,7 +343,7 @@ PromotionPossible(short color, short f, short t, short p)
 }
 
 
-static inline int
+static inline int /* FIXME bool|negative-score */
 NonPromotionPossible(short color,
                      short t, short p)
 {
@@ -882,7 +882,7 @@ LinkMove(short ply, short f,
 
 
 
-static short
+static short /* FIXME bool|negative-score */
 DropPossible(short piece, short side, short sq)
 {
     short r = row(sq), possible = true;

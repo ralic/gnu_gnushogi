@@ -66,7 +66,7 @@ char listfile[128];
 
 short rpthash[2][256];
 short TrPnt[MAXDEPTH];
-small_short PieceList[2][NO_SQUARES];
+small_short PieceList[2][NO_SQUARES]; /* FIXME: indices are pieces, not squares */
 small_short PawnCnt[2][NO_COLS];
 small_short Captured[2][NO_PIECES];
 small_short Mvboard[NO_SQUARES];
