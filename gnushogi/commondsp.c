@@ -1493,7 +1493,7 @@ SetMachineTime(char *time)
 
 static char ponderString[20];
 
-void
+static void
 PonderOnHintMove(void)
 {
 #ifdef QUIETBACKGROUND
@@ -1576,7 +1576,7 @@ PonderOnHintMove(void)
  * Recognize the command s from input line sx, and perform the action it specifies.
  * Returns whether the command could cause it to be out turn to move.
  */
-int
+static int
 ParseAndExecuteCommand(char *s, char *sx)
 {
     short ok;
