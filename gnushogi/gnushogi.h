@@ -714,7 +714,7 @@ extern short WAwindow, BAwindow, WBwindow, BBwindow;
 extern short dither, player;
 extern short xwndw, contempt;
 extern long  ResponseTime, ExtraTime, TCleft,
-    MaxResponseTime, et, et0, time0, ft;
+    MaxResponseTime, ft;
 extern int   TCcount;
 
 #ifdef INTERRUPT_TEST

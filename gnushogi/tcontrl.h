@@ -36,3 +36,6 @@
 #define MINGAMEIN  4
 extern int   timecomp[MINGAMEIN], timeopp[MINGAMEIN];
 extern int   compptr, oppptr;
+
+extern long  time0;             /* time of start of turn */
+extern long  et; /* "elapsed time": centiseconds elapsed since start of turn */

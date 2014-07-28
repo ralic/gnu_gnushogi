@@ -505,7 +505,7 @@ NewGame(void)
     flag.gamein = false;
 
     mycnt1 = mycnt2 = 0;
-    GenCnt = NodeCnt = et0 = dither =  XCmore = 0;
+    GenCnt = NodeCnt = dither = XCmore = 0;
     znodes = ZNODES;
     WAwindow = WAWNDW;
     WBwindow = WBWNDW;
