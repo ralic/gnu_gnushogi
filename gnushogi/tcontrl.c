@@ -71,7 +71,7 @@ TimeCalc()
 {
     /* adjust number of moves remaining in gamein games */
     int increment = 0;
-    int topsum = 0;
+    int toppsum = 0;
     int tcompsum = 0;
     int me, him;
     int i;
@@ -84,10 +84,10 @@ TimeCalc()
     for (i = 0; i < MINGAMEIN; i++)
     {
         tcompsum += timecomp[i];
-        topsum += timeopp[i];
+        toppsum += timeopp[i];
     }
 
-    topsum   /= (100 * MINGAMEIN);
+    toppsum  /= (100 * MINGAMEIN);
     tcompsum /= (100 * MINGAMEIN);
 
     /* If I have less time than opponent add another move. */
@@ -101,9 +101,9 @@ TimeCalc()
         increment++;
 
     /* If I am losing more time with each move add another. */
-    /* If (!((me - him) > 60) && tcompsum > topsum) increment++; */
+    /* If (!((me - him) > 60) && tcompsum > toppsum) increment++; */
 
-    if (tcompsum > topsum)
+    if (tcompsum > toppsum)
     {
         increment += 2;
     }
@@ -112,7 +112,7 @@ TimeCalc()
         /* ... but don't let moves go below MINMOVES. */
         increment++;
     }
-    else if ((me > him) && (tcompsum < topsum))
+    else if ((me > him) && (tcompsum < toppsum))
     {
         /* If I am doing really well use more time per move. */
         increment = -1;
