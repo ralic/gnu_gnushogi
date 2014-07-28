@@ -10,6 +10,13 @@ Known bugs:
 
 Target for v1.5:
 
+- turn time control into something understandable
+  - move API in tcontrl.h and document it
+  - TimeCalc modulo-100 computations are unefficient and wrong
+  - time0 when !HAVE_GETTIMEOFDAY seems to be sometimes seconds
+    sometimes centiseconds
+  - TCflag is set by "depth 0", undefined behaviour next ?
+  - mostly-unused OperatorTime is shown as "add" in Curses help
 - use ~/.gnushogi for binary book and hash file
 
 - make minishogi a run-time option rather than a compile-time one,
