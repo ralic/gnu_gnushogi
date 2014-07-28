@@ -31,6 +31,7 @@
  */
 
 #include "gnushogi.h"
+#include "tcontrl.h"
 
 short background = 0;
 static short DepthBeyond;

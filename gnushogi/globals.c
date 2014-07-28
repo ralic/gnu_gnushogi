@@ -149,9 +149,6 @@ FILE *hashfile;
 
 unsigned int starttime;
 
-int timeopp[MINGAMEIN], timecomp[MINGAMEIN];
-int compptr, oppptr;
-
 
 struct leaf  *Tree = NULL;
 
