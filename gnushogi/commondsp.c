@@ -36,6 +36,7 @@
 #define _POSIX_C_SOURCE 200112L
 
 #include "gnushogi.h"
+#include "tcontrl.h"
 
 #include <stdio.h>
 

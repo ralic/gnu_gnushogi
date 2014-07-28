@@ -56,7 +56,8 @@ noinst_HEADERS = \
 	eval.h \
 	gnushogi.h \
 	opts.h \
-	pattern.h
+	pattern.h \
+	tcontrl.h
 
 COMMONSOURCES =         \
 	globals.c      	\

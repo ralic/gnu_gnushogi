@@ -407,7 +407,6 @@ enum {
 #  define MINRESPONSETIME 100     /* 1 s */
 #endif
 
-#define MINGAMEIN  4
 #define MINMOVES  15
 #define CHKDEPTH   1   /* always look forward CHKDEPTH
                         * half-moves if in check */
@@ -734,8 +733,6 @@ extern struct TimeControlRec TimeControl;
 extern int   TCadd;
 extern short TCmoves, TCminutes, TCseconds, OperatorTime;
 extern bool  TCflag;
-extern int   timecomp[MINGAMEIN], timeopp[MINGAMEIN];
-extern int   compptr, oppptr;
 extern short XCmore, XCmoves[], XCminutes[], XCseconds[], XC;
 extern const short otherside[];
 extern const small_short Stboard[];

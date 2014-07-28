@@ -31,6 +31,7 @@
  */
 
 #include "gnushogi.h"
+#include "tcontrl.h"
 
 #if defined HAVE_GETTIMEOFDAY
 #include <sys/time.h>

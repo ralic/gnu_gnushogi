@@ -32,8 +32,15 @@
 
 
 #include "gnushogi.h"
+#include "tcontrl.h"
 #include <math.h>
 
+/*
+ * Exported globals
+ */
+
+int timeopp[MINGAMEIN], timecomp[MINGAMEIN];
+int compptr, oppptr;
 
 /*
  * In a networked enviroment gnushogi might be compiled on different hosts
@@ -52,13 +59,11 @@ urand(void)
 }
 
 
-
 void
 gsrand(unsigned int seed)
 {
     next = seed;
 }
-
 
 
 void
@@ -114,8 +119,6 @@ TimeCalc()
     }
 
     /* If not fischer clock be careful about time. */
-    /* CHECKME: what's a fischer clock? */
-
     if ((TCadd == 0) && (increment > 0))
         increment += 2;
 
@@ -124,7 +127,6 @@ TimeCalc()
 
     TimeControl.moves[computer] += increment;
 }
-
 
 
 /*
@@ -233,7 +235,6 @@ void SetResponseTime(short side)
 
     assert(TCcount <= MAXTCCOUNTX);
 }
-
 
 
 void
