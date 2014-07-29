@@ -625,13 +625,6 @@ struct GameRec
 };
 
 
-struct TimeControlRec
-{
-    short moves[2];
-    long  clock[2];
-};
-
-
 struct flags
 {
     bool mate;              /* the game is over */
@@ -729,7 +722,6 @@ extern struct GameRec  *GameList;
 extern short GameCnt, Game50;
 extern short Sdepth, MaxSearchDepth;
 extern bool  Book;
-extern struct TimeControlRec TimeControl;
 extern int   TCadd;
 extern short TCmoves, TCminutes, TCseconds, OperatorTime;
 extern bool  TCflag;

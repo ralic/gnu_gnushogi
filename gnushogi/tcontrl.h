@@ -39,3 +39,11 @@ extern int   compptr, oppptr;
 
 extern long  time0;             /* time of start of turn */
 extern long  et; /* "elapsed time": centiseconds elapsed since start of turn */
+
+/* current time controls */
+struct TimeControlRec
+{
+    short moves[2];             /* # of moves to make before end of current interval */
+    long  clock[2];             /* centiseconds before end of current interval */
+};
+extern struct TimeControlRec TimeControl;
