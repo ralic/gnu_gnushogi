@@ -96,7 +96,6 @@ short Sdepth, Game50, MaxSearchDepth;
 short GameCnt = 0;
 short contempt;
 int   Book;
-struct TimeControlRec TimeControl;
 int   TCadd = 0;
 short TCflag, TCmoves, TCminutes, TCseconds, OperatorTime;
 short XCmoves[3]   = { 0, 0, 0 };
