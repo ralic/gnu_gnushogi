@@ -43,6 +43,8 @@ int timeopp[MINGAMEIN], timecomp[MINGAMEIN];
 int compptr, oppptr;
 long time0 = 0, et = 0;
 struct TimeControlRec TimeControl;
+int   TCadd = 0;
+short TCflag, TCmoves, TCminutes, TCseconds, OperatorTime;
 
 /*
  * In a networked enviroment gnushogi might be compiled on different hosts

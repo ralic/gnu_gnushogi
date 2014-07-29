@@ -724,8 +724,6 @@ extern struct GameRec  *GameList;
 extern short GameCnt, Game50;
 extern short Sdepth, MaxSearchDepth;
 extern int   Book;
-extern int   TCadd;
-extern short TCflag, TCmoves, TCminutes, TCseconds, OperatorTime;
 extern short XCmore, XCmoves[], XCminutes[], XCseconds[], XC;
 extern const short otherside[];
 extern const small_short Stboard[];

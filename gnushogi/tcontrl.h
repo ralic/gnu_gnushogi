@@ -47,3 +47,11 @@ struct TimeControlRec
     long  clock[2];             /* centiseconds before end of current interval */
 };
 extern struct TimeControlRec TimeControl;
+
+/* TimeControl initial values as used by SetTimeControl */
+extern short TCmoves, TCminutes, TCseconds;
+
+extern int   TCadd;             /* Fischer clock increment */
+extern short TCflag;            /* wether timecontrol is active */
+
+extern short OperatorTime;      /* FIXME: ? */
