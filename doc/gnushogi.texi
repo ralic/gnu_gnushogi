@@ -1672,23 +1672,20 @@ separate.
 @cindex  Web sites
 
 
-There are very few English-language books for people learning shogi.
-The two I recommend are:
+There are very few English-language books for people learning shogi,
+easily found in Internet book stores.  The two I recommend are:
 
 @enumerate
 
 @item
-@cite{Shogi for Beginners, 2nd. Edition}, by John Fairbairn.  This is a
+@cite{Shogi for Beginners}, by John Fairbairn.  This is a
 superb beginner's book in every way, covering all phases of the game.
-It was out of print for a long time, but has now been reprinted and is
-available either from Kiseido (@uref{http://www.labnet.or.jp/~kiseido})
-or from George Hodges (see below).
+It was out of print for a long time, but has now been reprinted.
 
 @item
 @cite{The Art of Shogi}, by Tony Hoskings.  This is one step up from the
 Fairbairn book.  It covers a lot of ground, and is especially noteworthy
-for its detailed treatment of opening lines.  You can order this book
-from Amazon.com's UK branch (@uref{http://www.amazon.co.uk}).
+for its detailed treatment of opening lines.
 
 @end enumerate
 
@@ -1700,10 +1697,12 @@ set you might pick this book up.  It is still in print.
 
 Two books that are no longer in print but are definitely worth getting
 if you find them are @cite{Guide to Shogi Openings} and @cite{Better
-Moves for Better Shogi}, both by Aono Teriuchi.  They are published in a
-bilingual edition (English/Japanese) and are the only books on shogi in
-English written by a Japanese professional shogi player.  John Fairbairn
-did the translation from Japanese to English.
+Moves for Better Shogi}, both by Aono Teriuchi.  They are published in
+a bilingual edition (English/Japanese) and are the only books on shogi
+in English written by a Japanese professional shogi player.  John
+Fairbairn did the translation from Japanese to English.  @cite{Better
+Moves for Better Shogi} is now available again from Internet book
+stores.
 
 Back issues of the magazine ``Shogi'', published by George Hodges for
 70 issues in the late 70's to late 80's.  This magazine is STRONGLY
