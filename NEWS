@@ -7,6 +7,7 @@ Changes in version 1.4.3 (unreleased):
   of remaining time.
 * Fixed a bug with forced promotion of pawns in minishogi.
 * Fixed the tsume problem in the manual (was only correct in TeX output).
+* Updated References and links in the manual.
 * Fixed support for parallel build.
 * Minor code cleanups.
 
