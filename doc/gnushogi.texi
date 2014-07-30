@@ -1045,9 +1045,9 @@ ways they are really more like giant chess games than like modern shogi.
 The only one of these games to have survived in Japan is Chu (middle)
 shogi, which is still played a little bit.  Thanks to the efforts of
 George Hodges and John Fairbairn of the Shogi Association (two British
-shogi enthusiasts), these games were resurrected and rules and sets for
-them can still be purchased from George Hodges (@pxref{References and
-links}).  I hope to eventually extend GNU shogi so that it can play at
+shogi enthusiasts), these games were resurrected and rules and sets have
+been sold for many years by George Hodges but are harder to find now.
+I hope to eventually extend GNU shogi so that it can play at
 least some of these games.  There are also several non-historical
 variants of shogi; I don't know much about them but you can find
 information about them on the internet (@pxref{References and links}).
@@ -1705,21 +1705,10 @@ bilingual edition (English/Japanese) and are the only books on shogi in
 English written by a Japanese professional shogi player.  John Fairbairn
 did the translation from Japanese to English.
 
-Shogi sets are available from:
-
-@quotation
-George F. Hodges @*
-P.O. Box 77 @*
-Bromley, Kent @*
-United Kingdom BR1 2WT
-@end quotation
-
-George also sells equipment for all the historical shogi variants
-(@pxref{Shogi variants}) (except for Kyoku tai shogi) and also sells
-back issues of the magazine ``Shogi'' which he published for 70 issues
-in the late 70's to late 80's.  This magazine is STRONGLY recommended;
-it contains more information about shogi in English than you will ever
-find anywhere else.
+Back issues of the magazine ``Shogi'', published by George Hodges for
+70 issues in the late 70's to late 80's.  This magazine is STRONGLY
+recommended; it contains more information about shogi in English than
+you will ever find anywhere else.
 
 Here are some useful URLs:
 
@@ -1780,7 +1769,9 @@ Georges Hodges, for starting the Shogi Association in England, without
 which I would probably never have heard of shogi, for supplying shogi
 equipment, for publishing the excellent magazine ``Shogi'' (now sadly
 defunct), for personally answering all my silly questions by mail, and
-for being the ambassador of shogi to the West.
+for being the ambassador of shogi to the West.  He also introduced Chu
+Shogi to the West, with his ``Middle Shogi Manual'' book.  Georges
+passed away in 2010.
 
 @item
 Pieter Stouten, for having the most comprehensive shogi site on the
