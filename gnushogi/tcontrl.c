@@ -384,3 +384,27 @@ SetTimeControl(void)
     et = 0;
     ElapsedTime(COMPUTE_AND_INIT_MODE);
 }
+
+void
+RenewTimeControl(int side, int TCadd)
+{
+    if (flag.gamein || TCadd)
+    {
+        TimeCalc();
+    }
+    else if (TimeControl.moves[side] == 0)
+    {
+        if (XC)
+        {
+            if (XCmore < XC)
+            {
+                TCmoves   = XCmoves[XCmore];
+                TCminutes = XCminutes[XCmore];
+                TCseconds = XCseconds[XCmore];
+                XCmore++;
+            }
+        }
+
+        SetTimeControl();
+    }
+}

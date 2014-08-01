@@ -383,28 +383,8 @@ main (int argc, char **argv)
         else
             InputCommand(NULL);
 
-        if (opponent == white)
-        {
-            if (flag.gamein || TCadd)
-            {
-                TimeCalc();
-            }
-            else if (TimeControl.moves[opponent] == 0)
-            {
-                if (XC)
-                {
-                    if (XCmore < XC)
-                    {
-                        TCmoves   = XCmoves[XCmore];
-                        TCminutes = XCminutes[XCmore];
-                        TCseconds = XCseconds[XCmore];
-                        XCmore++;
-                    }
-                }
-
-                SetTimeControl();
-            }
-        }
+        if(opponent == white)
+            RenewTimeControl(opponent, TCadd);
 
         compptr = (compptr + 1) % MINGAMEIN;
 
@@ -415,28 +395,8 @@ main (int argc, char **argv)
 #endif
             SelectMove(computer, FOREGROUND_MODE);
 
-            if (computer == white)
-            {
-                if (flag.gamein)
-                {
-                    TimeCalc();
-                }
-                else if (TimeControl.moves[computer] == 0)
-                {
-                    if (XC)
-                    {
-                        if (XCmore < XC)
-                        {
-                            TCmoves = XCmoves[XCmore];
-                            TCminutes = XCminutes[XCmore];
-                            TCseconds = XCseconds[XCmore];
-                            XCmore++;
-                        }
-                    }
-
-                    SetTimeControl();
-                }
-            }
+            if(computer == white)
+                RenewTimeControl(computer, false);
         }
     }
 
