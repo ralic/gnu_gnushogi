@@ -64,11 +64,13 @@ urand(void)
 }
 
 
+
 void
 gsrand(unsigned int seed)
 {
     next = seed;
 }
+
 
 
 void
@@ -134,6 +136,7 @@ TimeCalc()
 }
 
 
+
 /*
  * Set ResponseTime, TCcount, and TCleft.
  */
@@ -168,7 +171,8 @@ void SetResponseTime(short side)
                 short rtf = in_opening_stage ? 8 : 2;
                 short tcq = in_opening_stage ? 2 : 4;
 
-                TimeControl.clock[side] += TCadd;
+                if(!xboard) /* no pre-add of increment in XBoard mode */
+                    TimeControl.clock[side] += TCadd;
                 ResponseTime = (TimeControl.clock[side])
                     / (((TimeControl.moves[side]) * rtf) + 1);
                 TCleft = (long)ResponseTime / tcq;
@@ -240,6 +244,7 @@ void SetResponseTime(short side)
 
     assert(TCcount <= MAXTCCOUNTX);
 }
+
 
 
 void
