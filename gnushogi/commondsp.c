@@ -1486,6 +1486,129 @@ SetMachineTime(char *time)
     }
 }
 
+#define SETERROR(args) do { error++; printf args; } while(0)
+
+/*
+ * Set up a board position from Forsyth-Edwards Notation string
+ */
+static void
+ReadFEN(char *fen)
+{
+    short whose_turn = white, r, c, sq, i, error = 0;
+
+    /* caller leaves at least one leading space */
+    while (*fen == ' ') fen++;
+
+    flag.regularstart = true;
+    Book = BOOKFAIL;
+
+    for (sq = 0; sq < NO_SQUARES; sq++)
+    {
+        board[sq] = no_piece;
+        color[sq] = neutral;
+    }
+
+    ClearCaptured();
+
+    /* read board */
+    r = NO_ROWS-1; c = 0;
+    while(*fen)
+    {
+        if (isdigit(*fen))
+        {
+            c += *fen++ - '0'; /* assumes single digit! */
+            /* naive safeguard for above limitation */
+            if (isdigit(*fen)) SETERROR(("multidigit %c%c\n", *(fen-1), *fen));
+        }
+        else if (*fen == '/')
+        {   /* next rank */
+            if (c != NO_COLS) SETERROR(("short row %d (%d)\n", r, c));
+            c = 0; fen++;
+            if (--r < 0) break;
+        }
+        else
+        {
+            int promo = false, found = 0;
+            if (*fen == '+')
+            {
+                if (!isalpha(*fen)) SETERROR(("+ before non-alpha %c\n", *fen));
+                promo = true; fen++;
+            }
+
+            if (!isalpha(*fen)) break;
+
+            for (i = pawn; i <= king; i++)
+            {
+                if ((*fen == pxx[i]) || (*fen == qxx[i]))
+                {
+                    sq = locn(r, c);
+                    color[sq] = (islower(*fen) ? white : black);
+                    if (promo)
+                        board[sq] = promoted[i];
+                    else
+                        board[sq] = i;
+
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found) SETERROR(("unknown piece %c at (%d,%d)\n", *fen, c, r));
+            c++; fen++;
+        }
+    }
+    if(r != 0 || c != NO_COLS) SETERROR(("short board (%d,%d)", c, r));
+
+    while (*fen == ' ') fen++;
+
+    /* read holdings */
+    if(!strncmp(fen, "[-]", 3)) fen += 3; /* empty holdings */
+    else if(*fen == '[')
+    {
+        fen++;
+        while(isalpha(*fen))
+        {
+            int found = 0;
+            for (i = pawn; i <= king; i++)
+            {
+                if ((*fen == pxx[i]) || (*fen == qxx[i]))
+                {
+                    Captured[islower(*fen) ? white : black][i]++;
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) SETERROR(("unknown piece %c in holdings\n", *fen));
+            fen++;
+        }
+        if(*fen == ']') fen++; else SETERROR(("expecting ] not %c after %c\n", *fen, *(fen-1)));
+    }
+
+    while (*fen == ' ') fen++;
+
+    if (*fen == 'w')
+        whose_turn = black;
+    else if (*fen == 'b')
+        whose_turn = white;
+    else
+        SETERROR(("invalid color %c", *fen));
+
+    if (error) printf("tellusererror bad FEN\n");
+
+    for (sq = 0; sq < NO_SQUARES; sq++)
+        Mvboard[sq] = ((board[sq] != Stboard[sq]) ? 10 : 0);
+
+    computer = otherside[whose_turn];
+    opponent = whose_turn;
+    flag.force = true;
+    GameCnt = 0;
+    Game50 = 1;
+    ZeroRPT();
+    Sdepth = 0;
+    InitializeStats();
+}
+
+#undef SETERROR
 
 /* FIXME!  This is truly the function from hell! */
 
@@ -1505,7 +1628,7 @@ InputCommand(char *command)
 #endif
     bool ok, done, is_move = false;
     unsigned short mv;
-    char s[80], sx[80];
+    char s[200], sx[200];
 
     ok = flag.quit = done = false;
     player = opponent;
@@ -1676,7 +1799,7 @@ InputCommand(char *command)
                    "shogi"
 #endif
                 );
-            printf("debug=1 setboard=0 sigint=0 usermove=1 memory=1 done=1\n");
+            printf("debug=1 setboard=1 sigint=0 usermove=1 memory=1 done=1\n");
         }
         else if ((strcmp(s, "set") == 0) ||
                  (strcmp(s, "edit") == 0))
@@ -1747,6 +1870,10 @@ InputCommand(char *command)
         {
             NewGame();
             dsp->UpdateDisplay(0, 0, 1, 0);
+        }
+        else if (strcmp(s, "setboard") == 0)
+        {
+            ReadFEN(sx + strlen("setboard"));
         }
         else if (strcmp(s, "list") == 0)
         {
