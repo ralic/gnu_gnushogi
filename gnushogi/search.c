@@ -45,6 +45,7 @@ short PVari;        /* Is this the PV */
 #endif
 
 short zwndw;
+short movesLeft, currentMove;
 
 
 
@@ -404,7 +405,7 @@ SelectMove(short side, SelectMove_mode iop)
     /********************** end of main loop ***************************/
 
     /* background mode */
-    if (iop == BACKGROUND_MODE)
+    if (background) /* originally: if (iop == BACKGROUND_MODE) */
         return;
 
     if (rpt >= 3)
@@ -877,6 +878,8 @@ search(short side,
 #endif /* QUIETBACKGROUND */
                     dsp->ShowCurrentMove(pnt, node->f, node->t);
             }
+            movesLeft = TrPnt[2] - pnt; /* to report with XBoard periodic updates */
+            currentMove = node->f << 8 | node->t;
         }
 
         if (!(node->flags & exact))

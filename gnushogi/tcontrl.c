@@ -245,6 +245,10 @@ void SetResponseTime(short side)
     if (ResponseTime < MINRESPONSETIME)
         ResponseTime = MINRESPONSETIME;
 
+    printf("# %2d. moves=%d,%d time=%ld,%ld ResponseTime=%ld+%ld\n", GameCnt,
+           TimeControl.moves[computer], TimeControl.moves[opponent],
+           TimeControl.clock[computer], TimeControl.clock[opponent],
+           ResponseTime, TCleft);
     assert(TCcount <= MAXTCCOUNTX);
 }
 

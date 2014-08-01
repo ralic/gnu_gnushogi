@@ -636,6 +636,7 @@ struct flags
     bool bothsides;         /* computer plays both sides */
     bool hash;              /* enable/disable transposition table */
     bool force;             /* enter moves */
+    bool analyze;           /* search during move entry */
     bool easy;              /* disable thinking on opponents time */
     bool beep;              /* enable/disable beep */
     bool timeout;           /* time to make a move */
@@ -839,9 +840,7 @@ typedef struct hashval drop_hashcode_array[2][NO_PIECES][NO_SQUARES];
 extern hashcode_array  *hashcode;
 extern drop_hashcode_array  *drop_hashcode;
 
-#ifdef QUIETBACKGROUND
 extern bool background;
-#endif /* QUIETBACKGROUND */
 
 #if ttblsz
 extern bool use_ttable;
@@ -1030,7 +1029,7 @@ extern void  UpdateWeights(short side);
 extern int   InitMain(void);
 extern void  ExitMain(void);
 extern void  Initialize(void);
-extern void  InputCommand(char *command);
+extern int   InputCommand(char *command, int root);
 extern void  ExitShogi(void);
 extern void  ClearScreen(void);
 extern void  SetTimeControl(void);
@@ -1102,6 +1101,7 @@ typedef enum
 
 extern bool VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv);
 extern unsigned short TTage;
+extern short movesLeft, currentMove;
 
 /* display driver framework */
 

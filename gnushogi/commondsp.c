@@ -1610,8 +1610,6 @@ ReadFEN(char *fen)
 
 #undef SETERROR
 
-/* FIXME!  This is truly the function from hell! */
-
 /*
  * Process the user's command. If easy mode is OFF (the computer is thinking
  * on opponents time) and the program is out of book, then make the 'hint'
@@ -1620,15 +1618,16 @@ ReadFEN(char *fen)
  * the hint move, then set Sdepth to zero.
  */
 
-void
-InputCommand(char *command)
+int
+InputCommand(char *command, int root)
 {
 #ifdef QUIETBACKGROUND
     bool have_shown_prompt = false;
 #endif
     bool ok, done, is_move = false;
     unsigned short mv;
-    char s[200], sx[200];
+    char s[200], sx[200], s2[200];
+    static char backlog[200], ponderString[20];
 
     ok = flag.quit = done = false;
     player = opponent;
@@ -1638,7 +1637,7 @@ InputCommand(char *command)
         ZeroTTable();
 #endif
 
-    if ((hint > 0) && !flag.easy && !flag.force)
+    while ((hint > 0) && !flag.easy && !flag.force && !command && !backlog[0] && root)
     {
         /*
          * A hint move for the player is available.  Compute a move for the
@@ -1649,13 +1648,13 @@ InputCommand(char *command)
         ft = time0; /* Save reference time for the player. */
         fflush(stdout);
         algbr((short) hint >> 8, (short) hint & 0xff, 0);
-        strcpy(s, mvstr[0]);
+        strcpy(ponderString, mvstr[0]);
 
         if (flag.post)
             dsp->GiveHint();
 
         /* do the hint move */
-        if (VerifyMove(s, VERIFY_AND_TRY_MODE, &mv))
+        if (VerifyMove(ponderString, VERIFY_AND_TRY_MODE, &mv))
         {
             Sdepth = 0;
 
@@ -1690,17 +1689,35 @@ InputCommand(char *command)
             }
 #endif
 
-            /* undo the hint and carry on */
-            VerifyMove(s, UNMAKE_MODE, &mv);
+            if (strcmp(ponderString, "hit"))
+            {   /* undo the hint and carry on */
+                VerifyMove(ponderString, UNMAKE_MODE, &mv);
+            }
+            else
+            {   /* otherwise SelectMove will have played the computer's reply */ 
+                /* update ponder-move stats, which was skipped in TRY_MODE    */
+                GameList[GameCnt-1].depth = GameList[GameCnt].score = 0;
+                GameList[GameCnt-1].nodes = 0;
+                ElapsedTime(COMPUTE_AND_INIT_MODE);
+                GameList[GameCnt-1].time = (short) (et + 50)/100; /* FIXME: this is wrong */
+
+                RenewTimeControl(computer, 0); /* add time for next session */
+            }
             Sdepth = 0;
         }
 
         time0 = ft; /* Restore reference time for the player. */
+        ponderString[0] = '\0';
+        /* on a ponder miss or other command, loop terminates because of backlog */
     }
 
     while(!(ok || flag.quit || done))
     {
         player = opponent;
+
+        if (flag.analyze && !command && !backlog[0] && root) {
+            SelectMove(opponent, BACKGROUND_MODE);
+        }
 
 #ifdef QUIETBACKGROUND
         if (!have_shown_prompt)
@@ -1715,18 +1732,44 @@ InputCommand(char *command)
         have_shown_prompt = false;
 #endif /* QUIETBACKGROUND */
 
+        if (!command && backlog[0]) command = backlog; /* pick up backlogged command */
+
         if (command == NULL) {
             int eof = dsp->GetString(sx);
             if (eof)
                 dsp->ExitShogi();
         } else {
             strcpy(sx, command);
-            done = true;
+            backlog[0]= '\0'; /* make sure no backlog is left */
+            command = NULL;
         }
 
         /* extract first word */
-        if (sscanf(sx, "%s", s) < 1)
+        if (sscanf(sx, "%s %s", s, s2) < 1)
             continue;
+
+        if (!root && (strcmp(s, "usermove") == 0)
+                  && (strcmp(s2, ponderString) == 0))
+        {   /* ponder hit; switch to normal search  */
+            background = false;
+            hint = 0;
+            if (TCflag)
+            {   /* account opponent time and moves */
+                TimeControl.clock[opponent] -= et;
+                timeopp[oppptr] = et;
+                if (--TimeControl.moves[opponent] == 0)
+                    TimeControl.moves[opponent] = TCmoves; /* assumes uni-TC! */
+            }
+            SetResponseTime(computer);
+            strcpy(ponderString, "hit");
+            return false;        /* no search abort */
+        }
+
+        if (!root && strcmp(s, ".") && strcmp(s, "time") && strcmp(s, "otim"))
+        {   /* during search most commands can only be done after abort */
+            strcpy(backlog, sx); /* backlog the command    */
+            return true;         /* and order search abort */
+        }
 
         if (strcmp(s, "bd") == 0)   /* bd -- display board */
         {
@@ -1763,7 +1806,7 @@ InputCommand(char *command)
             /* noop */ ;
         }
         else if ((strcmp(s, "quit") == 0) ||
-                 (strcmp(s, "exit") == 0))
+                 (!xboard && (strcmp(s, "exit") == 0)))
         {
             flag.quit = true;
         }
@@ -1800,6 +1843,25 @@ InputCommand(char *command)
 #endif
                 );
             printf("debug=1 setboard=1 sigint=0 usermove=1 memory=1 done=1\n");
+        }
+        else if (strcmp(s, ".") == 0)
+        {   // periodic update request of analysis info: send stat01 info
+            ElapsedTime(2);
+            algbr((short)(currentMove >> 8), (short)(currentMove & 0xFF), 0);
+            printf("stat01: %4ld %8ld %2d %2d %2d %s\n",
+                    et, NodeCnt, Sdepth, movesLeft, TrPnt[2]-TrPnt[1], mvstr[0]);
+            fflush(stdout);
+            if (!root) return false; /* signal no abort needed */
+        }
+        else if (strcmp(s, "exit") == 0) /* implicitely, "&& xboard" */
+        {
+            flag.analyze = false;
+            flag.force = true;
+        }
+        else if (strcmp(s, "analyze") == 0)
+        {
+            flag.analyze = true;
+            flag.force = true;
         }
         else if ((strcmp(s, "set") == 0) ||
                  (strcmp(s, "edit") == 0))
@@ -2190,4 +2252,6 @@ InputCommand(char *command)
                    ++mycnt2, s, TimeControl.clock[player] * 10);
         }
     }
+
+    return true;
 }
