@@ -136,6 +136,53 @@ const small_short side_of_ptype[NO_PTYPE_PIECES] =
     white, white
 };
 
+int
+AllocateTT(int size)
+{
+    int n = sizeof(struct hashentry)*(size + rehash);
+    static int oldSize;
+    int doit = true;
+
+    if(oldSize == size) return use_ttable;
+    oldSize = ttblsize = size;
+
+    if(ttable[0]) free(ttable[0]);
+    if(ttable[1]) free(ttable[1]);
+
+    while (doit && ttblsize > MINTTABLE)
+    {
+        ttable[0] = malloc(n);  /* FIXME: cast to the correct type. */
+        ttable[1] = ttable[0] ? malloc(n) : NULL;
+
+        if (!ttable[1])
+        {
+            free(ttable[0]);
+
+            ttblsize = ttblsize >> 1;
+            n = sizeof(struct hashentry) * (ttblsize + rehash);
+        }
+        else
+        {
+            doit = false;
+        }
+    }
+
+    if (ttblsize <= MINTTABLE)
+    {
+        use_ttable = false;
+    }
+
+    if (use_ttable)
+    {
+        ttbllimit = (ttblsize << 1) - (ttblsize >> 2);
+    }
+    else
+    {
+        ttable[0] = ttable[1] = NULL;
+    }
+
+    return use_ttable;
+}
 
 int
 Initialize_data(void)
@@ -143,7 +190,6 @@ Initialize_data(void)
     size_t n;
     int i;
     char buffer[60];
-    int doit = true;
 
     {
         small_short x = -1;
@@ -295,47 +341,11 @@ Initialize_data(void)
     if (rehash < 0)
         rehash = MAXrehash;
 
-    n = sizeof(struct hashentry)*(ttblsize + rehash);
-
-    while (doit && ttblsize > MINTTABLE)
-    {
-        ttable[0] = malloc(n);  /* FIXME: cast to the correct type. */
-        ttable[1] = ttable[0] ? malloc(n) : NULL;
-
-        if (!ttable[0] || !ttable[1])
-        {
-            if (!ttable[0])
-                free(ttable[0]);
-
-            if (!ttable[1])
-                free(ttable[1]);
-
-            ttblsize = ttblsize >> 1;
-            n = sizeof(struct hashentry) * (ttblsize + rehash);
-        }
-        else
-        {
-            doit = false;
-        }
-    }
-
-    if (ttblsize <= MINTTABLE)
-    {
-        use_ttable = false;
-    }
-
-    if (use_ttable)
-    {
-        /* CHECKME: is the precedence here correct? */
-        /* ttbllimit = ttblsize << 1 - ttblsize >> 2; */
-        ttbllimit = (ttblsize << 1) - (ttblsize >> 2);
-    }
-    else
+    if (!AllocateTT(ttblsize))
     {
         sprintf(buffer, "Cannot allocate %ld bytes for transposition table",
                 (long)(2 * n));
         dsp->ShowMessage(buffer);
-        ttable[0] = ttable[1] = NULL;
     }
 #endif /* ttblsz */
 

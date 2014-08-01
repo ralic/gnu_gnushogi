@@ -1676,7 +1676,7 @@ InputCommand(char *command)
                    "shogi"
 #endif
                 );
-            printf("debug=1 setboard=0 sigint=0 usermove=1 done=1\n");
+            printf("debug=1 setboard=0 sigint=0 usermove=1 memory=1 done=1\n");
         }
         else if ((strcmp(s, "set") == 0) ||
                  (strcmp(s, "edit") == 0))
@@ -1691,6 +1691,17 @@ InputCommand(char *command)
         {
             ok = true;
         }
+#if ttblsz
+        else if (strcmp(s, "memory") == 0)
+        {
+            unsigned int mem, size, t = 1;
+            sscanf(sx, "memory %d", &mem);
+            if(mem > 2048) mem = 2048; /* prevent integer overflow for > 2GB hash */
+            size = (mem << 20) / sizeof(struct hashentry) - rehash;
+            while(t <= size/4) t <<= 1;
+            AllocateTT(t);
+        }
+#endif
         else if (strcmp(s, "go") == 0)
         {
             ok = true;
