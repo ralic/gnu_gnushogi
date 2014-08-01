@@ -381,7 +381,7 @@ main (int argc, char **argv)
         if (flag.bothsides && !flag.mate)
             SelectMove(opponent, FOREGROUND_MODE);
         else
-            InputCommand(NULL, true);
+            InputCommand(true);
 
         if(opponent == white)
             RenewTimeControl(opponent, (TCadd != 0));
