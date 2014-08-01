@@ -407,7 +407,6 @@ enum {
 #  define MINRESPONSETIME 100     /* 1 s */
 #endif
 
-#define MINGAMEIN  4
 #define MINMOVES  15
 #define CHKDEPTH   1   /* always look forward CHKDEPTH
                         * half-moves if in check */
@@ -626,13 +625,6 @@ struct GameRec
 };
 
 
-struct TimeControlRec
-{
-    short moves[2];
-    long  clock[2];
-};
-
-
 struct flags
 {
     bool mate;              /* the game is over */
@@ -720,7 +712,7 @@ extern short WAwindow, BAwindow, WBwindow, BBwindow;
 extern short dither, player;
 extern short xwndw, contempt;
 extern long  ResponseTime, ExtraTime, TCleft,
-    MaxResponseTime, et, et0, time0, ft;
+    MaxResponseTime, ft;
 extern int   TCcount;
 
 #ifdef INTERRUPT_TEST
@@ -735,12 +727,6 @@ extern struct GameRec  *GameList;
 extern short GameCnt, Game50;
 extern short Sdepth, MaxSearchDepth;
 extern bool  Book;
-extern struct TimeControlRec TimeControl;
-extern int   TCadd;
-extern short TCmoves, TCminutes, TCseconds, OperatorTime;
-extern bool  TCflag;
-extern int   timecomp[MINGAMEIN], timeopp[MINGAMEIN];
-extern int   compptr, oppptr;
 extern short XCmore, XCmoves[], XCminutes[], XCseconds[], XC;
 extern const short otherside[];
 extern const small_short Stboard[];

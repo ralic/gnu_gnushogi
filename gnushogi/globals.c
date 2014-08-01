@@ -80,7 +80,7 @@ struct flags flag;
 short opponent, computer, WAwindow, WBwindow, BAwindow, BBwindow, dither,
     INCscore = 0;
 long ResponseTime = 0, ExtraTime = 0, MaxResponseTime = 0,
-    et = 0, et0 = 0, time0 = 0, ft = 0;
+    ft = 0;
 
 #ifdef INTERRUPT_TEST
 long it, itime0;
@@ -95,11 +95,7 @@ short rehash = -1;
 short Sdepth, Game50, MaxSearchDepth;
 short GameCnt = 0;
 short contempt;
-bool  Book;
-struct TimeControlRec TimeControl;
-int   TCadd = 0;
-short TCmoves, TCminutes, TCseconds, OperatorTime;
-bool TCflag;
+bool   Book;
 short XCmoves[3]   = { 0, 0, 0 };
 short XCminutes[3] = { 0, 0, 0 };
 short XCseconds[3] = { 0, 0, 0 };
@@ -149,9 +145,6 @@ FILE *hashfile;
 #endif
 
 unsigned int starttime;
-
-int timeopp[MINGAMEIN], timecomp[MINGAMEIN];
-int compptr, oppptr;
 
 
 struct leaf  *Tree = NULL;

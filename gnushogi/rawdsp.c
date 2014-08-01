@@ -31,6 +31,7 @@
  */
 
 #include "gnushogi.h"
+#include "tcontrl.h"
 
 #include <ctype.h>
 #include <signal.h>

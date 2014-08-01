@@ -32,8 +32,20 @@
 
 
 #include "gnushogi.h"
+#include "tcontrl.h"
 #include <math.h>
 
+/*
+ * Exported globals
+ */
+
+int timeopp[MINGAMEIN], timecomp[MINGAMEIN];
+int compptr, oppptr;
+long time0 = 0, et = 0;
+struct TimeControlRec TimeControl;
+int   TCadd = 0;
+short TCmoves, TCminutes, TCseconds, OperatorTime;
+bool  TCflag;
 
 /*
  * In a networked enviroment gnushogi might be compiled on different hosts
@@ -52,7 +64,6 @@ urand(void)
 }
 
 
-
 void
 gsrand(unsigned int seed)
 {
@@ -60,13 +71,12 @@ gsrand(unsigned int seed)
 }
 
 
-
 void
 TimeCalc()
 {
     /* adjust number of moves remaining in gamein games */
     int increment = 0;
-    int topsum = 0;
+    int toppsum = 0;
     int tcompsum = 0;
     int me, him;
     int i;
@@ -79,10 +89,10 @@ TimeCalc()
     for (i = 0; i < MINGAMEIN; i++)
     {
         tcompsum += timecomp[i];
-        topsum += timeopp[i];
+        toppsum += timeopp[i];
     }
 
-    topsum   /= (100 * MINGAMEIN);
+    toppsum  /= (100 * MINGAMEIN);
     tcompsum /= (100 * MINGAMEIN);
 
     /* If I have less time than opponent add another move. */
@@ -96,9 +106,9 @@ TimeCalc()
         increment++;
 
     /* If I am losing more time with each move add another. */
-    /* If (!((me - him) > 60) && tcompsum > topsum) increment++; */
+    /* If (!((me - him) > 60) && tcompsum > toppsum) increment++; */
 
-    if (tcompsum > topsum)
+    if (tcompsum > toppsum)
     {
         increment += 2;
     }
@@ -107,15 +117,13 @@ TimeCalc()
         /* ... but don't let moves go below MINMOVES. */
         increment++;
     }
-    else if ((me > him) && (tcompsum < topsum))
+    else if ((me > him) && (tcompsum < toppsum))
     {
         /* If I am doing really well use more time per move. */
         increment = -1;
     }
 
     /* If not fischer clock be careful about time. */
-    /* CHECKME: what's a fischer clock? */
-
     if ((TCadd == 0) && (increment > 0))
         increment += 2;
 
@@ -124,7 +132,6 @@ TimeCalc()
 
     TimeControl.moves[computer] += increment;
 }
-
 
 
 /*
@@ -233,7 +240,6 @@ void SetResponseTime(short side)
 
     assert(TCcount <= MAXTCCOUNTX);
 }
-
 
 
 void

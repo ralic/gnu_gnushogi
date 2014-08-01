@@ -31,6 +31,7 @@
  */
 
 #include "gnushogi.h"
+#include "tcontrl.h"
 
 #if defined HAVE_GETTIMEOFDAY
 #include <sys/time.h>
@@ -505,7 +506,7 @@ NewGame(void)
     flag.rv     = true;
 
     mycnt1 = mycnt2 = 0;
-    GenCnt = NodeCnt = et0 = dither =  XCmore = 0;
+    GenCnt = NodeCnt = dither = XCmore = 0;
     znodes = ZNODES;
     WAwindow = WAWNDW;
     WBwindow = WBWNDW;
