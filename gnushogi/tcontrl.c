@@ -170,7 +170,7 @@ void SetResponseTime(short side)
 
             if (TimeControl.moves[side] < 5)
             {
-                TCcount = MAXTCCOUNTX - 10;
+                TCcount = MAXTCCOUNTX - 6 - TimeControl.moves[side];
 
                 if (TCcount < 0)
                     TCcount = 0;
