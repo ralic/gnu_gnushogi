@@ -1727,8 +1727,10 @@ collection of Tsume-shogi (mating) problems, both for beginners and
 more advanced players.
 
 @item Steve Evans' shogi page: @uref{http://www.users.on.net/~ybosde/}
-Steve has written a program that plays almost all of the shogi variants,
-unfortunately it only runs on Windows :-(
+Steve has written a program that plays almost all of the shogi
+variants.  The original version available from his page only runs on
+pre-64bit Windows, and was later ported to Linux by H.G. Muller:
+@uref{http://hgm.nubati.net/cgi-bin/gitweb.cgi?p=shogivar.git;a=shortlog;h=refs/heads/bugfix}
 
 @item Hans Bodlaender's chess variant pages: @uref{http://www.chessvariants.org/}
 This page has an almost unimaginable variety of rules for different
