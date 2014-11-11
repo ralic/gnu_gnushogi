@@ -603,13 +603,18 @@ Raw_UpdateDisplay(short f, short t, short redraw, short isspec)
 
     short r, c, l, m;
 
+    r = (short)(TimeControl.clock[black] / 6000);
+    c = (short)((TimeControl.clock[black] % 6000) / 100);
+    l = (short)(TimeControl.clock[white] / 6000);
+    m = (short)((TimeControl.clock[white] % 6000) / 100);
+
+    if (XSHOGI) {
+        printf("# Black %d:%02d  White %d:%02d\n", r, c, l, m);
+    }
+
     if (redraw && !XSHOGI)
     {
         printf("\n");
-        r = (short)(TimeControl.clock[black] / 6000);
-        c = (short)((TimeControl.clock[black] % 6000) / 100);
-        l = (short)(TimeControl.clock[white] / 6000);
-        m = (short)((TimeControl.clock[white] % 6000) / 100);
         printf("Black %d:%02d  White %d:%02d\n", r, c, l, m);
         printf("\n");
 
