@@ -1,5 +1,7 @@
 Known bugs:
 
+- does not detect when its own moves cause a draw by repetition,
+  only when the opponent's move does
 - some positions show problem in the evaluation algorithm
 - minishogi repetition rule, different from standard shogi, is
   not implemented
