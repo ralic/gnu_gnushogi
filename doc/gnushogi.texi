@@ -1585,6 +1585,15 @@ move depending on the situation.  If easy mode is disabled (using the
 ``easy'' command), the program will often respond with its move
 immediately, saving time on its clock for use later on.
 
+Three types of time control can be set, through ``level <nmoves>
+<time>'' (eg. ``level 60 5'' for 60 moves in 5 minutes), or ``level 0
+<time>'' for a per-move time limit (eg. ``level 0 1:30'' to force each
+move to be played in less than 1 minutes and 30 seconds, without any
+limit on overall playing time), or ``level f<time> <increment>'' for a
+Fisher-clock game (eg. ``level f15 30'' for a main time of 15 minutes
+and a Fisher increment of 30 seconds, ie. the player's time gets
+incremented by 30 seconds on each turn).
+
 @item list 
 writes the game moves and some statistics on search depth, nodes, and
 time to the file ``shogi.lst''.
