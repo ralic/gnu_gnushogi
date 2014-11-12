@@ -1594,6 +1594,9 @@ Fisher-clock game (eg. ``level f15 30'' for a main time of 15 minutes
 and a Fisher increment of 30 seconds, ie. the player's time gets
 incremented by 30 seconds on each turn).
 
+When in xboard mode, the standard xboard syntax is used, ie. ``level
+<nmoves> <time> <increment>''.
+
 @item list 
 writes the game moves and some statistics on search depth, nodes, and
 time to the file ``shogi.lst''.
