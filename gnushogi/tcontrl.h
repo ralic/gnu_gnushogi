@@ -56,6 +56,12 @@ extern bool  TCflag;            /* wether timecontrol is active */
 
 extern short OperatorTime;      /* FIXME: ? */
 
+extern long ResponseTime;
+extern long ExtraTime;
+extern long TCleft;
+extern long MaxResponseTime;
+extern int TCcount;
+
 /*
  * Time contro functions
  */

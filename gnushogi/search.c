@@ -125,11 +125,6 @@ pick(short p1, short p2)
 bool bookflag = false;
 int Jscore = 0;
 
-int TCcount;
-long TCleft = 0;
-
-
-
 
 /*
  * Select a move by calling function search() at progressively deeper ply

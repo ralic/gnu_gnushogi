@@ -46,6 +46,8 @@ struct TimeControlRec TimeControl;
 int   TCadd = 0;
 short TCmoves, TCminutes, TCseconds, OperatorTime;
 bool  TCflag;
+long ResponseTime = 0, ExtraTime = 0, TCleft = 0, MaxResponseTime = 0;
+int TCcount;
 
 /*
  * In a networked enviroment gnushogi might be compiled on different hosts

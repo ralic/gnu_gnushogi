@@ -79,7 +79,6 @@ struct flags flag;
 
 short opponent, computer, WAwindow, WBwindow, BAwindow, BBwindow, dither,
     INCscore = 0;
-long ResponseTime = 0, ExtraTime = 0, MaxResponseTime = 0;
 
 #ifdef INTERRUPT_TEST
 long it, itime0;

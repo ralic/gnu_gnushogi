@@ -706,9 +706,6 @@ extern short opponent, computer, INCscore;
 extern short WAwindow, BAwindow, WBwindow, BBwindow;
 extern short dither, player;
 extern short xwndw, contempt;
-extern long  ResponseTime, ExtraTime, TCleft,
-    MaxResponseTime;
-extern int   TCcount;
 
 #ifdef INTERRUPT_TEST
 extern long itime0, it;
