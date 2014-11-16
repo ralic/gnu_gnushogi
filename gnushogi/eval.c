@@ -32,6 +32,7 @@
 
 #include "gnushogi.h"
 #include "pattern.h"
+#include "tcontrl.h"
 
 /* Hash table for preventing multiple scoring of the same position */
 

@@ -945,11 +945,8 @@ PutInTTable(short side,
 extern void ZeroTTable(void);
 extern void ZeroRPT(void);
 extern void Initialize_ttable(void);
-extern unsigned int urand(void);
 
 #  ifdef HASHFILE
-extern void gsrand(unsigned int);
-
 extern bool
 ProbeFTable(short side,
             short depth,
@@ -1023,19 +1020,7 @@ extern void  UpdateWeights(short side);
 extern int   InitMain(void);
 extern void  ExitMain(void);
 extern void  InputCommand(char *command);
-extern void  SetTimeControl(void);
 
-typedef enum
-{
-    COMPUTE_AND_INIT_MODE = 1, COMPUTE_MODE
-#ifdef INTERRUPT_TEST
-    , INIT_INTERRUPT_MODE, COMPUTE_INTERRUPT_MODE
-#endif
-} ElapsedTime_mode;
-
-extern void  SetResponseTime(short side);
-extern void  CheckForTimeout(int score, int globalscore,
-                             int Jscore, int zwndw);
 extern void  algbr(short f, short t, short flags);
 extern void  ListGame(void);
 extern void  skip(void);
@@ -1043,8 +1028,6 @@ extern void  skipb(void);
 extern void  EnPassant(short xside, short f, short t, short iop);
 extern bool  pick(short p1, short p2);
 extern short repetition(void);
-extern void  TimeCalc(void);
-extern void  ElapsedTime(ElapsedTime_mode iop);
 
 extern bool
 IsCheckmate(short side, short in_check,

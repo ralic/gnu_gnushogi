@@ -55,3 +55,24 @@ extern int   TCadd;             /* Fischer clock increment */
 extern bool  TCflag;            /* wether timecontrol is active */
 
 extern short OperatorTime;      /* FIXME: ? */
+
+/*
+ * Time contro functions
+ */
+
+typedef enum
+{
+    COMPUTE_AND_INIT_MODE = 1, COMPUTE_MODE
+#ifdef INTERRUPT_TEST
+    , INIT_INTERRUPT_MODE, COMPUTE_INTERRUPT_MODE
+#endif
+} ElapsedTime_mode;
+
+extern unsigned int urand(void);
+extern void gsrand(unsigned int);
+extern void TimeCalc(void);
+extern void SetResponseTime(short side);
+extern void CheckForTimeout(int score, int globalscore,
+                            int Jscore, int zwndw);
+extern void ElapsedTime(ElapsedTime_mode iop);
+extern void SetTimeControl(void);

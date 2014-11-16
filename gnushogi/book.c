@@ -31,6 +31,7 @@
  */
 
 #include "gnushogi.h"
+#include "tcontrl.h"
 
 #define O_BINARY 0
 
