@@ -49,6 +49,8 @@ bool  TCflag;
 long ResponseTime = 0, ExtraTime = 0, TCleft = 0, MaxResponseTime = 0;
 int TCcount;
 
+const bool hard_time_limit = true;
+
 /*
  * In a networked enviroment gnushogi might be compiled on different hosts
  * with different random number generators; that is not acceptable if they

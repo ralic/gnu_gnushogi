@@ -56,6 +56,9 @@ extern bool  TCflag;            /* wether timecontrol is active */
 
 extern short OperatorTime;      /* FIXME: ? */
 
+extern const bool hard_time_limit; /* If true, exceeding the time
+                                      limit means losing the game. */
+
 extern long ResponseTime;
 extern long ExtraTime;
 extern long TCleft;

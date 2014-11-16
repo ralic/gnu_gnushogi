@@ -45,12 +45,6 @@
  *     A variety of global flags.
  ****************************************/
 
-/*
- * If hard_time_limit is nonzero, exceeding the time limit means
- * losing the game.
- */
-
-short hard_time_limit = 1;
 #ifdef LIST_ON_EXIT
 short nolist          = 0;  /* List the game after exit. */
 #else

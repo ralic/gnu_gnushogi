@@ -76,7 +76,6 @@ extern display_t display_type;
 
 /* Miscellaneous globals. */
 
-extern short hard_time_limit; /* If you exceed time limit, you lose.   */
 extern short nolist;          /* Don't list game after exit.           */
 extern bool  xboard;          /* Use XBoard instead of xShogi protocol */
 
