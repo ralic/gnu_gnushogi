@@ -1523,7 +1523,7 @@ InputCommand(char *command)
          * selected by the player.
          */
 
-        ft = time0; /* Save reference time for the player. */
+        long ft = time0; /* Save reference time for the player. */
         fflush(stdout);
         algbr((short) hint >> 8, (short) hint & 0xff, 0);
         strcpy(s, mvstr[0]);
