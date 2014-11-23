@@ -5,7 +5,7 @@
  *
  * GNU SHOGI is based on GNU CHESS
  *
- * Copyright (c) 1988,1989,1990 John Stanback
+ * Copyright (c) 1988, 1989, 1990 John Stanback
  * Copyright (c) 1992 Free Software Foundation
  *
  * This file is part of GNU SHOGI.

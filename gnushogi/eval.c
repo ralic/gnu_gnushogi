@@ -5,34 +5,33 @@
  *
  * GNU SHOGI is based on GNU CHESS
  *
- * Copyright (c) 1988,1989,1990 John Stanback
+ * Copyright (c) 1988, 1989, 1990 John Stanback
  * Copyright (c) 1992 Free Software Foundation
  *
  * This file is part of GNU SHOGI.
  *
- * GNU Shogi is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 1, or (at your option)
- * any later version.
+ * GNU Shogi is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 1, or (at your option) any
+ * later version.
  *
- * GNU Shogi is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Shogi is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with GNU Shogi; see the file COPYING.  If not, write to
- * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * You should have received a copy of the GNU General Public License along
+ * with GNU Shogi; see the file COPYING.  If not, write to the Free
+ * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
-#include "gnushogi.h"
 
+#include "gnushogi.h"
 #include "pattern.h"
  
 
 /* Hash table for preventing multiple scoring of the same position */
 
-int EADD = 0;       /* number of writes to the cache table */ 
+int EADD = 0;       /* number of writes to the cache table */
 int EGET = 0;       /* number of hits to the cache table */
 int PUTVAR = false; /* shall the current scoring be cached? */
 
@@ -40,28 +39,41 @@ int PUTVAR = false; /* shall the current scoring be cached? */
 /* Pieces and colors of initial board setup */
 
 const small_short Stboard[NO_SQUARES] =
-{lance,knight,silver,gold,king,gold,silver,knight,lance,
- 0, bishop, 0, 0, 0, 0, 0, rook, 0,
- pawn, pawn, pawn, pawn, pawn, pawn, pawn, pawn, pawn, 
- 0, 0, 0, 0, 0, 0, 0, 0, 0, 
- 0, 0, 0, 0, 0, 0, 0, 0, 0, 
- 0, 0, 0, 0, 0, 0, 0, 0, 0, 
- pawn, pawn, pawn, pawn, pawn, pawn, pawn, pawn, pawn, 
- 0, rook, 0, 0, 0, 0, 0, bishop, 0,
- lance,knight,silver,gold,king,gold,silver,knight,lance};
+{
+    lance, knight, silver,   gold,   king,   gold, silver, knight,  lance,
+    0, bishop,      0,      0,      0,      0,      0,   rook,      0,
+    pawn,   pawn,   pawn,   pawn,   pawn,   pawn,   pawn,   pawn,   pawn,
+    0,      0,      0,      0,      0,      0,      0,      0,      0,
+    0,      0,      0,      0,      0,      0,      0,      0,      0,
+    0,      0,      0,      0,      0,      0,      0,      0,      0,
+    pawn,   pawn,   pawn,   pawn,   pawn,   pawn,   pawn,   pawn,   pawn,
+    0,   rook,      0,      0,      0,      0,      0, bishop,      0,
+    lance, knight, silver,   gold,   king,   gold, silver, knight,  lance
+};
 
 
 const small_short Stcolor[NO_SQUARES] =
-{black, black, black, black, black, black, black, black, black, 
- neutral, black, neutral, neutral, neutral, neutral, neutral, black, neutral,
- black, black, black, black, black, black, black, black, black, 
- neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral, 
- neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral, 
- neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral, 
- white, white, white, white, white, white, white, white, white,
- neutral, white, neutral, neutral, neutral, neutral, neutral, white, neutral,
- white, white, white, white, white, white, white, white, white};
-                                              
+{
+    black,   black,   black,   black,
+    black,   black,   black,   black,   black,
+    neutral, black, neutral, neutral,
+    neutral, neutral, neutral,   black, neutral,
+    black,   black,   black,   black,
+    black,   black,   black,   black,   black,
+    neutral, neutral, neutral, neutral,
+    neutral, neutral, neutral, neutral, neutral,
+    neutral, neutral, neutral, neutral,
+    neutral, neutral, neutral, neutral, neutral,
+    neutral, neutral, neutral, neutral,
+    neutral, neutral, neutral, neutral, neutral,
+    white,   white,   white,   white,
+    white,   white,   white, white, white,
+    neutral, white, neutral, neutral,
+    neutral, neutral, neutral, white, neutral,
+    white,   white,   white,   white,
+    white,   white,   white, white, white
+};
+
 
 /* Actual pieces and colors */
 
@@ -162,15 +174,15 @@ short ADVNCM[NO_PIECES];
 
 /* distance to enemy king */
 static const EnemyKingDistanceBonus[10] =
-{0, 6, 4, -1, -3, -4, -6, -8, -10, -12};
- 
+{ 0, 6, 4, -1, -3, -4, -6, -8, -10, -12 };
+
 /* distance to own king */
 static const OwnKingDistanceBonus[10] =
-{0, 5, 2, 1, 0, -1, -2, -3, -4, -5};
+{ 0, 5, 2, 1, 0, -1, -2, -3, -4, -5 };
 
 /* distance to promotion zone */
 static const PromotionZoneDistanceBonus[NO_ROWS] =
-{0, 0, 0, 0, 2, 6, 6, 8, 8};
+{ 0, 0, 0, 0, 2, 6, 6, 8, 8 };
 
 #define MAX_BMBLTY 20
 #define MAX_RMBLTY 20
@@ -178,23 +190,23 @@ static const PromotionZoneDistanceBonus[NO_ROWS] =
 
 /* Bishop mobility bonus indexed by # reachable squares */
 static const short BMBLTY[MAX_BMBLTY] =
- {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 14, 14, 16, 16, 16, 16};
+{ 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 14, 14, 16, 16, 16, 16 };
 
 /* Rook mobility bonus indexed by # reachable squares */
 static const short RMBLTY[MAX_RMBLTY] =
- {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 14, 14, 16, 16, 16, 16};
+{ 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 14, 14, 16, 16, 16, 16 };
 
 /* Lance mobility bonus indexed by # reachable squares */
 static const short LMBLTY[MAX_LMBLTY] =
- {0, 0, 0, 0, 4, 6, 8, 10};
+{ 0, 0, 0, 0, 4, 6, 8, 10 };
 
 static const short MBLTY[NO_PIECES] =
- {0, 2, 1, 10, 5, 5, 1, 1, 5, 5, 5, 5, 1, 1, 4};
+{ 0, 2, 1, 10, 5, 5, 1, 1, 5, 5, 5, 5, 1, 1, 4 };
 
 static const short KTHRT[36] =
-{0, -8, -20, -36, -52, -68, -80, -80, -80, -80, -80, -80,
- -80, -80, -80, -80, -80, -80, -80, -80, -80, -80, -80, -80,
- -80, -80, -80, -80, -80, -80, -80, -80, -80, -80, -80, -80};
+{   0,  -8, -20, -36, -52, -68, -80, -80, -80, -80, -80, -80,
+    -80, -80, -80, -80, -80, -80, -80, -80, -80, -80, -80, -80,
+    -80, -80, -80, -80, -80, -80, -80, -80, -80, -80, -80, -80 };
 
 static small_short fvalue[2][NO_FEATURES];
 
@@ -204,13 +216,14 @@ small_short sseed[NO_SQUARES];      /* square occupied by a seed piece? */
 struct signature threats_signature[2] =    /* statistics valid for position ... */
  {-1, -1, -1, -1};			   /* attack and sseed available */
 
-small_short starget[2][NO_SQUARES]; /* significance as a target for a side of a square */
+small_short starget[2][NO_SQUARES]; /* significance as a target for a
+                                     * side of a square */
 small_short sloose[NO_SQUARES];     /* square occupied by a loose piece? */
 small_short shole[NO_SQUARES];      /* empty square a hole? */
-small_short shung[NO_SQUARES];	   /* hung piece? */
+small_short shung[NO_SQUARES];      /* hung piece? */
 
-struct signature squares_signature =       /* statistics valid for position ... */
- {0, 0};				   /* starget, sloose, shole, shung available */
+struct signature squares_signature =  /* statistics valid for position ... */
+{ 0, 0 };                /* starget, sloose, shole, shung available */
 
 short target[2], seed[2], loose[2], hole[2];
 
@@ -227,32 +240,29 @@ char GameType[2] = {UNKNOWN,UNKNOWN}; /* choosen game type of each side */
 static short attack_opening_sequence[2];    /* current castle patterns */
 static short castle_opening_sequence[2];    /* current attack formations */
 
-static small_short Mpawn[2][NO_SQUARES]; 
-static small_short Msilver[2][NO_SQUARES]; 
-static small_short Mgold[2][NO_SQUARES]; 
-static small_short Mking[2][NO_SQUARES];
-static small_short Mlance[2][NO_SQUARES]; 
-static small_short Mknight[2][NO_SQUARES]; 
-static small_short Mbishop[2][NO_SQUARES]; 
-static small_short Mrook[2][NO_SQUARES]; 
+static small_short Mpawn  [2][NO_SQUARES];
+static small_short Msilver[2][NO_SQUARES];
+static small_short Mgold  [2][NO_SQUARES];
+static small_short Mking  [2][NO_SQUARES];
+static small_short Mlance [2][NO_SQUARES];
+static small_short Mknight[2][NO_SQUARES];
+static small_short Mbishop[2][NO_SQUARES];
+static small_short Mrook  [2][NO_SQUARES];
 
 static Mpiece_array Mpawn, Mlance, Mknight, Msilver, Mgold,
- 		    Mbishop, Mrook, Mking;
+    Mbishop, Mrook, Mking;
 
 Mpiece_array *Mpiece[NO_PIECES] =
-  { NULL, &Mpawn, &Mlance, &Mknight, &Msilver, &Mgold, &Mbishop, &Mrook,
-          &Mgold, &Mgold, &Mgold, &Mgold, &Mbishop, &Mrook, &Mking };
+{ NULL, &Mpawn, &Mlance, &Mknight, &Msilver, &Mgold, &Mbishop, &Mrook,
+  &Mgold, &Mgold, &Mgold, &Mgold, &Mbishop, &Mrook, &Mking };
 
 
 static short c1, c2;
-
 static small_short *PC1, *PC2;
-
 static small_short *fv1;
-
 static long *atk1, *atk2;
+static long  a1, a2;
 
-static long a1, a2;           
                                                            
 
 #define csquare(side,sq) ((side==black)?sq:(NO_SQUARES_1-sq))
@@ -364,17 +374,19 @@ threats (short side)
   long c; 
   long *a;
 #ifdef SAVE_NEXTPOS
-  short d;
+    short d;
 #else
   unsigned char  *ppos, *pdir;
 #endif
-  short i, kd, piece, xside; 
-  small_short *PL;
+    short i, kd, piece, xside;
+    small_short *PL;
 
-  if ( MatchSignature(threats_signature[side]) ) {
-    /* data valid for current positional signature */
-    return;
-  }
+    if (MatchSignature(threats_signature[side]))
+    {
+        /* data valid for current positional signature */
+        return;
+    }
+
 
   a = attack[side];
   xside = side ^ 1;
@@ -384,34 +396,41 @@ threats (short side)
   PL = PieceList[side];
   for (i = PieceCnt[side]; i >= 0; i--)
     { short ptyp;
-      sq = PL[i];
-      piece = board[sq];
-      ptyp = ptype[side][piece];
-      c = control[piece];
+        sq = PL[i];
+        piece = board[sq];
+        ptyp = ptype[side][piece];
+        c = control[piece];
 #ifdef SAVE_NEXTPOS
       u = first_direction(ptyp,&d,sq);
 #else
-      ppos = (*nextpos[ptyp])[sq];
-      pdir = (*nextdir[ptyp])[sq];
-      u = ppos[sq];
+        ppos = (*nextpos[ptyp])[sq];
+        pdir = (*nextdir[ptyp])[sq];
+        u = ppos[sq];
 #endif
-      do {
-          a[u] = ((a[u]+1) | c);
-	  if ( (kd = Kdist[xside][u]) < 2 ) {
-	    sseed[sq] += 2 - kd;
-	    seed[side]++;
-	  }
+
+        do
+        {
+            a[u] = ((a[u] + 1) | c);
+
+            if ((kd = Kdist[xside][u]) < 2)
+            {
+                sseed[sq] += 2 - kd;
+                seed[side]++;
+            }
+
 #ifdef SAVE_NEXTPOS
-          u = ((color[u] == neutral) ? next_position(ptyp,&d,sq,u)
-				     : next_direction(ptyp,&d,sq));
+            u = ((color[u] == neutral)
+                 ? next_position(ptyp, &d, sq, u)
+                 : next_direction(ptyp, &d, sq));
 #else
-          u = ((color[u] == neutral) ? ppos[u] : pdir[u]);
+            u = ((color[u] == neutral) ? ppos[u] : pdir[u]);
 #endif
-      } while (u != sq);
-   }
-   
-   /* data valid for current positional signature */
-   CopySignature(threats_signature[side]);
+        }
+        while (u != sq);
+    }
+
+    /* data valid for current positional signature */
+    CopySignature(threats_signature[side]);
 }
 
 
@@ -423,52 +442,62 @@ threats (short side)
  * it is outside the board.
  */ 
 
-static void add_target (short sq, short side, short id)
-{               
-  short isq,tsq,xside; 
-  isq = inunmap[sq];
-  tsq = (side == black) ? nunmap[isq+id] : nunmap[isq-id];
-  if ( tsq >= 0 ) {
-    target[xside = side^1]++;
-    if ( attack[side][tsq] )
-      starget[xside][tsq]++;  /* protected target square */                   
-    else
-      starget[xside][tsq]+=2; /* unprotected target square */                   
-  }
+static void
+add_target(short sq, short side, short id)
+{
+    short isq, tsq, xside;
+    isq = inunmap[sq];
+    tsq = (side == black) ? nunmap[isq + id] : nunmap[isq - id];
+
+    if (tsq >= 0)
+    {
+        target[xside = side^1]++;
+
+        if (attack[side][tsq])
+            starget[xside][tsq]++;  /* protected target square */
+        else
+            starget[xside][tsq] += 2; /* unprotected target square */
+    }
 }
-   
+
+
 
 /*
  * Target squares can be vertically ahead, diagonally ahead
  * or diagonally behind.
  */
 
-static void CheckTargetPiece (short sq, short side)
+static void
+CheckTargetPiece(short sq, short side)
 {
-  switch ( board[sq] ) {
+    switch (board[sq])
+    {
     case pawn: /* vertically ahead if unprotected */
 	if ( !attack[side][sq] )  
 	  add_target(sq,side,11);
 	break;
     case king: /* diagonally and vertically ahead */
-	add_target(sq,side,10);
-	add_target(sq,side,11);
-	add_target(sq,side,12);
-	break;
+        add_target(sq, side, 10);
+        add_target(sq, side, 11);
+        add_target(sq, side, 12);
+        break;
+
     case rook: /* diagonally ahead and behind */
-	add_target(sq,side,10);
-	add_target(sq,side,12);
-	add_target(sq,side,-10);
-	add_target(sq,side,-12);
-	break;
+        add_target(sq, side, 10);
+        add_target(sq, side, 12);
+        add_target(sq, side, -10);
+        add_target(sq, side, -12);
+        break;
+
     case bishop: /* vertically ahead */
-	add_target(sq,side,11);
-	break;
+        add_target(sq, side, 11);
+        break;
+
     case knight: /* vertically ahead if advanced */
-	if ( sq != 1 && sq != 7 && sq != 73 && sq != 79 )  
-	  add_target(sq,side,11);
-	break;
-  }
+        if ((sq != 1) && (sq != 7) && (sq != 73) && (sq != 79))
+            add_target(sq, side, 11);
+        break;
+    }
 }
 
 
@@ -624,19 +653,19 @@ ExamineSquares (void)
 
 /*
  * Inputs are:
- * mtl[side]  - value of all material
- * hung[side] - count of hung pieces
- * Tscore[ply] - search tree score for ply ply
- * Pscore[ply] - positional score for ply ply
- * INCscore    - bonus score or penalty for certain moves
- * Sdepth - search goal depth
- * xwndw - evaluation window about alpha/beta
- * EWNDW - second evaluation window about alpha/beta
- * ChkFlag[ply]- checking piece at level ply or 0 if no check
- * TesujiFlag[ply]- 1 if tesuji move at level ply or 0 if no tesuji
- * PC1[column] - # of my pawns in this column
- * PC2[column] - # of opponents pawns in column
- * PieceCnt[side] - just what it says
+ * mtl[side]       - value of all material
+ * hung[side]      - count of hung pieces
+ * Tscore[ply]     - search tree score for ply ply
+ * Pscore[ply]     - positional score for ply ply
+ * INCscore        - bonus score or penalty for certain moves
+ * Sdepth          - search goal depth
+ * xwndw           - evaluation window about alpha/beta
+ * EWNDW           - second evaluation window about alpha/beta
+ * ChkFlag[ply]    - checking piece at level ply or 0 if no check
+ * TesujiFlag[ply] - 1 if tesuji move at level ply or 0 if no tesuji
+ * PC1[column]     - # of my pawns in this column
+ * PC2[column]     - # of opponents pawns in column
+ * PieceCnt[side]  - just what it says
  */
 
 
@@ -675,9 +704,9 @@ evaluate (short side,
     hung[black] = hung[white] = 0;
 
     /* should we use the estimete or score the position */
-    if ( (ply == 1) ||
-	 (ply == Sdepth) ||
-	 (ply > Sdepth && s >= (alpha - 30) && s <= (beta + 30))
+    if ((ply == 1)
+        || (ply == Sdepth)
+        || (ply > Sdepth && s >= (alpha - 30) && s <= (beta + 30))
 #ifdef CACHE
     	|| (use_etable && CheckEETable (side))
 #endif   
@@ -766,234 +795,300 @@ BRLscan (short sq, short *mob)
     short u, xu, pin, ptyp, csq = column(sq);
     short piece, upiece, xupiece, rvalue, ds;
     small_short *Kd = Kdist[c2];
+
     mobx = s = 0;
     piece = board[sq];
 
     rvalue = (*value)[stage][piece];
     ptyp = ptype[c1][upiece = unpromoted[piece]];
     rvalue = (*value)[stage][upiece];
+
 #ifdef SAVE_NEXTPOS
-    u = first_direction(ptyp,&d,sq);
+    u = first_direction(ptyp, &d, sq);
 #else
     ppos = (*nextpos[ptyp])[sq];
     pdir = (*nextdir[ptyp])[sq];
-    u = ppos[sq];                         
+    u = ppos[sq];
 #endif
-    pin = -1;			/* start new direction */
+
+    pin = -1;           /* start new direction */
+
     do
-      {
-          if ( Kd[u] < 2 ) {
-            s += (ds = fv1[CTRLK] * (2-Kd[u]));
+    {
+        if (Kd[u] < 2)
+        {
+            s += (ds = fv1[CTRLK] * (2 - Kd[u]));
 #ifdef DEBUG_EVAL
 	    if ( debug_eval )
 	      fprintf(debug_eval_file,"%d for threatening square %d away from enemy king\n",
 	      		ds, Kd[u]);
 #endif
-	  }
-	  if ( (ds = starget[c1][u]) != 0 ) {
-	    /* threatening a target square */
-	    if ( pin < 0 || /* direct threat */
-	         color[pin] == c2 ) /* pin threat */ {
-	      s += (ds *= fv1[TARGET]);
+        }
+
+        if ((ds = starget[c1][u]) != 0)
+        {
+            /* threatening a target square */
+            if ((pin < 0)               /* direct threat */
+                || (color[pin] == c2))  /* pin threat    */
+            {
+                s += (ds *= fv1[TARGET]);
 #ifdef DEBUG_EVAL
 	      if ( debug_eval )
 	        fprintf(debug_eval_file,"%d for threatening target square\n",ds);
-#endif       
-	    }
-	  }
-	  if ( (ds = shole[u]) != 0 ) {
-	    /* attacking or protecting a hole */
-	    s += (ds = fv1[HOLES]);
+#endif
+            }
+        }
+
+        if ((ds = shole[u]) != 0)
+        {
+            /* attacking or protecting a hole */
+            s += (ds = fv1[HOLES]);
 #ifdef DEBUG_EVAL
 	    if ( debug_eval )
 	      fprintf(debug_eval_file,"%d for threatening a hole\n",ds);
 #endif
-	  } else if ( InPromotionZone(c1,u) ) {
-	    /* attacking a square in promotion zone */
-	    s += (ds = fv1[HOLES] / 2);
+        }
+        else if (InPromotionZone(c1, u))
+        {
+            /* attacking a square in promotion zone */
+            s += (ds = fv1[HOLES] / 2);
 #ifdef DEBUG_EVAL
 	    if ( debug_eval )
 	      fprintf(debug_eval_file,"%d for threatening promotion zone\n",ds);
 #endif
-	  }
-	  if (color[u] == neutral)
-	    {
+        }
+
+        if (color[u] == neutral)
+        {
 #ifdef SAVE_NEXTPOS
-		dd = d;
-		xu = next_position(ptyp,&d,sq,u);
-		if ( xu == next_direction(ptyp,&dd,sq) )
-		    pin = -1;	/* oops new direction */
+            dd = d;
+            xu = next_position(ptyp, &d, sq, u);
+
+            if (xu == next_direction(ptyp, &dd, sq))
+                pin = -1;   /* oops new direction */
 #else
-		if ((xu = ppos[u]) == pdir[u])
-		    pin = -1;	/* oops new direction */
+
+            if ((xu = ppos[u]) == pdir[u])
+                pin = -1;   /* oops new direction */
 #endif
-		u = xu;
-		mobx++;
-	    }
-	  else 
-	    {   /* there is a piece in current direction */
-		if (pin < 0)
-		    {   /* it's the first piece in the current direction */
+            u = xu;
+            mobx++;
+        }
+        else
+        {
+            /* there is a piece in current direction */
+            if (pin < 0)
+            {
+                /* it's the first piece in the current direction */
 #ifdef DEBUG_EVAL
 			if ( debug_eval )
 			  fprintf(debug_eval_file, 
 			    "first piece on square %d is an %s piece\n",
 				u, (color[u]==c1) ? "own" : "enemy");
 #endif
-			if ( color[u] == c1 ) {
-			  /* own intercepting piece in xray attack */
-			  if ( upiece == lance ) {
-			    /* lance xray */
-			    if ( board[u] == pawn ) {
-				s += (ds = 2*fv1[PROTECT]);
+                if (color[u] == c1)
+                {
+                    /* own intercepting piece in xray attack */
+                    if (upiece == lance)
+                    {
+                        /* lance xray */
+                        if (board[u] == pawn)
+                        {
+                            s += (ds = 2*fv1[PROTECT]);
 #ifdef DEBUG_EVAL
 				if ( debug_eval )
 				  fprintf(debug_eval_file,"%d for lance protecting pawn\n",ds);
 #endif
-  			    } else if ( in_opening_stage ) {
-				s += (ds = -2*fv1[PROTECT]);
+                        }
+                        else if (in_opening_stage)
+                        {
+                            s += (ds = -2*fv1[PROTECT]);
 #ifdef DEBUG_EVAL
 				if ( debug_eval )
 				  fprintf(debug_eval_file,"%d for lance protecting non-pawn\n",ds);
 #endif
-  			    }
-			  } else {
-			    /* bishop or rook xray */
-			    if ( upiece == bishop && board[u] == pawn && GameType[c1] == STATIC_ROOK ) {
-				  s += (ds = -2*fv1[HCLSD]); 
+                        }
+                    }
+                    else
+                    {
+                        /* bishop or rook xray */
+                        if ((upiece == bishop) && (board[u] == pawn)
+                            && (GameType[c1] == STATIC_ROOK))
+                        {
+                            s += (ds = -2*fv1[HCLSD]);
 #ifdef DEBUG_EVAL
 				  if ( debug_eval )
 				    fprintf(debug_eval_file,"%d for own pawn in bishops direction\n",ds);
 #endif
-			    } else if ( upiece == rook && board[u] == lance && GameType[c1] == STATIC_ROOK && column(u) == csq) {
-				  s += (ds = fv1[XRAY]); 
+                        }
+                        else if ((upiece == rook) && (board[u] == lance)
+                                 && (GameType[c1] == STATIC_ROOK)
+                                 && (column(u) == csq))
+                        {
+                            s += (ds = fv1[XRAY]);
 #ifdef DEBUG_EVAL
 				  if ( debug_eval )
 				    fprintf(debug_eval_file,"%d for lance supported by rook\n",ds);
 #endif
-			    }
-			  }
-			} else {
-			  /* enemy's intercepting piece in pin attack */
-			  if ( upiece == lance ) {
-			    /* lance pin attack */
-			    if ( board[u] == pawn ) {
-				s += (ds = -2*fv1[PROTECT]);
+                        }
+                    }
+                }
+                else
+                {
+                    /* enemy's intercepting piece in pin attack */
+                    if (upiece == lance)
+                    {
+                        /* lance pin attack */
+                        if (board[u] == pawn)
+                        {
+                            s += (ds = -2*fv1[PROTECT]);
 #ifdef DEBUG_EVAL
 				if ( debug_eval )
 				  fprintf(debug_eval_file,"%d for lance attacking pawn\n",ds);
 #endif
-  			    } else if ( in_opening_stage ) {
-				s += (ds = 2*fv1[PROTECT]);
+                        }
+                        else if (in_opening_stage)
+                        {
+                            s += (ds = 2 * fv1[PROTECT]);
 #ifdef DEBUG_EVAL
 				if ( debug_eval )
 				  fprintf(debug_eval_file,"%d for lance attacking non-pawn\n",ds);
 #endif
-  			    }
-			  } else {
-			    /* bishop or rook pin attack */
-			    if ( board[u] == pawn ) {
-				  s += (ds = -fv1[HCLSD]); 
+                        }
+                    }
+                    else
+                    {
+                        /* bishop or rook pin attack */
+                        if (board[u] == pawn)
+                        {
+                            s += (ds = -fv1[HCLSD]);
 #ifdef DEBUG_EVAL
 				  if ( debug_eval )
 				    fprintf(debug_eval_file,"%d for enemy pawn in bishops direction\n",ds);
 #endif
-			    }
-			  }
-			}
+                        }
+                    }
+                }
+
 #ifdef SAVE_NEXTPOS
-			dd = d;
-			xu = next_position(ptyp,&d,sq,u);
-			if ( xu != next_direction(ptyp,&dd,sq) )
-			    pin = u;	/* not on the edge and on to find a pin */
+                dd = d;
+                xu = next_position(ptyp, &d, sq, u);
+
+                if (xu != next_direction(ptyp, &dd, sq))
+                    pin = u;    /* not on the edge and on to find a pin */
 #else
-			if ((xu = ppos[u]) != pdir[u])
-			    pin = u;	/* not on the edge and on to find a pin */
+                if ((xu = ppos[u]) != pdir[u])
+                    pin = u;    /* not on the edge and on to find a pin */
 #endif
-			u = xu;
-		    }
-		else
-		    {
-			/* it's the second piece in the current direction */
+                u = xu;
+            }
+            else
+            {
+                /* it's the second piece in the current direction */
 #ifdef DEBUG_EVAL
 			if ( debug_eval )
 			  fprintf(debug_eval_file, 
 			    "second piece on square %d is an %s piece\n",
 				u, (color[u]==c1) ? "own" : "enemy");
 #endif
-			if ( color[u] == c1 ) {
-			  /* second piece is an own piece */
-			  if ( upiece == bishop && board[u] == pawn && GameType[c1] == STATIC_ROOK ) {
-			    s += (ds = -fv1[HCLSD]); 
+                if (color[u] == c1)
+                {
+                    /* second piece is an own piece */
+                    if ((upiece == bishop) && (board[u] == pawn)
+                        && (GameType[c1] == STATIC_ROOK))
+                    {
+                        s += (ds = -fv1[HCLSD]);
 #ifdef DEBUG_EVAL
 			    if (debug_eval )
 			      fprintf(debug_eval_file,"%d for own pawn in bishops (2) direction\n",ds);
 #endif
-			  }
-			} else {
-			  /* second piece is an enemy piece */
-			  if ( upiece == bishop && board[u] == pawn ) {
-			    s += (ds = -fv1[HCLSD]/2); 
+                    }
+                }
+                else
+                {
+                    /* second piece is an enemy piece */
+                    if (upiece == bishop && board[u] == pawn)
+                    {
+                        s += (ds = -fv1[HCLSD]/2);
 #ifdef DEBUG_EVAL
 			    if (debug_eval )
 			      fprintf(debug_eval_file,"%d for enemy pawn in bishops (2) direction\n",ds);
 #endif
-			  }
-			  if ((*value)[stage][xupiece = unpromoted[board[u]]] > rvalue || atk2[u] == 0) {
+                    }
+
+                    if (((*value)[stage][xupiece = unpromoted[board[u]]]
+                         > rvalue)
+                        || (atk2[u] == 0))
+                    {
 #ifdef DEBUG_EVAL
 			      if ( debug_eval )
 				fprintf(debug_eval_file,"enemy %s better than attacking %s\n",
 					PieceStr[upiece], PieceStr[xupiece]);
 #endif
-			    if (color[pin] == c2) {
-			      if ( xupiece == king && in_endgame_stage ) {
-			        s += (ds = 2*fv1[PINVAL]);
+                        if (color[pin] == c2)
+                        {
+                            if ((xupiece == king) && (in_endgame_stage))
+                            {
+                                s += (ds = 2 * fv1[PINVAL]);
 #ifdef DEBUG_EVAL
 			        if ( debug_eval && ds )
 				  fprintf(debug_eval_file,"%d for pin attack to king\n",ds);
 #endif
-			      } else { 
-			        s += (ds = fv1[PINVAL]);
+                            }
+                            else
+                            {
+                                s += (ds = fv1[PINVAL]);
 #ifdef DEBUG_EVAL
 			        if ( debug_eval && ds )
 				  fprintf(debug_eval_file,"%d for pin attack\n",ds);
 #endif
-			      }
-			      if (atk2[pin] == 0 || atk1[pin] > control[board[pin]] + 1) {
-				hung[c2]++;
-				shung[u]++;
-			      }
-			    } else {
-			      if ( upiece == lance ) {
-				s += (ds = fv1[XRAY]/2);
+                            }
+
+                            if ((atk2[pin] == 0)
+                                || (atk1[pin] > control[board[pin]] + 1))
+                            {
+                                hung[c2]++;
+                                shung[u]++;
+                            }
+                        }
+                        else
+                        {
+                            if (upiece == lance)
+                            {
+                                s += (ds = fv1[XRAY] / 2);
 #ifdef DEBUG_EVAL   
 			        if ( debug_eval && ds )
 				  fprintf(debug_eval_file,"lance xray attack: %d\n",ds);
 #endif
-			      } else {
-			        s += (ds = fv1[XRAY]); 
+                            }
+                            else
+                            {
+                                s += (ds = fv1[XRAY]);
 #ifdef DEBUG_EVAL		      
 			        if ( debug_eval )
 				  fprintf(debug_eval_file,"bishop/rook xray attack: %d\n",ds);
 #endif		
-			      }
-			    }
-			  }
-			}
-			pin = -1;	/* new direction */
-#ifdef SAVE_NEXTPOS
-			u = next_direction(ptyp,&d,sq);
-#else
-			u = pdir[u];
-#endif
-		    }
-	    }
-      }
-    while (u != sq);
-    *mob = mobx;
-    return s;
-}                             
+                            }
+                        }
+                    }
+                }
 
+                pin = -1;   /* new direction */
+
+#ifdef SAVE_NEXTPOS
+                u = next_direction(ptyp, &d, sq);
+#else
+                u = pdir[u];
+#endif
+            }
+        }
+    }
+    while (u != sq);
+
+    *mob = mobx;
+
+    return s;
+}
 
 
 #define ctlSG (ctlS | ctlG | ctlPp | ctlLp | ctlNp | ctlSp)

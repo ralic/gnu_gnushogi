@@ -5,24 +5,24 @@
  *
  * GNU SHOGI is based on GNU CHESS
  *
- * Copyright (c) 1988,1989,1990 John Stanback
+ * Copyright (c) 1988, 1989, 1990 John Stanback
  * Copyright (c) 1992 Free Software Foundation
  *
  * This file is part of GNU SHOGI.
  *
- * GNU Shogi is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 1, or (at your option)
- * any later version.
+ * GNU Shogi is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 1, or (at your option) any
+ * later version.
  *
- * GNU Shogi is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Shogi is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with GNU Shogi; see the file COPYING.  If not, write to
- * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * You should have received a copy of the GNU General Public License along
+ * with GNU Shogi; see the file COPYING.  If not, write to the Free
+ * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 #include "gnushogi.h"
@@ -37,7 +37,7 @@ short *TrP;
 
 static struct leaf  *node;
 static short sqking, sqxking;
-static short InCheck = false, GenerateAllMoves = false;     
+static short InCheck = false, GenerateAllMoves = false;
 static short check_determined = false;
 
 static short INCscore = 0;
@@ -49,15 +49,16 @@ short generate_move_flags = false;
 
 
 /*
- * Ply limits for deep search cut.
- * No moves or drops flagged with "stupid" are considered beyond ply BEYOND_STUPID.
- * Only moves or drops flagged with "kingattack" are considered beyond ply BEYOND_KINGATTACK.
- * No moves or drops flagged with "questionable" are considered beyond ply BEYOND_QUESTIONABLE.
- * Only moves or drops flagged with "tesuji" are considered beyond ply BEYOND_TESUJI.
- * No drops are considered beyond ply BEYOND_DROP.
- * Exceptions: moves or drops that prevent check or give check are always considered.
+ * Ply limits for deep search cut.  No moves or drops flagged with "stupid"
+ * are considered beyond ply BEYOND_STUPID.  Only moves or drops flagged
+ * with "kingattack" are considered beyond ply BEYOND_KINGATTACK.  No moves
+ * or drops flagged with "questionable" are considered beyond ply
+ * BEYOND_QUESTIONABLE.  Only moves or drops flagged with "tesuji" are
+ * considered beyond ply BEYOND_TESUJI.  No drops are considered beyond ply
+ * BEYOND_DROP.  Exceptions: moves or drops that prevent check or give
+ * check are always considered.
  */
-                       
+
 #if defined THINK_C || defined MSDOS
 #define BEYOND_STUPID 0
 #define BEYOND_TIMEOUT 2
@@ -66,24 +67,25 @@ short generate_move_flags = false;
 #define BEYOND_TESUJI 6
 #define BEYOND_DROP 8
 #else
-#define BEYOND_STUPID 0
-#define BEYOND_TIMEOUT 2
-#define BEYOND_KINGATTACK 6
-#define BEYOND_QUESTIONABLE 8
-#define BEYOND_TESUJI 8
-#define BEYOND_DROP 10
+#define BEYOND_STUPID        0
+#define BEYOND_TIMEOUT       2
+#define BEYOND_KINGATTACK    6
+#define BEYOND_QUESTIONABLE  8
+#define BEYOND_TESUJI        8
+#define BEYOND_DROP         10
 #endif 
 
 static short MaxNum[MAXDEPTH] =
-  {-1,40,80,20,40,10, 5, 5, 5, 5,
-    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 
-    5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-    5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-  };
+{
+    -1, 40, 80, 20, 40, 10, 5, 5, 5, 5,
+     5,  5,  5,  5,  5,  5, 5, 5, 5, 5,
+     5,  5,  5,  5,  5,  5, 5, 5, 5, 5,
+     5,  5,  5,  5,  5,  5, 5, 5, 5, 5,
+};
 
 #ifdef HASHKEYTEST
-    extern int CheckHashKey ();
-    extern char mvstr[4][6];
+extern int CheckHashKey();
+extern char mvstr[4][6];
 #endif
 
 
@@ -105,56 +107,68 @@ GenMakeMove (short side,
 {
   short piece, upiece, n;
 
-  t = t & 0x7f;
+    t = t & 0x7f;
       
 #ifdef DEBUG
   assert(f!=NO_SQUARES);
 #endif
 
-  if (f > NO_SQUARES )
-    { 
-      piece = f - NO_SQUARES;
-      if ( piece > NO_PIECES ) piece -= NO_PIECES;
-      board[t] = piece;
-      color[t] = side;
-      n = Captured[side][piece]--;
-      UpdateDropHashbd (side, piece, n);
-      UpdateHashbd (side, piece, -1, t);
-      UpdatePieceList (side, t, ADD_PIECE);
-    }
-  else
+    if (f > NO_SQUARES)
     {
-      *tempb = board[t];
-      *tempc = color[t];
-      if ( *tempb != no_piece ) {
-	n = ++Captured[side][upiece = unpromoted[*tempb]];
-	UpdateDropHashbd (side, upiece, n);
-	UpdateHashbd (*tempc, *tempb, -1, t);
-	UpdatePieceList (*tempc, t, REMOVE_PIECE);
-      }
-      piece = board[f];
-      Pindex[t] = Pindex[f];
-      PieceList[side][Pindex[t]] = t;
-      color[f] = neutral;
-      board[f] = no_piece;
-      color[t] = side;
-      if ( promote_piece ) {
-	UpdateHashbd(side,piece,f,-1);
-        board[t] = promoted[piece];   
-	UpdateHashbd(side,board[t],-1,t);
-      } else {
+        piece = f - NO_SQUARES;
+
+        if (piece > NO_PIECES)
+            piece -= NO_PIECES;
+
         board[t] = piece;
-	UpdateHashbd(side,piece,f,t);
-      }
-    } 
+        color[t] = side;
+        n = Captured[side][piece]--;
+        UpdateDropHashbd(side, piece, n);
+        UpdateHashbd(side, piece, -1, t);
+        UpdatePieceList(side, t, ADD_PIECE);
+    }
+    else
+    {
+        *tempb = board[t];
+        *tempc = color[t];
+
+        if (*tempb != no_piece)
+        {
+            n = ++Captured[side][upiece = unpromoted[*tempb]];
+            UpdateDropHashbd(side, upiece, n);
+            UpdateHashbd(*tempc, *tempb, -1, t);
+            UpdatePieceList(*tempc, t, REMOVE_PIECE);
+        }
+
+        piece = board[f];
+        Pindex[t] = Pindex[f];
+        PieceList[side][Pindex[t]] = t;
+        color[f] = neutral;
+        board[f] = no_piece;
+        color[t] = side;
+
+        if (promote_piece)
+        {
+            UpdateHashbd(side, piece, f, -1);
+            board[t] = promoted[piece];
+            UpdateHashbd(side, board[t], -1, t);
+        }
+        else
+        {
+            board[t] = piece;
+            UpdateHashbd(side, piece, f, t);
+        }
+    }
+
 #ifdef DEBUG
     assert(Captured[black][0]==0 && Captured[white][0]==0);
 #endif 
 #ifdef HASHKEYTEST
-    if ( CheckHashKey () ) {
-      algbr(f,t,0);
-      printf("error in GenMakeMove: %s\n",mvstr[0]);
-      exit(1);
+    if (CheckHashKey())
+    {
+        algbr(f, t, 0);
+        printf("error in GenMakeMove: %s\n", mvstr[0]);
+        exit(1);
     }
 #endif
 }
@@ -181,51 +195,63 @@ GenUnmakeMove (short side,
   assert(f!=NO_SQUARES);
 #endif
   
-  if (f > NO_SQUARES )
-    { 
-      piece = f - NO_SQUARES;
-      if ( piece > NO_PIECES ) piece -= NO_PIECES;
-      board[t] = no_piece;
-      color[t] = neutral;
-      n = ++Captured[side][piece];
-      UpdateDropHashbd (side, piece, n);
-      UpdateHashbd (side, piece, -1, t);
-      UpdatePieceList (side, t, REMOVE_PIECE);
+    if (f > NO_SQUARES)
+    {
+        piece = f - NO_SQUARES;
+
+        if (piece > NO_PIECES)
+            piece -= NO_PIECES;
+
+        board[t] = no_piece;
+        color[t] = neutral;
+        n = ++Captured[side][piece];
+        UpdateDropHashbd(side, piece, n);
+        UpdateHashbd(side, piece, -1, t);
+        UpdatePieceList(side, t, REMOVE_PIECE);
     }
-  else
-    { 
-      piece = board[t];
-      color[t] = tempc;
-      board[t] = tempb;
-      Pindex[f] = Pindex[t];
-      PieceList[side][Pindex[f]] = f;
-      if ( tempb != no_piece ) {
-        n = Captured[side][upiece=unpromoted[tempb]]--;
-	UpdateDropHashbd (side, upiece, n);
-	UpdateHashbd (tempc, tempb, -1, t);
-	UpdatePieceList (tempc, t, ADD_PIECE);
-      }
-      color[f] = side;
-      if ( promote_piece ) {
-	UpdateHashbd(side,piece,-1,t);
-        board[f] = unpromoted[piece]; 
-	UpdateHashbd(side,board[f],f,-1);
-      } else {
-        board[f] = piece;
-	UpdateHashbd(side,piece,f,t);
-      } 
+    else
+    {
+        piece = board[t];
+        color[t] = tempc;
+        board[t] = tempb;
+        Pindex[f] = Pindex[t];
+        PieceList[side][Pindex[f]] = f;
+
+        if (tempb != no_piece)
+        {
+            n = Captured[side][upiece = unpromoted[tempb]]--;
+            UpdateDropHashbd(side, upiece, n);
+            UpdateHashbd(tempc, tempb, -1, t);
+            UpdatePieceList(tempc, t, ADD_PIECE);
+        }
+
+        color[f] = side;
+
+        if (promote_piece)
+        {
+            UpdateHashbd(side, piece, -1, t);
+            board[f] = unpromoted[piece];
+            UpdateHashbd(side, board[f], f, -1);
+        }
+        else
+        {
+            board[f] = piece;
+            UpdateHashbd(side, piece, f, t);
+        }
     }
+
 #ifdef DEBUG
     assert(Captured[black][0]==0 && Captured[white][0]==0);
-#endif
+#endif 
 #ifdef HASHKEYTEST
-    if ( CheckHashKey () ) {
-      algbr(f,t,0);
-      printf("error in GenUnmakeMove: %s\n",mvstr[0]);
-      exit(1);
+    if (CheckHashKey())
+    {
+        algbr(f, t, 0);
+        printf("error in GenUnmakeMove: %s\n", mvstr[0]);
+        exit(1);
     }
 #endif
-}                 
+}
 
 
 
@@ -326,25 +352,52 @@ inline
 int
 NonPromotionPossible (short color, short f, short t, short p)
 {
-  switch ( p ) {
-    case pawn : 
-           if ( color == black )
-             return ((t < 72) ? true : (generate_move_flags ? ILLEGAL_TRAPPED : false));
-           else
-             return ((t > 8) ? true : (generate_move_flags ? ILLEGAL_TRAPPED : false));
-    case lance: 
-           if ( color == black )
-             return ((t < 72) ? true : (generate_move_flags ? ILLEGAL_TRAPPED : false));
-           else
-             return ((t > 8) ? true : (generate_move_flags ? ILLEGAL_TRAPPED : false));
-    case knight:
-           if ( color == black )
-             return ((t < 63) ? true : (generate_move_flags ? ILLEGAL_TRAPPED : false));
-           else
-             return ((t > 17) ? true : (generate_move_flags ? ILLEGAL_TRAPPED : false));
-  };
+    switch (p)
+    {
+    case pawn :
+        if (color == black)
+        {
+            return ((t < 72)
+                    ? true
+                    : (generate_move_flags ? ILLEGAL_TRAPPED : false));
+        }
+        else
+        {
+            return ((t > 8)
+                    ? true
+                    : (generate_move_flags ? ILLEGAL_TRAPPED : false));
+        }
 
-  return(true);
+    case lance:
+        if (color == black)
+        {
+            return ((t < 72)
+                    ? true
+                    : (generate_move_flags ? ILLEGAL_TRAPPED : false));
+        }
+        else
+        {
+            return ((t > 8)
+                    ? true
+                    : (generate_move_flags ? ILLEGAL_TRAPPED : false));
+        }
+
+    case knight:
+        if (color == black)
+        {
+            return ((t < 63)
+                    ? true
+                    : (generate_move_flags ? ILLEGAL_TRAPPED : false));
+        }
+        else
+        {
+            return ((t > 17)
+                    ? true
+                    : (generate_move_flags ? ILLEGAL_TRAPPED : false));
+        }
+    }
+
+    return true;
 }
 
 

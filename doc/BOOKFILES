@@ -14,17 +14,19 @@ must be available in the "src" directory or it is created).
 "make install" also copies the "gnushogi.bbk" to the installation
 directory for libraries. 
 
+
 Adding new opening lines
 ------------------------
 
-You can add entries to the binary file by providing a text book 
-file "gnushogi.tbk" in the installation directory.
-After starting gnushogi, the new entries will be added. It is 
-recommended to remove the text book file after adding the entries to
-the binary book file (or gnushogi will always check for new entries).
+You can add entries to the binary file by providing a text book file
+"gnushogi.tbk" in the installation directory.  After starting gnushogi, the
+new entries will be added. It is recommended to remove the text book file
+after adding the entries to the binary book file (or gnushogi will always
+check for new entries).
 
 You can also use the "bsave" command while running gnushogi. The current
 moves will be appended to the named file in a text book file style.
+
 
 Syntax of text book files
 -------------------------

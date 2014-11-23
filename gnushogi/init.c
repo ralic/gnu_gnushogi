@@ -5,29 +5,27 @@
  *
  * GNU SHOGI is based on GNU CHESS
  *
- * Copyright (c) 1988,1989,1990 John Stanback
+ * Copyright (c) 1988, 1989, 1990 John Stanback
  * Copyright (c) 1992 Free Software Foundation
  *
  * This file is part of GNU SHOGI.
  *
- * GNU Shogi is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 1, or (at your option)
- * any later version.
+ * GNU Shogi is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 1, or (at your option) any
+ * later version.
  *
- * GNU Shogi is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Shogi is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with GNU Shogi; see the file COPYING.  If not, write to
- * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * You should have received a copy of the GNU General Public License along
+ * with GNU Shogi; see the file COPYING.  If not, write to the Free
+ * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
+
 #include "gnushogi.h"
-
-
 
 #if defined HAVE_GETTIMEOFDAY && !defined THINK_C
 #include <sys/time.h>
@@ -59,31 +57,39 @@ unsigned int ttbllimit;
 
 
 const small_short piece_of_ptype[NO_PTYPE_PIECES] =
-{ pawn, lance, knight, silver, gold, bishop, rook, pbishop, prook, king,
-    pawn, lance, knight, silver, gold };
+{
+    pawn, lance, knight, silver, gold, bishop, rook, pbishop, prook, king,
+    pawn, lance, knight, silver, gold
+};
 
 
 const small_short side_of_ptype[NO_PTYPE_PIECES] =
-{ black, black, black, black, black, black, black, black, black, black,
-    white, white, white, white, white };
+{
+    black, black, black, black, black, black, black, black, black, black,
+    white, white, white, white, white
+};
 
 #ifdef SAVE_NEXTPOS
 const small_short psweep[NO_PTYPE_PIECES] =
-{ false, true, false, false, false, true, true, true, true, false,
-    false, true, false, false, false };
+{
+    false, true, false, false, false, true, true, true, true, false,
+    false, true, false, false, false
+};
 #endif
 
 const small_short sweep[NO_PIECES] =
-{ false, false, true, false, false, false, true, true,  
-  false, false, false, false, true, true, false };
+{
+    false, false, true, false, false, false, true, true,
+    false, false, false, false, true, true, false
+};
 
 
 #if !defined EXTLANGFILE
 
 char  *CP[CPSIZE] = 
 
-{             
-/* 000:eng: */ "",
+{
+/* 000: eng: */ "",
 #ifdef LANGFILE
 #include LANGFILE
 #else
@@ -107,146 +113,165 @@ ptype_distance (short ptyp, short f, short t)
  * the count is set to CANNOT_REACH.
  */
 
-#define csquare(sq) ((side == black) ? sq : (NO_SQUARES-1-sq))
+#define csquare(sq) ((side == black) ? sq : (NO_SQUARES - 1 - sq))
 #define crow(sq) row(csquare(sq))
 #define ccol(sq) column(csquare(sq))
 
 {
-  short side, piece;
-  short colf, colt, rowf, rowt, dcol, drow;
+    short side, piece;
+    short colf, colt, rowf, rowt, dcol, drow;
 
-  if ( f == t )
-    return (0);
+    if (f == t)
+        return 0;
 
-  piece = piece_of_ptype[ptyp];
-  side  = side_of_ptype[ptyp];
+    piece = piece_of_ptype[ptyp];
+    side  = side_of_ptype[ptyp];
 
-  dcol = (colt = ccol(t)) - (colf = ccol(f));
-  drow = (rowt = crow(t)) - (rowf = crow(f));
+    dcol = (colt = ccol(t)) - (colf = ccol(f));
+    drow = (rowt = crow(t)) - (rowf = crow(f));
 
-  switch ( piece ) {
-
+    switch (piece)
+    {
     case pawn:
-	if ( (dcol != 0) || (drow < 1) )
-	  return (CANNOT_REACH);
-	else
-	  return (drow);
+        if ((dcol != 0) || (drow < 1))
+            return CANNOT_REACH;
+        else
+            return drow;
 
     case lance:
-	if ( (dcol != 0) || (drow < 1) )
-	  return (CANNOT_REACH);
-	else
-	  return (1);
+        if ((dcol != 0) || (drow < 1))
+            return CANNOT_REACH;
+        else
+            return 1;
 
     case knight:
-	if ( odd(drow) || (odd(drow / 2) != odd(dcol)) )
-	  return (CANNOT_REACH);
-	else if ( (drow == 0) || ((drow / 2) < abs(dcol)) )
-	  return (CANNOT_REACH);
-	else
-	  return (drow / 2);
+        if (odd(drow) || (odd(drow / 2) != odd(dcol)))
+            return CANNOT_REACH;
+        else if ((drow == 0) || ((drow / 2) < abs(dcol)))
+            return CANNOT_REACH;
+        else
+            return (drow / 2);
 
     case silver:
-	if ( drow > 0 ) {
-	  if ( odd(drow) == odd(dcol) )
-	    return max(abs(drow),abs(dcol));
-	  else
-	    if ( abs(dcol) <= drow )
-	      return (drow);
-	    else
-	      return (max(abs(drow),abs(dcol))+1);
-	} else {
-	  if ( odd(drow) == odd(dcol) )
-	    return (max(abs(drow),abs(dcol)));
-	  else
-	    return (max(abs(drow)+1,abs(dcol))+1);
-	};
+        if (drow > 0)
+        {
+            if (odd(drow) == odd(dcol))
+            {
+                return max(abs(drow), abs(dcol));
+            }
+            else
+            {
+                if (abs(dcol) <= drow)
+                    return drow;
+                else
+                    return (max(abs(drow), abs(dcol)) + 1);
+            }
+        }
+        else
+        {
+            if (odd(drow) == odd(dcol))
+                return (max(abs(drow), abs(dcol)));
+            else
+                return (max(abs(drow) + 1, abs(dcol)) + 1);
+        };
 
     case gold:
     case ppawn:
     case pknight:
     case plance:
     case psilver:
-	if ( abs(dcol) == 0 )
-	  return (abs(drow));
-	else if ( drow >= 0 )
-	  return max(drow,abs(dcol));
-	else
-	  return (abs(dcol)-drow);
+        if (abs(dcol) == 0)
+            return (abs(drow));
+        else if (drow >= 0)
+            return max(drow, abs(dcol));
+        else
+            return (abs(dcol) - drow);
 
     case bishop:
-	if ( odd(dcol) != odd(drow) )
-	  return (CANNOT_REACH);
-	else
-	  return ((abs(dcol) == abs(drow)) ? 1 : 2);
+        if (odd(dcol) != odd(drow))
+            return CANNOT_REACH;
+        else
+            return ((abs(dcol) == abs(drow)) ? 1 : 2);
 
     case pbishop:
-	if ( odd(dcol) != odd(drow) )
-	  if ( (abs(dcol) <= 1) && (abs(drow) <= 1) )
-	    return (1);
-	  else if ( abs(abs(dcol) - abs(drow)) == 1 )
-	    return (2);
-	  else
-	    return (3);
-	else
-	  return ((abs(dcol) == abs(drow)) ? 1 : 2);
+        if (odd(dcol) != odd(drow))
+        {
+            if ((abs(dcol) <= 1) && (abs(drow) <= 1))
+                return 1;
+            else if (abs(abs(dcol) - abs(drow)) == 1)
+                return 2;
+            else
+                return 3;
+        }
+        else
+        {
+            return ((abs(dcol) == abs(drow)) ? 1 : 2);
+        }
 
     case rook:
-	if ( (dcol == 0) || (drow == 0) )
-	  return (1);
-	else
-	  return (2);
+        if ((dcol == 0) || (drow == 0))
+            return 1;
+        else
+            return 2;
 
     case prook:
-	if ( (dcol == 0) || (drow == 0) )
-	  return (1);
-	else if ( (abs(dcol) == 1) && (abs(drow) == 1) )
-	  return (1);
-	else
-	  return (2);
+        if ((dcol == 0) || (drow == 0))
+            return 1;
+        else if ((abs(dcol) == 1) && (abs(drow) == 1))
+            return 1;
+        else
+            return 2;
 
     case king:
-	return max(abs(drow),abs(dcol));
+        return max(abs(drow), abs(dcol));
 
     default:
-	/* should never occur */
-	return (CANNOT_REACH);
-
-  }
-
+        /* should never occur */
+        return (CANNOT_REACH);
+    }
 }
 
 
-#ifdef SAVE_DISTDATA 
-short distance (short a, short b) 
-{ 
-  return (short)computed_distance(a,b);
-}
-#else                
-short distance (short a, short b)
+#ifdef SAVE_DISTDATA
+short
+distance(short a, short b)
 {
-  return (use_distdata ? (short)(*distdata)[(int)a][(int)b] : (short)computed_distance(a,b));
+    return (short)computed_distance(a, b);
 }
-#endif                         
+#else
+short
+distance(short a, short b)
+{
+    return (use_distdata
+            ? (short)(*distdata)[(int)a][(int)b]
+            : (short)computed_distance(a, b));
+}
+#endif
 
 
 #ifdef SAVE_PTYPE_DISTDATA
-short piece_distance(short side,short piece,short f,short t)
+short
+piece_distance(short side, short piece, short f, short t)
 {
-  return ((f > NO_SQUARES) ? (short)1 : (short)ptype_distance(ptype[side][piece],f,t));
+    return ((f > NO_SQUARES)
+            ? (short)1
+            : (short)ptype_distance(ptype[side][piece], f, t));
 }
 #else
-short piece_distance(short side,short piece,short f,short t)
+short
+piece_distance(short side, short piece, short f, short t)
 {
-  return ((f > NO_SQUARES) ? (short)1 : 
-                 (use_ptype_distdata ? (short)(*ptype_distdata[ptype[side][piece]])[f][t] :
-     			               (short)ptype_distance(ptype[side][piece],f,t)));
+    return ((f > NO_SQUARES)
+            ? (short)1
+            : (use_ptype_distdata
+               ? (short)(*ptype_distdata[ptype[side][piece]])[f][t]
+               : (short)ptype_distance(ptype[side][piece], f, t)));
 }
-#endif                      
+#endif
 
 
 void
-Initialize_dist (void)
+Initialize_dist(void)
 {
   short a, b, d, di, ptyp;
 #ifndef SAVE_DISTDATA  
@@ -259,30 +284,42 @@ Initialize_dist (void)
       } 
 #endif
 #ifndef SAVE_PTYPE_DISTDATA
-  for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++)
+    for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++)
     {
-      for (a = 0; a < NO_SQUARES; a++)
-        for (b = 0; b < NO_SQUARES; b++)
-          (*ptype_distdata[ptyp])[a][b] = ptype_distance(ptyp,a,b);
+        for (a = 0; a < NO_SQUARES; a++)
+            for (b = 0; b < NO_SQUARES; b++)
+                (*ptype_distdata[ptyp])[a][b] = ptype_distance(ptyp, a, b);
     }
 #endif
 }
 
 
 /*
- * nextpos[piece][from-square] , nextdir[piece][from-square] gives vector of
- * positions reachable from from-square in ppos with piece such that the
- * sequence	ppos = nextpos[piece][from-square]; pdir =
- * nextdir[piece][from-square]; u = ppos[sq]; do { u = ppos[u]; if(color[u]
- * != neutral) u = pdir[u]; } while (sq != u); will generate the sequence of
- * all squares reachable from sq.
+ * nextpos[piece][from-square], nextdir[piece][from-square] gives vector
+ * of positions reachable from from-square in ppos with piece such that the
+ * sequence
+ *
+ *     ppos = nextpos[piece][from-square];
+ *     pdir = nextdir[piece][from-square];
+ *     u = ppos[sq];
+ *
+ *     do
+ *     {
+ *         u = ppos[u];
+ *
+ *         if(color[u] != neutral)
+ *             u = pdir[u];
+ *     }
+ *     while (sq != u);
+ *
+ * will generate the sequence of all squares reachable from sq.
  *
  * If the path is blocked u = pdir[sq] will generate the continuation of the
  * sequence in other directions.
  */
 
 
-/*                                           
+/*
  * ptype is used to separate black and white pawns, like this; ptyp =
  * ptype[side][piece] piece can be used directly in nextpos/nextdir when
  * generating moves for pieces that are not white pawns.
@@ -299,21 +336,27 @@ const small_short ptype[2][NO_PIECES] =
     ptype_pbishop, ptype_prook, ptype_king};
 
 const small_short promoted[NO_PIECES] =
-{ no_piece, ppawn, plance, pknight, psilver, gold, pbishop, prook,
-    ppawn, plance, pknight, psilver, pbishop, prook, king };
-    
+{
+    no_piece, ppawn, plance, pknight, psilver, gold, pbishop, prook,
+    ppawn, plance, pknight, psilver, pbishop, prook, king
+};
+
 const small_short unpromoted[NO_PIECES] =
-{ no_piece, pawn, lance, knight, silver, gold, bishop, rook,
-    pawn, lance, knight, silver, bishop, rook, king };
-    
+{
+    no_piece, pawn, lance, knight, silver, gold, bishop, rook,
+    pawn, lance, knight, silver, bishop, rook, king
+};
+
 const small_short is_promoted[NO_PIECES] =
-{ false, false, false, false, false, false, false, false,
-    true, true, true, true, true, true, false };
+{
+    false, false, false, false, false, false, false, false,
+    true, true, true, true, true, true, false
+};
 
 /* data used to generate nextpos/nextdir */
 #if !defined SAVE_NEXTPOS
 static
-#endif 
+#endif
 const small_short direc[NO_PTYPE_PIECES][8] =
 {
    11,  0,  0,  0,  0,  0,  0,  0 ,   /*  0 ptype_pawn */
@@ -360,51 +403,70 @@ const small_short nunmap[(NO_COLS+2)*(NO_ROWS+4)] =
 
 const small_short inunmap[NO_SQUARES] =
 {
-  23, 24, 25, 26, 27, 28, 29, 30, 31, 
-  34, 35, 36, 37, 38, 39, 40, 41, 42,
-  45, 46, 47, 48, 49, 50, 51, 52, 53,
-  56, 57, 58, 59, 60, 61, 62, 63, 64,
-  67, 68, 69, 70, 71, 72, 73, 74, 75,
-  78, 79, 80, 81, 82, 83, 84, 85, 86,
-  89, 90, 91, 92, 93, 94, 95, 96, 97,
- 100,101,102,103,104,105,106,107,108,
- 111,112,113,114,115,116,117,118,119 }; 
+     23,  24,  25,  26,  27,  28,  29,  30,  31,
+     34,  35,  36,  37,  38,  39,  40,  41,  42,
+     45,  46,  47,  48,  49,  50,  51,  52,  53,
+     56,  57,  58,  59,  60,  61,  62,  63,  64,
+     67,  68,  69,  70,  71,  72,  73,  74,  75,
+     78,  79,  80,  81,  82,  83,  84,  85,  86,
+     89,  90,  91,  92,  93,  94,  95,  96,  97,
+    100, 101, 102, 103, 104, 105, 106, 107, 108,
+    111, 112, 113, 114, 115, 116, 117, 118, 119
+};
+
 
 int InitFlag = false;
 
 
 #if defined SAVE_NEXTPOS
 
-short next_direction(short ptyp, short *d, short sq)
+short
+next_direction(short ptyp, short *d, short sq)
 {
-  short delta, to, sfrom = inunmap[sq];
-  do { 
-    (*d)++;
-    if ( *d >= 8 ) return sq;
-    delta = direc[ptyp][*d];
-    if ( delta == 0 ) return sq;
-    to = nunmap[sfrom + delta];
-  } while ( to < 0 );
-  return to;  
+    short delta, to, sfrom = inunmap[sq];
+
+    do
+    {
+        (*d)++;
+        if (*d >= 8)
+            return sq;
+
+        delta = direc[ptyp][*d];
+        if (delta == 0)
+            return sq;
+
+        to = nunmap[sfrom + delta];
+    }
+    while (to < 0);
+
+    return to;
 }
 
-short next_position(short ptyp, short *d, short sq, short u)
+
+short
+next_position(short ptyp, short *d, short sq, short u)
 {
-  if ( *d < 4 && psweep[ptyp] ) {
-    short to = nunmap[inunmap[u]+direc[ptyp][*d]];
-    if ( to < 0 )
-	return next_direction(ptyp,d,sq);
+    if (*d < 4 && psweep[ptyp])
+    {
+        short to = nunmap[inunmap[u] + direc[ptyp][*d]];
+
+        if (to < 0)
+            return next_direction(ptyp, d, sq);
+        else
+            return to;
+    }
     else
-	return to;
-  } else {
-    return next_direction(ptyp,d,sq);
-  } 
+    {
+        return next_direction(ptyp, d, sq);
+    }
 }
 
-short first_direction(short ptyp, short *d, short sq)
+
+short
+first_direction(short ptyp, short *d, short sq)
 {
-  *d = -1;
-  return next_direction(ptyp,d,sq);
+    *d = -1;
+    return next_direction(ptyp, d, sq);
 }
 
 #else
@@ -413,9 +475,9 @@ void
 Initialize_moves (void)
 
 /*
- * This procedure pre-calculates all moves for every piece from every square.
- * This data is stored in nextpos/nextdir and used later in the move
- * generation routines.
+ * This procedure pre-calculates all moves for every piece from every
+ * square.  This data is stored in nextpos/nextdir and used later in the
+ * move generation routines.
  */
 
 {
@@ -426,83 +488,108 @@ Initialize_moves (void)
   short steps[8];
   short fpo=23,tpo=120;
 
-  for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++)
+    for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++)
     {
-      for (po = 0; po < NO_SQUARES; po++)
-        for (p0 = 0; p0 < NO_SQUARES; p0++)
-	  { 
-	    (*nextpos[ptyp])[po][p0] = (unsigned char) po;
-	    (*nextdir[ptyp])[po][p0] = (unsigned char) po;
-	  }
+        for (po = 0; po < NO_SQUARES; po++)
+        {
+            for (p0 = 0; p0 < NO_SQUARES; p0++)
+            {
+                (*nextpos[ptyp])[po][p0] = (unsigned char)po;
+                (*nextdir[ptyp])[po][p0] = (unsigned char)po;
+            }
+        }
     }
-	
-  for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++) 
-    for (po = fpo; po < tpo; po++)
-      if (nunmap[po] >= (small_short)0)
-	{ 
-	  ppos = (*nextpos[ptyp])[nunmap[po]];
-	  pdir = (*nextdir[ptyp])[nunmap[po]];
-	  /* dest is a function of direction and steps */
-	  for (d = 0; d < 8; d++)
-	    {
-	      dest[d][0] = nunmap[po];
-	      delta = direc[ptyp][d];
-	      if (delta != 0)
-		{
-		  p0 = po;
-		  for (s = 0; s < max_steps[ptyp]; s++)
-		    {
-		      p0 = p0 + delta;
 
-		      /*
-		       * break if (off board) or (promoted rooks wishes to 
-                       * move two steps diagonal) or (promoted
-                       * bishops wishes to move two steps non-diagonal) 
-		       */                     
-		      if ( (nunmap[p0] < (small_short)0) ||
-                           ((ptyp == ptype_prook) && (s > 0) && diagonal(delta)) ||
-                           ((ptyp == ptype_pbishop) && (s > 0) && !diagonal(delta)) )
-			break;
-		      else
-			dest[d][s] = nunmap[p0];
-		    }
-		}
-	      else
-		s = 0;
+    for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++)
+    {
+        for (po = fpo; po < tpo; po++)
+        {
+            if (nunmap[po] >= (small_short)0)
+            {
+                ppos = (*nextpos[ptyp])[nunmap[po]];
+                pdir = (*nextdir[ptyp])[nunmap[po]];
 
-	      /*
-	       * sort dest in number of steps order currently no sort
-	       * is done due to compability with the move generation
-	       * order in old gnu chess
-	       */
-	      steps[d] = s;
-	      for (di = d; s > 0 && di > 0; di--)
-		if (steps[sorted[di - 1]] == 0)	/* should be: < s */
-		  sorted[di] = sorted[di - 1];
-		else
-		  break;
-	      sorted[di] = d;
-	    }
+                /* dest is a function of direction and steps */
+                for (d = 0; d < 8; d++)
+                {
+                    dest[d][0] = nunmap[po];
+                    delta = direc[ptyp][d];
 
-	  /*
-	   * update nextpos/nextdir
-	   */
-	  p0 = nunmap[po];
-	  pdir[p0] = (unsigned char) dest[sorted[0]][0];
-	  for (d = 0; d < 8; d++)
-	      for (s = 0; s < steps[sorted[d]]; s++)
-		  {
-		    ppos[p0] = (unsigned char) dest[sorted[d]][s];
-		    p0 = dest[sorted[d]][s];
-		    if (d < 7)
-		      pdir[p0] = (unsigned char) dest[sorted[d + 1]][0];
+                    if (delta != 0)
+                    {
+                        p0 = po;
 
-		    /*
-		     * else is already initialized
-		     */
-		  }
-	}
+                        for (s = 0; s < max_steps[ptyp]; s++)
+                        {
+                            p0 = p0 + delta;
 
+                            /*
+                             * break if (off board) or (promoted rooks
+                             * wishes to move two steps diagonal) or
+                             * (promoted bishops wishes to move two steps
+                             * non-diagonal)
+                             */
+                            if ((nunmap[p0] < (small_short)0)
+                                || ((ptyp == ptype_prook)
+                                    && (s > 0)
+                                    && diagonal(delta))
+                                || ((ptyp == ptype_pbishop)
+                                    && (s > 0)
+                                    && !diagonal(delta)))
+                                break;
+                            else
+                                dest[d][s] = nunmap[p0];
+                        }
+                    }
+                    else
+                    {
+                        s = 0;
+                    }
+
+                    /*
+                     * sort dest in number of steps order currently no sort
+                     * is done due to compability with the move generation
+                     * order in old gnu chess.
+                     */
+
+                    steps[d] = s;
+
+                    for (di = d; s > 0 && di > 0; di--)
+                    {
+                        if (steps[sorted[di - 1]] == 0) /* should be: < s */
+                            sorted[di] = sorted[di - 1];
+                        else
+                            break;
+                    }
+
+                    sorted[di] = d;
+                }
+
+                /*
+                 * update nextpos/nextdir
+                 */
+
+                p0 = nunmap[po];
+                pdir[p0] = (unsigned char)dest[sorted[0]][0];
+
+                for (d = 0; d < 8; d++)
+                {
+                    for (s = 0; s < steps[sorted[d]]; s++)
+                    {
+                        ppos[p0] = (unsigned char)dest[sorted[d]][s];
+                        p0 = dest[sorted[d]][s];
+
+                        if (d < 7)
+                            pdir[p0] = (unsigned char)dest[sorted[d + 1]][0];
+
+                        /*
+                         * else is already initialized
+                         */
+                    }
+                }
+            }
+        }
+    }
 }
 
 #endif
@@ -952,96 +1039,118 @@ InitConst (char *lang)
 #else
 
 void
-InitConst (char *lang)
+InitConst(char *lang)
 {
-  FILE *constfile;
-  char s[256];
-  char sl[5];
-  char buffer[120];
-  int len, entry;
-  char *p, *q;
-  constfile = fopen (LANGFILE, "r");
-  if (!constfile)
-    {
-      ShowMessage ("NO LANGFILE");
-      exit (1);
-    }
-  while (fgets (s, sizeof (s), constfile))
-    {
-      if (s[0] == '!')
-	continue;
-      len = strlen (s);
-      if (len > 3 && s[3] == ':' || len > 7 && s[7] == ':' ) 
-	{
-	  ShowMessage("old Langfile error"); 
-	  exit (1);
-	}
-      if (len <= 15)
-	{
-	  ShowMessage("length error in Langfile");
-	  exit (1);
-	}
-      for (q = &s[len]; q > &s[15]; q--)
-	if (*q == '"')
-	  break;
-      if (q == &s[15])
-	{
-	  ShowMessage("\" error in Langfile");
-	  exit (1);
-	}
-      *q = '\0';
-      if (s[6] != ':' || s[10] != ':' || s[15] != '"')
-	{
-	  sprintf (buffer,"Langfile format error %s", s);
-	  ShowMessage(buffer);
-	  exit (1);
-	}
-      s[6] = s[10] = '\0';
-      if (lang == NULL)
-	{
-	  lang = sl;
-	  strcpy (sl, &s[7]);
-	}     
-      if (strcmp (&s[7], lang))
-	continue;
-      entry = atoi (&s[3]);
-      if (entry < 0 || entry >= CPSIZE)
-	{
-	  ShowMessage("Langfile number error");
-	  exit (1);
-	} 
-      for (q = p = &s[16]; *p; p++)
-	{
-	  if (*p != '\\')
-	    {
-	      *q++ = *p;
-	    }
-	  else if (*(p + 1) == 'n')
-	    {
-	      *q++ = '\n';
-	      p++;
-	    }
-	}
-      *q = '\0';
-      if (entry < 0 || entry > 255)
-	{
-	  sprintf (buffer,"Langfile error %d\n", entry);
-          ShowMessage(buffer);
-	  exit (0);
-	}
-      CP[entry] = (char  *) GLOBAL_ALLOC ((unsigned) strlen (&s[16]) + 1);
-      if (CP[entry] == NULL)
-	{
-	  char buffer[80];
-	  sprintf(buffer,"CP MALLOC, entry %d",entry);
-	  perror (buffer);
-	  exit (0);
-	}
-      strcpy (CP[entry], &s[16]);
+    FILE *constfile;
+    char s[256];
+    char sl[5];
+    char buffer[120];
+    int len, entry;
+    char *p, *q;
+    constfile = fopen(LANGFILE, "r");
 
+    if (!constfile)
+    {
+        ShowMessage("NO LANGFILE");
+        exit(1);
     }
-  fclose (constfile);
-}                    
+
+    while (fgets(s, sizeof(s), constfile))
+    {
+        if (s[0] == '!')
+            continue;
+
+        len = strlen(s);
+
+        if ((len > 3) && (s[3] == ':') || (len > 7) && (s[7] == ':'))
+        {
+            ShowMessage("old Langfile error");
+            exit(1);
+        }
+
+        if (len <= 15)
+        {
+            ShowMessage("length error in Langfile");
+            exit(1);
+        }
+
+        for (q = &s[len]; q > &s[15]; q--)
+        {
+            if (*q == '"')
+                break;
+        }
+
+        if (q == &s[15])
+        {
+            ShowMessage("\" error in Langfile");
+            exit(1);
+        }
+
+        *q = '\0';
+
+        if ((s[6] != ':') || (s[10] != ':') || (s[15] != '"'))
+        {
+            sprintf(buffer, "Langfile format error %s", s);
+            ShowMessage(buffer);
+            exit(1);
+        }
+
+        s[6] = s[10] = '\0';
+
+        if (lang == NULL)
+        {
+            lang = sl;
+            strcpy(sl, &s[7]);
+        }
+
+        if (strcmp(&s[7], lang))
+            continue;
+
+        entry = atoi(&s[3]);
+
+        if ((entry < 0) || (entry >= CPSIZE))
+        {
+            ShowMessage("Langfile number error");
+            exit(1);
+        }
+
+        for (q = p = &s[16]; *p; p++)
+        {
+            if (*p != '\\')
+            {
+                *q++ = *p;
+            }
+            else if (*(p + 1) == 'n')
+            {
+                *q++ = '\n';
+                p++;
+            }
+        }
+
+        *q = '\0';
+
+        if ((entry < 0) || (entry > 255))
+        {
+            sprintf(buffer, "Langfile error %d\n", entry);
+            ShowMessage(buffer);
+            exit(0);
+        }
+
+        CP[entry] = (char far *)GLOBAL_ALLOC((unsigned)strlen(&s[16]) + 1);
+
+        if (CP[entry] == NULL)
+        {
+            char buffer[80];
+            sprintf(buffer, "CP MALLOC, entry %d", entry);
+            perror(buffer);
+            exit(0);
+        }
+
+        strcpy(CP[entry], &s[16]);
+    }
+
+    fclose(constfile);
+}
 
 #endif
 
@@ -1049,7 +1158,7 @@ InitConst (char *lang)
 
 
 int
-InitMain (void)
+InitMain(void)
 {
 #if defined THINK_C
   gsrand (starttime = ((unsigned int) time ((time_t *) 0)));	/* init urand */
@@ -1058,22 +1167,22 @@ InitMain (void)
 #endif
 
 #if ttblsz
-  ttblsize = ttblsz;
-  rehash = -1;
-#endif /* ttblsz */      
+    ttblsize = ttblsz;
+    rehash = -1;
+#endif /* ttblsz */
 
-  if ( Initialize_data() != 0 )
-    return(1);
+    if (Initialize_data() != 0)
+        return 1;
 
 #if defined EXTLANGFILE
-  InitConst (Lang);    
+    InitConst(Lang);
 #endif
 
-  strcpy(ColorStr[0],CP[118]);
-  strcpy(ColorStr[1],CP[119]);
+    strcpy(ColorStr[0], CP[118]);
+    strcpy(ColorStr[1], CP[119]);
 
-  XC = 0;
-  MaxResponseTime = 0;
+    XC = 0;
+    MaxResponseTime = 0;
 
 #if defined XSHOGI
   signal (SIGTERM, TerminateSearch);
@@ -1095,48 +1204,49 @@ InitMain (void)
   Initialize_dist ();
   Initialize_eval ();
 #if !defined SAVE_NEXTPOS
-  Initialize_moves ();
+    Initialize_moves();
 #endif
 
-  NewGame ();
+    NewGame();
 
-  flag.easy = ahead;
-  flag.hash = hash;
-  if (xwin)
-    xwndw = atoi (xwin);
+    flag.easy = ahead;
+    flag.hash = hash;
+
+    if (xwin)
+        xwndw = atoi(xwin);
 
 #ifdef HASHFILE
-  hashfile = NULL;
+    hashfile = NULL;
 #endif
 
 #if ttblsz
 #ifdef HASHFILE
-  hashfile = fopen (HASHFILE, RWA_ACC);
-  if (hashfile)
+    hashfile = fopen(HASHFILE, RWA_ACC);
+
+    if (hashfile)
     {
-      fseek (hashfile, 0L, SEEK_END);
-      filesz = ftell (hashfile) / sizeof (struct fileentry) - 1 - MAXrehash;
-              hashmask = filesz>>1;
-	      hashbase = hashmask+1;
-    }               
+        fseek(hashfile, 0L, SEEK_END);
+        filesz = ftell(hashfile) / sizeof(struct fileentry) - 1 - MAXrehash;
+        hashmask = filesz >> 1;
+        hashbase = hashmask + 1;
+    }
 #endif /* HASHFILE */
 #endif /* ttblsz */
 
-  savefile[0] = '\0';
-  listfile[0] = '\0';
+    savefile[0] = '\0';
+    listfile[0] = '\0';
 
-  return(0);
-
+    return 0;
 }
 
 
 void
-ExitMain (void)
+ExitMain(void)
 {
 #if ttblsz
 #ifdef HASHFILE
-  if (hashfile)
-    fclose (hashfile);
+    if (hashfile)
+        fclose(hashfile);
 #endif /* HASHFILE */
 #endif /* ttblsz */
 
